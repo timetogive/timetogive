@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "myapp",
-    "slug": "myapp",
+    "slug": "timetogive",
     "scheme": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -37,14 +37,15 @@
         "@rnmapbox/maps",
         {
           "RNMapboxMapsImpl": "mapbox",
-          "RNMapboxMapsDownloadToken": "pk.eyJ1IjoiaG9vY2hhbmkiLCJhIjoiY2xkdW8xN21nMDdwbTNvbXYyOHh6dHlkNyJ9.Pyjfe7kZDRBUzdSSmrxVHA"
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiaG9vY2hhbmkiLCJhIjoiY2xkdmhzajl5MGZ2NzQzbzVnYnJwNHpyayJ9.Q69ulGxHAuykGOzg5cdT8w"
         }
       ]
     ],
     "extra": {
       "eas": {
-        "projectId": "061b4470-78c7-4d6a-b850-8167fb0a3434"
+        "projectId": "796bb72c-c49c-4d09-b117-a94c85d675df"
       }
-    }
+    },
+    "owner": "hoochani"
   }
 }
