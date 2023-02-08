@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import { Stack, YStack, Image, Input, Button, Text } from '@my/ui'
 import { useLink } from 'solito/link'
 
-export default function SignUpScreen() {
+export const SignUpScreen = () => {
   const linkToSignInProps = useLink({
     href: '/sign-in',
   })

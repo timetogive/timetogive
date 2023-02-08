@@ -1,12 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import HomeScreen from 'app/screens/HomeScreen'
 
 import 'react-native-url-polyfill/auto'
 import { useState, useEffect } from 'react'
 import { supabase } from 'app/lib/supabase'
-import SignInScreen from 'app/screens/SignInScreen'
 import { Session } from '@supabase/supabase-js'
-import SignUpScreen from 'app/screens/SignUpScreen'
+import { SignUpScreen } from 'app/screens'
+import { HomeScreen } from 'app/screens'
+import { SignInScreen } from 'app/screens'
 
 const Stack = createNativeStackNavigator()
 
