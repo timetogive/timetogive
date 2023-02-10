@@ -1,3 +1,5 @@
-import { HomeScreen } from 'app/components/home/screen'
+const HomePage = () => {
+  return <>Hello</>
+}
 
-export default HomeScreen
+export default HomePage

@@ -15,6 +15,7 @@ const headingFont = createInterFont({
     7: 'none',
   },
   weight: {
+    4: '300',
     6: '400',
     7: '700',
   },
@@ -34,19 +35,28 @@ const headingFont = createInterFont({
     15: -6,
   },
   face: {
+    300: { normal: 'InterLight' },
+    400: { normal: 'Inter' },
     700: { normal: 'InterBold' },
   },
 })
 
 const bodyFont = createInterFont(
   {
+    weight: {
+      4: '300',
+      6: '400',
+      7: '700',
+    },
     face: {
+      300: { normal: 'InterLight' },
+      400: { normal: 'Inter' },
       700: { normal: 'InterBold' },
     },
   },
   {
-    sizeSize: (size) => Math.round(size * 1.1),
-    sizeLineHeight: (size) => Math.round(size * 1.1 + (size > 20 ? 10 : 10)),
+    sizeSize: (size) => Math.round(size * 1.0),
+    sizeLineHeight: (size) => Math.round(size * 1.0 + (size > 20 ? 10 : 10)),
   }
 )
 

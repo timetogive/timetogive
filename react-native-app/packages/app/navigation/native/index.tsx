@@ -1,47 +1,35 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import 'react-native-url-polyfill/auto'
-import { useState, useEffect } from 'react'
-import { supabase } from 'app/lib/supabase'
-import { Session } from '@supabase/supabase-js'
 import { SignUpScreen } from 'app/screens'
-import { HomeScreen } from 'app/screens'
+import { MainScreen } from 'app/screens'
 import { SignInScreen } from 'app/screens'
+import { SignedIn } from 'app/components/SignedIn'
+import { SignedOut } from 'app/components/SignedOut'
 
 const Stack = createNativeStackNavigator()
 
 export function NativeNavigation() {
-  const [session, setSession] = useState<Session | null>(null)
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-  }, [])
-
   return (
-    <Stack.Navigator>
-      {session && session.user ? (
-        <>
+    <>
+      <SignedIn>
+        <Stack.Navigator>
           <Stack.Screen
             name="home"
-            component={HomeScreen}
+            component={MainScreen}
             options={{
-              title: 'Home',
+              title: 'Main',
               headerShown: false,
             }}
           />
-        </>
-      ) : (
-        <>
+        </Stack.Navigator>
+      </SignedIn>
+      <SignedOut>
+        <Stack.Navigator>
           <Stack.Screen name="sign-in" options={{ headerShown: false }} component={SignInScreen} />
           <Stack.Screen name="sign-up" options={{ headerShown: false }} component={SignUpScreen} />
-        </>
-      )}
-    </Stack.Navigator>
+        </Stack.Navigator>
+      </SignedOut>
+    </>
   )
 }

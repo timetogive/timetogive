@@ -1,4 +1,10 @@
+\echo '---------------------------'
+\echo 'Setting up profiles'
+\echo '---------------------------'
+
+-- auth to profiles setup (copied from standard supabase setup)
 -- Create a table for public profiles
+
 create table profiles (
   id uuid references auth.users on delete cascade not null primary key,
   updated_at timestamp with time zone,
@@ -9,6 +15,7 @@ create table profiles (
 
   constraint username_length check (char_length(username) >= 3)
 );
+
 -- Set up Row Level Security (RLS)
 -- See https://supabase.com/docs/guides/auth/row-level-security for more details.
 alter table profiles
@@ -36,15 +43,3 @@ $$ language plpgsql security definer;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
-
--- Set up Storage!
-insert into storage.buckets (id, name)
-  values ('avatars', 'avatars');
-
--- Set up access controls for storage.
--- See https://supabase.com/docs/guides/storage#policy-examples for more details.
-create policy "Avatar images are publicly accessible." on storage.objects
-  for select using (bucket_id = 'avatars');
-
-create policy "Anyone can upload an avatar." on storage.objects
-  for insert with check (bucket_id = 'avatars');
