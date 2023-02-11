@@ -1,3 +1,6 @@
+\echo '---------------------------'
+\echo 'Setting up storage'
+\echo '---------------------------'
 
 -- Set up Storage!
 insert into storage.buckets (id, name)

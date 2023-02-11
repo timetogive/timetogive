@@ -2,7 +2,11 @@ create or replace function public.search_tasks(
 ) returns table (
     id public.tasks.id%type,
     title public.tasks.title%type,
-    description public.tasks.description%type
+    description public.tasks.description%type,
+    reason public.tasks.reason%type,
+    listing_longitude double precision,
+    listing_latitude double precision,
+    created_datetime public.tasks.created_datetime%type
 )
 language plpgsql
 as $$
@@ -20,6 +24,10 @@ begin
           t.id
         , t.title
         , t.description
+        , t.reason
+        , ST_X(t.fuzzy_geo_location::geometry) as longitude
+        , ST_Y(t.fuzzy_geo_location::geometry) as latitude
+        , t.created_datetime
     ';
 
     from_clause := '

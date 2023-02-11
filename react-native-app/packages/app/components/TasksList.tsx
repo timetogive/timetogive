@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from 'react-query'
 import { supabase } from 'app/lib/supabase'
 import { Stack, Text } from '@my/ui'
-import { ScreenWrapper, TaskCard } from '.'
+import { TaskCard } from './TaskCard'
 import { FlatList } from 'react-native'
 
 const RESULTS_PER_PAGE = 500
@@ -20,13 +20,13 @@ export const supabaseCall = (pageParam: number) => {
 
 const renderItem = ({ item }) => (
   <Stack pb={10}>
-    <TaskCard title={item.title} description={item.description} />
+    <TaskCard title={item.title} description={item.description} reason={item.reason} />
   </Stack>
 )
 
-export const SearchTasks = () => {
-  const searchTasksQuery = useInfiniteQuery(
-    ['searchTasks'],
+export const TasksList = () => {
+  const TasksListQuery = useInfiniteQuery(
+    ['TasksList'],
     async ({ pageParam = 0 }) => {
       const query = supabaseCall(pageParam)
       const { data, count } = await query
@@ -45,20 +45,17 @@ export const SearchTasks = () => {
     }
   )
 
-  const data = searchTasksQuery.data?.pages.flatMap(({ data }) => data)
+  const data = TasksListQuery.data?.pages.flatMap(({ data }) => data)
 
-  if (searchTasksQuery.isLoading || searchTasksQuery.isIdle) {
+  if (TasksListQuery.isLoading || TasksListQuery.isIdle) {
     return <Text>Loading...</Text>
   }
 
   const duplicatedData = data ? [...Array(60)].map((_, i) => ({ ...data[0], id: i })) : []
 
   return (
-    <ScreenWrapper px={10}>
+    <Stack flex={1}>
       <FlatList data={duplicatedData} renderItem={renderItem} keyExtractor={(item) => item.id} />
-      {/* {data?.map((obj) => {
-        return <TaskCard key={obj.id} title={obj.title} description={obj.description} />
-      })} */}
-    </ScreenWrapper>
+    </Stack>
   )
 }

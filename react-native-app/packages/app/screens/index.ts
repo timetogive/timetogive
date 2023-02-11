@@ -1,3 +1,4 @@
-export * from './MainScreen'
-export * from './SignInScreen'
-export * from './SignUpScreen'
+export * from './Main'
+export * from './Tasks'
+export * from './SignIn'
+export * from './SignUp'

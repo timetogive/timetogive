@@ -50,10 +50,14 @@ export interface Database {
           id: string
           images_data: Json
           people_estimate: number | null
+          pledge: string | null
+          reason: Database["public"]["Enums"]["task_reason"]
           remote: boolean
+          status: Database["public"]["Enums"]["task_status"]
           timing: Database["public"]["Enums"]["task_timing"]
           title: string
           user_id: string
+          will_pledge: boolean
         }
         Insert: {
           created_datetime?: string
@@ -69,10 +73,14 @@ export interface Database {
           id?: string
           images_data?: Json
           people_estimate?: number | null
+          pledge?: string | null
+          reason?: Database["public"]["Enums"]["task_reason"]
           remote?: boolean
+          status?: Database["public"]["Enums"]["task_status"]
           timing?: Database["public"]["Enums"]["task_timing"]
           title: string
           user_id: string
+          will_pledge?: boolean
         }
         Update: {
           created_datetime?: string
@@ -88,10 +96,14 @@ export interface Database {
           id?: string
           images_data?: Json
           people_estimate?: number | null
+          pledge?: string | null
+          reason?: Database["public"]["Enums"]["task_reason"]
           remote?: boolean
+          status?: Database["public"]["Enums"]["task_status"]
           timing?: Database["public"]["Enums"]["task_timing"]
           title?: string
           user_id?: string
+          will_pledge?: boolean
         }
       }
     }
@@ -105,11 +117,21 @@ export interface Database {
           id: string
           title: string
           description: string
+          reason: Database["public"]["Enums"]["task_reason"]
+          listing_longitude: number
+          listing_latitude: number
+          created_datetime: string
         }[]
       }
     }
     Enums: {
       task_estimate_units: "Minutes" | "Hours" | "Days"
+      task_reason:
+        | "Charity"
+        | "Community"
+        | "In Need"
+        | "Mutual Benefit"
+        | "Return For Pledge"
       task_status: "Live" | "Closed"
       task_timing: "Any Time" | "Specific Time"
     }
