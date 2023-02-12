@@ -1,5 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Circle, SizableText, Stack } from '@my/ui'
+import { Circle, Text, Stack, useSelectContext } from '@my/ui'
 import { TouchableOpacity } from 'react-native'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot'
@@ -7,8 +6,34 @@ import { faList } from '@fortawesome/pro-light-svg-icons/faList'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TasksList } from 'app/components'
 import { TasksMap } from 'app/components'
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from 'app/lib/supabase'
+import { useInfiniteQuery } from 'react-query'
+import * as Location from 'expo-location'
+import { defaultLongLat, LongLat, useSelectedLocation } from 'app/providers/selectedLocation'
+
+const RESULTS_PER_PAGE = 500
+
+export const supabaseCall = (
+  pageParam: number,
+  longitude: number,
+  latitude: number,
+  distance: number
+) => {
+  const startRange = pageParam * RESULTS_PER_PAGE
+  const endRange = startRange + (RESULTS_PER_PAGE - 1)
+
+  const query = supabase
+    .rpc(
+      'search_tasks',
+      { p_longitude: longitude, p_latitude: latitude, p_distance: distance },
+      { count: 'exact' }
+    )
+    .select('*')
+    .range(startRange, endRange)
+
+  return query
+}
 
 enum MapOrListEnum {
   Map,
@@ -49,14 +74,52 @@ const MapOrListToggleButton = ({ mapOrList, onChange }: MapOrListToggleButtonPro
 }
 
 export const Tasks = () => {
-  const insets = useSafeAreaInsets()
-
   const [mapOrList, setMapOrList] = useState<MapOrListEnum>(MapOrListEnum.List)
+  const [longLat, setLongLat] = useState<LongLat>(defaultLongLat)
+  const location = useSelectedLocation()
+
+  const TasksListQuery = useInfiniteQuery(
+    ['SearchTasks'],
+    async ({ pageParam = 0 }) => {
+      const ll = await location.getLongLat()
+      console.log('In Tasks calling getLongLat')
+      setLongLat(ll)
+      const query = supabaseCall(
+        pageParam,
+        ll.latitude,
+        ll.longitude,
+        location.selectedLocation.distance
+      )
+      const { data, count } = await query
+
+      return {
+        data: data || [],
+        count: count || 0,
+        currentPage: pageParam,
+      }
+    },
+    {
+      refetchOnMount: false,
+      getNextPageParam(result) {
+        return result.currentPage + 1
+      },
+    }
+  )
+
+  const tasks = TasksListQuery.data?.pages.flatMap(({ data }) => data) || []
+
+  if (TasksListQuery.isLoading || TasksListQuery.isIdle) {
+    return <Text>Loading...</Text>
+  }
 
   return (
     <>
-      {mapOrList === MapOrListEnum.Map ? <TasksList /> : <TasksMap />}
-      <Stack position="absolute" top={insets.top + 5} right={insets.right + 10}>
+      {mapOrList === MapOrListEnum.List ? (
+        <TasksList tasks={tasks} />
+      ) : (
+        <TasksMap tasks={tasks} longLat={longLat} distance={location.selectedLocation.distance} />
+      )}
+      <Stack position="absolute" top={10} right={10}>
         <MapOrListToggleButton mapOrList={mapOrList} onChange={setMapOrList} />
       </Stack>
     </>

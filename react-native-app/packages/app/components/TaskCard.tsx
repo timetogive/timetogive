@@ -2,7 +2,7 @@ import { Card, YStack, Stack, Heading, Text, XStack, Paragraph, SizableText } fr
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { faHouseHeart } from '@fortawesome/pro-solid-svg-icons/faHouseHeart'
 import { faPeopleGroup } from '@fortawesome/pro-solid-svg-icons/faPeopleGroup'
-import { faHandHeart } from '@fortawesome/pro-solid-svg-icons/faHandHeart'
+import { faHandWave } from '@fortawesome/pro-light-svg-icons/faHandWave'
 import { faHandshake } from '@fortawesome/pro-solid-svg-icons/faHandshake'
 import { faHandHoldingDollar } from '@fortawesome/pro-solid-svg-icons/faHandHoldingDollar'
 
@@ -19,13 +19,13 @@ const TaskIcon = ({ reason }: TaskIconProps) => {
     case 'Community':
       return <FontAwesomeIcon icon={faPeopleGroup} size={30} />
     case 'In Need':
-      return <FontAwesomeIcon icon={faHandHeart} size={30} />
+      return <FontAwesomeIcon icon={faHandWave} size={30} />
     case 'Mutual Benefit':
       return <FontAwesomeIcon icon={faHandshake} size={30} />
     case 'Return For Pledge':
       return <FontAwesomeIcon icon={faHandHoldingDollar} size={30} />
     default:
-      return <FontAwesomeIcon icon={faHandHeart} size={30} />
+      return <FontAwesomeIcon icon={faHandWave} size={30} />
   }
 }
 interface Props {

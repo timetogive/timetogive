@@ -112,14 +112,18 @@ export interface Database {
     }
     Functions: {
       search_tasks: {
-        Args: Record<PropertyKey, never>
+        Args: {
+          p_longitude: number
+          p_latitude: number
+          p_distance: number
+        }
         Returns: {
           id: string
           title: string
           description: string
           reason: Database["public"]["Enums"]["task_reason"]
-          listing_longitude: number
-          listing_latitude: number
+          longitude: number
+          latitude: number
           created_datetime: string
         }[]
       }

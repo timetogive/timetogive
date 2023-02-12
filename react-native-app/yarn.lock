@@ -8291,6 +8291,7 @@ __metadata:
     expo-dev-client: ^2.0.1
     expo-font: ^11.0.1
     expo-linear-gradient: ^12.0.1
+    expo-location: ~15.0.1
     expo-splash-screen: ~0.17.5
     expo-status-bar: ^1.4.2
     expo-updates: ^0.15.6
@@ -8468,6 +8469,15 @@ __metadata:
     qs: ^6.9.1
     url-parse: ^1.5.9
   checksum: ff4beff24a971fce24baa5423bab7ef0caabda64f87c9c55d32c409cd8f0e48ea46cc08ab1e54978e51476d7a6dadca05a5ba4ab74e982063d64ddfc8230cb5e
+  languageName: node
+  linkType: hard
+
+"expo-location@npm:~15.0.1":
+  version: 15.0.1
+  resolution: "expo-location@npm:15.0.1"
+  peerDependencies:
+    expo: "*"
+  checksum: dc436d1f11a3f21aa7856fb68e528295c135a1396f61b8b9c0298f9ff4bf17d0fac167123368a401cce8080895140ead402c9e546fe62319ca2f79e8c96f73a9
   languageName: node
   linkType: hard
 

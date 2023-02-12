@@ -5,6 +5,7 @@ import { TamaguiProvider, TamaguiProviderProps } from '@my/ui'
 import { useColorScheme } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { SessionProvider } from './session'
+import { SelectedLocationProvider } from './selectedLocation'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,16 +21,18 @@ export function Providers({ children, ...rest }: Omit<TamaguiProviderProps, 'con
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <SessionProvider>
-          <TamaguiProvider
-            config={config}
-            disableInjectCSS
-            defaultTheme={scheme === 'dark' ? 'dark' : 'light'}
-            {...rest}
-          >
-            <NavigationProvider>{children}</NavigationProvider>
-          </TamaguiProvider>
-        </SessionProvider>
+        <SelectedLocationProvider>
+          <SessionProvider>
+            <TamaguiProvider
+              config={config}
+              disableInjectCSS
+              defaultTheme={scheme === 'dark' ? 'dark' : 'light'}
+              {...rest}
+            >
+              <NavigationProvider>{children}</NavigationProvider>
+            </TamaguiProvider>
+          </SessionProvider>
+        </SelectedLocationProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
   )

@@ -1,11 +1,16 @@
+-- Search for tasks via a location and radius
+
 create or replace function public.search_tasks(
+    p_longitude double precision,
+    p_latitude double precision,
+    p_distance double precision
 ) returns table (
     id public.tasks.id%type,
     title public.tasks.title%type,
     description public.tasks.description%type,
     reason public.tasks.reason%type,
-    listing_longitude double precision,
-    listing_latitude double precision,
+    longitude double precision,
+    latitude double precision,
     created_datetime public.tasks.created_datetime%type
 )
 language plpgsql
