@@ -18,8 +18,10 @@ as $$
 declare
     select_clause text;
     from_clause text;
+    where_clause text;
     order_by_clause text;
 	final_sql text;
+
 begin
 
     -- We need to build a dynamic sql string, because we don't know what
@@ -38,15 +40,16 @@ begin
     from_clause := '
         from   public.tasks t
     ';
-
+    
+    where_clause := 'where ST_DWithin(t.geo_location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, $3)';
 
     order_by_clause := '
         order by t.created_datetime desc
     ';
 
-    final_sql := select_clause||from_clause||order_by_clause;
+    final_sql := select_clause||from_clause||where_clause||order_by_clause;
 
-    return query execute final_sql;
+    return query execute final_sql using p_longitude, p_latitude, p_distance;
 
 end;
 $$;

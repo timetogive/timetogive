@@ -18,7 +18,7 @@ export const supabaseCall = (
   pageParam: number,
   longitude: number,
   latitude: number,
-  distance: number
+  distance: number // distance in m
 ) => {
   const startRange = pageParam * RESULTS_PER_PAGE
   const endRange = startRange + (RESULTS_PER_PAGE - 1)
@@ -78,16 +78,17 @@ export const Tasks = () => {
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat)
   const location = useSelectedLocation()
 
-  const TasksListQuery = useInfiniteQuery(
+  const SearchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
       const ll = await location.getLongLat()
       console.log('In Tasks calling getLongLat')
       setLongLat(ll)
+      console.log(ll)
       const query = supabaseCall(
         pageParam,
-        ll.latitude,
         ll.longitude,
+        ll.latitude,
         location.selectedLocation.distance
       )
       const { data, count } = await query
@@ -106,9 +107,14 @@ export const Tasks = () => {
     }
   )
 
-  const tasks = TasksListQuery.data?.pages.flatMap(({ data }) => data) || []
+  useEffect(() => {
+    console.log('In Tasks, selected location has changed')
+    SearchTasksQuery.refetch()
+  }, [location.selectedLocation])
 
-  if (TasksListQuery.isLoading || TasksListQuery.isIdle) {
+  const tasks = SearchTasksQuery.data?.pages.flatMap(({ data }) => data) || []
+
+  if (SearchTasksQuery.isLoading || SearchTasksQuery.isIdle) {
     return <Text>Loading...</Text>
   }
 

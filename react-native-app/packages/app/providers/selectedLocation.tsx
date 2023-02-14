@@ -1,5 +1,8 @@
 import { useState, createContext, useContext, ReactNode, useEffect } from 'react'
 import * as Location from 'expo-location'
+import React from 'react'
+import { View, StyleSheet, Button, Alert } from 'react-native'
+import { Linking } from 'react-native'
 
 export enum SelectedLocationMode {
   Current,
@@ -25,6 +28,7 @@ interface SelectedLocation {
 interface Context {
   set: (selectedLocation: SelectedLocation) => void
   getLongLat: () => Promise<LongLat>
+  setToCurrentLocation: () => void
   selectedLocation: SelectedLocation
 }
 
@@ -47,6 +51,7 @@ const SelectedLocationContext = createContext<Context>({
   set: () => undefined,
   selectedLocation: defaultSelectedLocation,
   getLongLat: async () => defaultLongLat,
+  setToCurrentLocation: () => undefined,
 })
 
 interface Props {
@@ -59,15 +64,7 @@ export const SelectedLocationProvider = ({ children }: Props): JSX.Element => {
 
   useEffect(() => {
     ;(async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync()
-      console.log(status)
-      if (status === 'granted') {
-        setSelectedLocation({ mode: SelectedLocationMode.Current, distance: 10000 })
-        console.log('Location permission granted')
-        return
-      }
-      console.log('Location permission denied - setting a default location')
-      setSelectedLocation(defaultSelectedLocation)
+      await setToCurrentLocation()
     })()
   }, [])
 
@@ -78,10 +75,7 @@ export const SelectedLocationProvider = ({ children }: Props): JSX.Element => {
   const getLongLat = async (): Promise<LongLat> => {
     if (selectedLocation.mode === SelectedLocationMode.Current) {
       let location = await Location.getCurrentPositionAsync({})
-      console.log('Called getCurrentPositionAsync')
-      console.log(location.coords)
       if (location) {
-        console.log('Returning the coords')
         return {
           longitude: location.coords.longitude,
           latitude: location.coords.latitude,
@@ -97,12 +91,33 @@ export const SelectedLocationProvider = ({ children }: Props): JSX.Element => {
     return defaultLongLat
   }
 
+  const setToCurrentLocation = async () => {
+    console.log('setToCurrentLocation')
+    let { status } = await Location.requestForegroundPermissionsAsync()
+    console.log(status)
+    if (status === 'granted') {
+      setSelectedLocation({ mode: SelectedLocationMode.Current, distance: 10000 })
+      return
+    }
+    Alert.alert(
+      'Permission Denied',
+      'Your device would now allow your current location to be used. Go to app settings and allow location to be used',
+      [
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+        { text: 'Settings', onPress: () => Linking.openSettings() },
+      ]
+    )
+    console.log('Location permission denied - setting a default location')
+    setSelectedLocation(defaultSelectedLocation)
+  }
+
   return (
     <SelectedLocationContext.Provider
       value={{
         set,
         selectedLocation,
         getLongLat,
+        setToCurrentLocation,
       }}
     >
       {children}
