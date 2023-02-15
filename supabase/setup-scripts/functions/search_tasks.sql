@@ -11,7 +11,8 @@ create or replace function public.search_tasks(
     reason public.tasks.reason%type,
     longitude double precision,
     latitude double precision,
-    created_datetime public.tasks.created_datetime%type
+    created_datetime public.tasks.created_datetime%type,
+    distance double precision
 )
 language plpgsql
 as $$
@@ -35,6 +36,7 @@ begin
         , ST_X(t.fuzzy_geo_location::geometry) as longitude
         , ST_Y(t.fuzzy_geo_location::geometry) as latitude
         , t.created_datetime
+        , (ST_Distance(ST_SetSRID(ST_Point($1, $2), 4326)::geography, t.geo_location)) as distance
     ';
 
     from_clause := '
