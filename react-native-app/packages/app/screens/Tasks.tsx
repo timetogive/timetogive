@@ -55,8 +55,7 @@ const MapOrListToggleButton = ({ mapOrList, onChange }: MapOrListToggleButtonPro
       <Circle
         borderColor="black"
         borderWidth={2}
-        backgroundColor="white"
-        shadowColor="black"
+        shadowColor="$shadowColor"
         shadowOffset={{ width: 0, height: 1 }}
         shadowOpacity={0.6}
         shadowRadius={2}

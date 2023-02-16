@@ -19,18 +19,16 @@ export const LocationBar = () => {
 
   return (
     <Stack
-      backgroundColor="white"
       pt={insets.top + 5}
       pl={insets.left + 5}
       pr={insets.right + 5}
       pb={10}
-      borderBottomWidth={0.5}
-      borderColor="$gray4"
+      backgroundColor="$background"
     >
       <TouchableOpacity onPress={onPress}>
         <XStack space={2} alignItems="center">
           <FontAwesomeIcon icon={faLocationDot} size={20} />
-          <SizableText> {locText} </SizableText>
+          <SizableText color="$color"> {locText} </SizableText>
         </XStack>
       </TouchableOpacity>
     </Stack>

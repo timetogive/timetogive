@@ -28,14 +28,8 @@ export const MainScreen = () => {
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (
               <YStack alignItems="center" space={3}>
-                <FontAwesomeIcon
-                  icon={faHeartCircleCheck}
-                  size={25}
-                  color={focused ? 'black' : 'gray'}
-                />
-                <SizableText size="$2" color={focused ? 'black' : 'gray'}>
-                  Tasks
-                </SizableText>
+                <FontAwesomeIcon icon={faHeartCircleCheck} size={25} />
+                <SizableText size="$2">Tasks</SizableText>
               </YStack>
             ),
           }}
@@ -48,14 +42,8 @@ export const MainScreen = () => {
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (
               <YStack alignItems="center" space={3}>
-                <FontAwesomeIcon
-                  icon={faMessagesQuestion}
-                  size={25}
-                  color={focused ? 'black' : 'gray'}
-                />
-                <SizableText size="$2" color={focused ? 'black' : 'gray'}>
-                  Questions
-                </SizableText>
+                <FontAwesomeIcon icon={faMessagesQuestion} size={25} />
+                <SizableText size="$2">Questions</SizableText>
               </YStack>
             ),
           }}
@@ -98,10 +86,8 @@ export const MainScreen = () => {
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (
               <YStack alignItems="center" space={3}>
-                <FontAwesomeIcon icon={faBell} size={25} color={focused ? 'black' : 'gray'} />
-                <SizableText size="$2" color={focused ? 'black' : 'gray'}>
-                  Notifications
-                </SizableText>
+                <FontAwesomeIcon icon={faBell} size={25} />
+                <SizableText size="$2">Notifications</SizableText>
               </YStack>
             ),
           }}
@@ -114,10 +100,8 @@ export const MainScreen = () => {
             tabBarShowLabel: false,
             tabBarIcon: ({ focused }) => (
               <YStack alignItems="center" space={3}>
-                <FontAwesomeIcon icon={faBars} size={25} color={focused ? 'black' : 'gray'} />
-                <SizableText size="$2" color={focused ? 'black' : 'gray'}>
-                  Menu
-                </SizableText>
+                <FontAwesomeIcon icon={faBars} size={25} />
+                <SizableText size="$2">Menu</SizableText>
               </YStack>
             ),
           }}

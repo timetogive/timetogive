@@ -1,7 +1,7 @@
 import config from '../tamagui.config'
 import { NavigationProvider } from './navigation'
 import { QueryClientProvider, QueryClient } from 'react-query'
-import { TamaguiProvider, TamaguiProviderProps } from '@my/ui'
+import { TamaguiProvider, TamaguiProviderProps, Theme } from '@my/ui'
 import { useColorScheme } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { SessionProvider } from './session'

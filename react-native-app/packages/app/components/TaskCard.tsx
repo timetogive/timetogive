@@ -12,21 +12,26 @@ interface TaskIconProps {
   reason: string
 }
 
-const TaskIcon = ({ reason }: TaskIconProps) => {
+const getIcon = ({ reason }: TaskIconProps) => {
   switch (reason) {
     case 'Charity':
-      return <FontAwesomeIcon icon={faHouseHeart} size={30} />
+      return faHouseHeart
     case 'Community':
-      return <FontAwesomeIcon icon={faPeopleGroup} size={30} />
+      return faPeopleGroup
     case 'In Need':
-      return <FontAwesomeIcon icon={faHandWave} size={30} />
+      return faHandWave
     case 'Mutual Benefit':
-      return <FontAwesomeIcon icon={faHandshake} size={30} />
+      return faHandshake
     case 'Return For Pledge':
-      return <FontAwesomeIcon icon={faHandHoldingDollar} size={30} />
+      return faHandHoldingDollar
     default:
-      return <FontAwesomeIcon icon={faHandWave} size={30} />
+      return faHandWave
   }
+}
+
+const TaskIcon = ({ reason }: TaskIconProps) => {
+  const icon = getIcon({ reason })
+  return <FontAwesomeIcon icon={icon} size={30} />
 }
 interface Props {
   title: string
@@ -36,24 +41,29 @@ interface Props {
 
 export const TaskCard = ({ title, description, reason }: Props) => {
   return (
-    <XStack
-      borderRadius={5}
-      elevation={3}
-      shadowColor="gray"
-      shadowOpacity={0.2}
-      shadowRadius={8}
+    <Stack
+      borderRadius="$5"
       backgroundColor="white"
-      overflow="hidden"
-      h={100}
+      borderColor="$gray6"
+      shadowColor="$shadowColor"
+      p="$5"
     >
-      <YStack w={100} maw={100} alignItems="center" jc="center" p={0} m={0} shadowRadius={0}>
+      <XStack justifyContent="space-between">
+        <YStack flex={1}>
+          <SizableText color="black" fontWeight="$6" fontSize="$5">
+            {title}
+          </SizableText>
+          <SizableText color="black" fontWeight="$5" fontSize="$4">
+            5km
+          </SizableText>
+        </YStack>
         <TaskIcon reason={reason} />
-      </YStack>
-      <YStack space={5} flex={1} pl={5} pr={10} py={10} overflow="hidden">
-        <SizableText fontSize="$4" fontWeight="$6" numberOfLines={2}>
-          {title}
+      </XStack>
+      <Stack alignItems="flex-end">
+        <SizableText color="black" fontWeight="$6" fontSize="$5">
+          Hello
         </SizableText>
-      </YStack>
-    </XStack>
+      </Stack>
+    </Stack>
   )
 }
