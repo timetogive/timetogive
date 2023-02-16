@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useInfiniteQuery } from 'react-query';
 import { Text } from '../components';
+import { Stack } from 'react-native-flex-layout';
 
 import {
   defaultLongLat,
@@ -50,6 +51,7 @@ export const Tasks = () => {
   );
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
   const location = useSelectedLocation();
+
   const insets = useSafeAreaInsets();
 
   const SearchTasksQuery = useInfiniteQuery(
@@ -95,8 +97,17 @@ export const Tasks = () => {
 
   return (
     <>
+      {mode === MapListMode.List ? (
+        <TasksList tasks={tasks} />
+      ) : (
+        <TasksMap
+          tasks={tasks}
+          longLat={longLat}
+          distance={location.selectedLocation.distance}
+        />
+      )}
+
       <LocationBar mode={mode} onChangeMode={setMapListMode} />
-      <TasksList tasks={tasks} />
     </>
   );
 };

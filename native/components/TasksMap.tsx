@@ -61,23 +61,19 @@ export const TasksMap = ({ tasks, longLat, distance }: Props) => {
     })();
   }, [longLat]);
 
-  return <></>;
-
-  // return (
-  //   <Stack flex={1}>
-  //     <MapView
-  //       provider={PROVIDER_GOOGLE}
-  //       style={{ flex: 1 }}
-  //       region={mapRegion}
-  //     >
-  //       {tasks.map((task: any) => (
-  //         <MapMarker
-  //           key={task.id}
-  //           longitude={task.longitude}
-  //           latitude={task.latitude}
-  //         />
-  //       ))}
-  //     </MapView>
-  //   </Stack>
-  // );
+  return (
+    <MapView
+      provider={PROVIDER_GOOGLE}
+      style={{ flex: 1 }}
+      region={mapRegion}
+    >
+      {tasks.map((task: any) => (
+        <MapMarker
+          key={task.id}
+          longitude={task.longitude}
+          latitude={task.latitude}
+        />
+      ))}
+    </MapView>
+  );
 };

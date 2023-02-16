@@ -70,7 +70,6 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
           mode === MapListMode.List ? 'light-content' : 'dark-content'
         }
       />
-
       <Stack
         position="absolute"
         top={0}
@@ -79,6 +78,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
         pt={insets.top + 5}
         pb={10}
         ph={insets.left + 20}
+        h={100}
         style={{
           ...(mode === MapListMode.List
             ? { backgroundColor: colors.purple[500] }
