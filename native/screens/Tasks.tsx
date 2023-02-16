@@ -1,16 +1,11 @@
-import { TouchableOpacity } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot';
-import { faList } from '@fortawesome/pro-light-svg-icons/faList';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TasksList } from '../components';
+import { LocationBar, TasksList } from '../components';
 import { TasksMap } from '../components';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useInfiniteQuery } from 'react-query';
-import * as Location from 'expo-location';
-import { Text } from '@rneui/themed';
-import { Stack } from 'react-native-flex-layout';
+import { Text } from '../components';
+
 import {
   defaultLongLat,
   LongLat,
@@ -44,46 +39,18 @@ export const supabaseCall = (
   return query;
 };
 
-enum MapOrListEnum {
+export enum MapListMode {
   Map,
   List,
 }
 
-interface MapOrListToggleButtonProps {
-  mapOrList: MapOrListEnum;
-  onChange: (mapOrList: MapOrListEnum) => void;
-}
-
-const MapOrListToggleButton = ({
-  mapOrList,
-  onChange,
-}: MapOrListToggleButtonProps) => {
-  return (
-    <TouchableOpacity
-      onPress={() =>
-        onChange(
-          mapOrList === MapOrListEnum.List
-            ? MapOrListEnum.Map
-            : MapOrListEnum.List
-        )
-      }
-    >
-      <FontAwesomeIcon
-        icon={
-          mapOrList === MapOrListEnum.List ? faLocationDot : faList
-        }
-        size={mapOrList === MapOrListEnum.List ? 30 : 23}
-      />
-    </TouchableOpacity>
-  );
-};
-
 export const Tasks = () => {
-  const [mapOrList, setMapOrList] = useState<MapOrListEnum>(
-    MapOrListEnum.List
+  const [mode, setMapListMode] = useState<MapListMode>(
+    MapListMode.List
   );
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
   const location = useSelectedLocation();
+  const insets = useSafeAreaInsets();
 
   const SearchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
@@ -128,21 +95,8 @@ export const Tasks = () => {
 
   return (
     <>
-      {mapOrList === MapOrListEnum.List ? (
-        <TasksList tasks={tasks} />
-      ) : (
-        <TasksMap
-          tasks={tasks}
-          longLat={longLat}
-          distance={location.selectedLocation.distance}
-        />
-      )}
-      <Stack position="absolute" top={10} right={10}>
-        <MapOrListToggleButton
-          mapOrList={mapOrList}
-          onChange={setMapOrList}
-        />
-      </Stack>
+      <LocationBar mode={mode} onChangeMode={setMapListMode} />
+      <TasksList tasks={tasks} />
     </>
   );
 };

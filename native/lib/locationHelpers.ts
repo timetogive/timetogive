@@ -1,30 +1,35 @@
 import {
   useSelectedLocation,
   SelectedLocationMode,
+  SelectedLocation,
 } from '../providers/selectedLocation';
+
+const getMainText = (selectedLocation: SelectedLocation) => {
+  if (selectedLocation.mode === SelectedLocationMode.Current) {
+    return `Live Location`;
+  }
+  if (!selectedLocation.custom) {
+    return 'Location Unknown';
+  }
+  if (selectedLocation.custom.name) {
+    return selectedLocation.custom.name;
+  }
+  return `${selectedLocation.custom.longitude.toFixed(
+    2
+  )} : ${selectedLocation.custom.latitude.toFixed(2)}`;
+};
 
 export const locationText = () => {
   const location = useSelectedLocation();
 
-  const distanceText = `(${(
-    location.selectedLocation.distance / 1000
-  ).toFixed(1)} km radius)`;
+  const mainText = getMainText(location.selectedLocation);
 
-  //(10km radius)
-  if (
-    location.selectedLocation.mode === SelectedLocationMode.Current
-  ) {
-    return `Live Location ${distanceText}`;
-  }
-  if (!location.selectedLocation.custom) {
-    return 'Location Unknown';
-  }
-  if (location.selectedLocation.custom.name) {
-    return location.selectedLocation.custom.name;
-  }
-  return `${location.selectedLocation.custom.longitude.toFixed(
-    2
-  )} ${location.selectedLocation.custom.latitude.toFixed(
-    2
-  )} ${distanceText}`;
+  const distanceText = `${(
+    location.selectedLocation.distance / 1000
+  ).toFixed(0)} km`;
+
+  return {
+    mainText,
+    distanceText,
+  };
 };

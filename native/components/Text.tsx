@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { TextProps, Text as ReactNativeText } from 'react-native';
 
-type Size = 'xxs' | 'xs' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 
 type Weight =
   | 'light'
@@ -24,6 +24,8 @@ const translateFontSize = (size?: Size) => {
       return 11;
     case 'xs':
       return 14;
+    case 'sm':
+      return 15;
     case 'md':
       return 16;
     case 'lg':
@@ -64,7 +66,6 @@ export const Text = ({
   const finalSize = translateFontSize(size);
   const finalWeight = translateWeight(weight);
 
-  console.log(`finalSize ${finalSize}`);
   return (
     <ReactNativeText
       style={{

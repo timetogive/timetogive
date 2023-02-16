@@ -14,7 +14,6 @@ import { faBars as faBarsSolid } from '@fortawesome/pro-solid-svg-icons/faBars';
 import { faBell } from '@fortawesome/pro-light-svg-icons/faBell';
 import { faBell as faBellSolid } from '@fortawesome/pro-solid-svg-icons/faBell';
 import { VStack, Stack } from 'react-native-flex-layout';
-import { Center } from '../components/Center';
 import { Text } from '../components';
 import colors from '../styles/colors';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -35,13 +34,11 @@ export const TabWithIcon = ({
   const color = focused ? colors.purple[500] : colors.blackAlpha[500];
   const icon = focused ? focussedIconDefinition : iconDefinition;
   return (
-    <VStack spacing={3}>
-      <Center>
-        <FontAwesomeIcon icon={icon} size={25} color={color} />
-        <Text size="xxs" textAlign="center" color={color}>
-          {title}
-        </Text>
-      </Center>
+    <VStack spacing={3} center>
+      <FontAwesomeIcon icon={icon} size={25} color={color} />
+      <Text size="xxs" textAlign="center" color={color}>
+        {title}
+      </Text>
     </VStack>
   );
 };
