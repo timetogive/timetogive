@@ -4,7 +4,7 @@ import { faAngleDown } from '@fortawesome/pro-solid-svg-icons/faAngleDown';
 import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot';
 import { faList } from '@fortawesome/pro-light-svg-icons/faList';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Text } from '../components';
+import { Text } from './Text';
 import {
   Stack,
   HStack,
@@ -13,15 +13,10 @@ import {
   VStack,
 } from 'react-native-flex-layout';
 
-import {
-  defaultLongLat,
-  LongLat,
-  useSelectedLocation,
-} from '../providers/selectedLocation';
-import colors from '../styles/colors';
+import colors, { defaultColor } from '../styles/colors';
 import { ButtonGroup } from '@rneui/themed';
 import { locationText } from '../lib';
-import { MapListMode } from '../screens';
+import { MapListMode } from '../types';
 
 interface Props {
   mode: MapListMode;
@@ -51,7 +46,7 @@ const ModeToggleButton = ({ mode, onChangeMode }: Props) => {
           <FontAwesomeIcon
             icon={mode === MapListMode.List ? faLocationDot : faList}
             size={mode === MapListMode.List ? 25 : 18}
-            color={colors.purple[500]}
+            color={defaultColor[500]}
           />
         </VStack>
       </Stack>
@@ -81,7 +76,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
         h={100}
         style={{
           ...(mode === MapListMode.List
-            ? { backgroundColor: colors.purple[500] }
+            ? { backgroundColor: defaultColor[500] }
             : {}),
         }}
       >
@@ -111,7 +106,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
               <FontAwesomeIcon
                 icon={faAngleDown}
                 size={14}
-                color={colors.purple[500]}
+                color={defaultColor[500]}
               ></FontAwesomeIcon>
             </Stack>
           </HStack>

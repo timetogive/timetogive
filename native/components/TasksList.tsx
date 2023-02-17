@@ -8,9 +8,12 @@ import {
   Spacer,
   VStack,
 } from 'react-native-flex-layout';
-
 import { Text } from './Text';
-import colors from '../styles/colors';
+import { defaultColor } from '../styles/colors';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faAngleDown } from '@fortawesome/pro-solid-svg-icons/faAngleDown';
+import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot';
+import { faList } from '@fortawesome/pro-light-svg-icons/faList';
 
 const renderItem = ({ item }: { item: any }) => (
   <></>
@@ -32,40 +35,18 @@ export const TasksList = ({ tasks }: Props) => {
     <VStack
       spacing={20}
       pt={110}
-      style={{ backgroundColor: colors.purple[50], flex: 1 }}
+      style={{ backgroundColor: defaultColor[50], flex: 1 }}
       ph={15}
     >
-      {tasks.map((t) => (
-        <HStack h={150}>
-          <Stack
-            key={t.id}
-            radius={5}
-            style={{
-              shadowColor: colors.gray[300],
-              shadowOffset: { width: -4, height: 6 },
-              shadowOpacity: 0.7,
-              shadowRadius: 20,
-              elevation: 6,
-              backgroundColor: colors.white,
-            }}
-            w="100%"
-            p={25}
-          >
-            <Text size="md" color={colors.gray[600]}>
-              {t.title}
-            </Text>
-          </Stack>
-        </HStack>
+      {tasks.map((t, i) => (
+        <Stack key={t.id}>
+          <TaskCard
+            title={t.title}
+            reason={t.reason}
+            description={t.description}
+          />
+        </Stack>
       ))}
     </VStack>
   );
-  // return (
-  //   <Stack backgroundColor="$background" flex={1} px="$3">
-  //     <FlatList
-  //       data={tasks}
-  //       renderItem={renderItem}
-  //       keyExtractor={(item) => item.id}
-  //     />
-  //   </Stack>
-  // );
 };

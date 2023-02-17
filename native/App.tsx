@@ -11,9 +11,13 @@ import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SessionProvider } from './providers/session';
 import { SelectedLocationProvider } from './providers/selectedLocation';
-import { SignedIn, SignedOut } from './components';
-import { SignIn, SignUp, Main } from './screens';
+import { SignedIn } from './components/SignedIn';
+import { SignedOut } from './components/SignedOut';
+import { SignIn } from './screens/SignIn';
+import { SignUp } from './screens/SignUp';
+import { Main } from './screens/Main';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SplashPreLoadProvider from './providers/splashPreLoad';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,43 +38,45 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <SafeAreaProvider>
-          <SelectedLocationProvider>
-            <SessionProvider>
-              <NavigationContainer>
-                <SignedIn>
-                  <Stack.Navigator>
-                    <Stack.Screen
-                      name="Main"
-                      component={Main}
-                      options={{
-                        title: 'Main',
-                        headerShown: false,
-                      }}
-                    />
-                  </Stack.Navigator>
-                </SignedIn>
-                <SignedOut>
-                  <Stack.Navigator>
-                    <Stack.Screen
-                      name="SignIn"
-                      options={{ headerShown: false }}
-                      component={SignIn}
-                    />
-                    <Stack.Screen
-                      name="SignUp"
-                      options={{ headerShown: false }}
-                      component={SignUp}
-                    />
-                  </Stack.Navigator>
-                </SignedOut>
-              </NavigationContainer>
-            </SessionProvider>
-          </SelectedLocationProvider>
-        </SafeAreaProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <SplashPreLoadProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <SafeAreaProvider>
+            <SelectedLocationProvider>
+              <SessionProvider>
+                <NavigationContainer>
+                  <SignedIn>
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="Main"
+                        component={Main}
+                        options={{
+                          title: 'Main',
+                          headerShown: false,
+                        }}
+                      />
+                    </Stack.Navigator>
+                  </SignedIn>
+                  <SignedOut>
+                    <Stack.Navigator>
+                      <Stack.Screen
+                        name="SignIn"
+                        options={{ headerShown: false }}
+                        component={SignIn}
+                      />
+                      <Stack.Screen
+                        name="SignUp"
+                        options={{ headerShown: false }}
+                        component={SignUp}
+                      />
+                    </Stack.Navigator>
+                  </SignedOut>
+                </NavigationContainer>
+              </SessionProvider>
+            </SelectedLocationProvider>
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </SplashPreLoadProvider>
   );
 }

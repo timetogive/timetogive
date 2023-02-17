@@ -7,9 +7,9 @@ module.exports = {
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
     splash: {
-      image: './assets/splash.png',
+      image: './assets/ttg-white.png',
       resizeMode: 'contain',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#B794F4',
     },
     updates: {
       fallbackToCacheTimeout: 0,

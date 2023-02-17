@@ -1,17 +1,18 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LocationBar, TasksList } from '../components';
-import { TasksMap } from '../components';
+import { LocationBar } from '../components/LocationBar';
+import { TasksList } from '../components/TasksList';
+import { TasksMap } from '../components/TasksMap';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useInfiniteQuery } from 'react-query';
-import { Text } from '../components';
-import { Stack } from 'react-native-flex-layout';
+import { Text } from '../components/Text';
 
 import {
   defaultLongLat,
   LongLat,
   useSelectedLocation,
 } from '../providers/selectedLocation';
+import { MapListMode } from '../types';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -39,11 +40,6 @@ export const supabaseCall = (
 
   return query;
 };
-
-export enum MapListMode {
-  Map,
-  List,
-}
 
 export const Tasks = () => {
   const [mode, setMapListMode] = useState<MapListMode>(

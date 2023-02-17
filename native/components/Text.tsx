@@ -6,9 +6,17 @@ type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 type Weight =
   | 'light'
   | 'regular'
+  | 'medium'
   | 'semi-bold'
   | 'bold'
   | 'extra-bold';
+
+// OpenSans_300Light,
+// OpenSans_400Regular,
+// OpenSans_500Medium,
+// OpenSans_600SemiBold,
+// OpenSans_700Bold,
+// OpenSans_800ExtraBold,
 
 interface Props extends TextProps {
   size?: Size;
@@ -41,18 +49,22 @@ const translateFontSize = (size?: Size) => {
   }
 };
 
-const translateWeight = (weight?: Weight) => {
+const translateWeightToFamily = (weight?: Weight) => {
   switch (weight) {
     case 'light':
-      return '200';
+      return 'OpenSans_300Light';
     case 'regular':
-      return 'normal';
+      return 'OpenSans_400Regular';
+    case 'medium':
+      return 'OpenSans_500Medium';
     case 'semi-bold':
+      return 'OpenSans_600SemiBold';
     case 'bold':
+      return 'OpenSans_700Bold';
     case 'extra-bold':
-      return 'bold';
+      return 'OpenSans_800ExtraBold';
     default:
-      return 'normal';
+      return 'OpenSans_400Regular';
   }
 };
 
@@ -64,13 +76,13 @@ export const Text = ({
   color,
 }: Props) => {
   const finalSize = translateFontSize(size);
-  const finalWeight = translateWeight(weight);
+  const finalFamily = translateWeightToFamily(weight);
 
   return (
     <ReactNativeText
       style={{
         fontSize: finalSize,
-        fontWeight: finalWeight,
+        fontFamily: finalFamily,
         ...(textAlign ? { textAlign } : {}),
         ...(color ? { color } : {}),
       }}

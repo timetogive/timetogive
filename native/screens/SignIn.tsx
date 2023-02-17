@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SafeWrapper } from '../components';
+import { SafeWrapper } from '../components/SafeWrapper';
 import { Alert, View } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Image, Input, Button, Text } from '@rneui/themed';
@@ -36,7 +36,7 @@ export const SignIn = ({ navigation }: Props) => {
           }}
         >
           <Image
-            source={require('../media/ttg.png')}
+            source={require('../assets/ttg.png')}
             resizeMode="contain"
             style={{
               width: '100%',

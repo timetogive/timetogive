@@ -239,4 +239,6 @@ const colors = {
   },
 };
 
+export const defaultColor = colors.purple;
+
 export default colors;

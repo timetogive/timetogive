@@ -14,8 +14,8 @@ import { faBars as faBarsSolid } from '@fortawesome/pro-solid-svg-icons/faBars';
 import { faBell } from '@fortawesome/pro-light-svg-icons/faBell';
 import { faBell as faBellSolid } from '@fortawesome/pro-solid-svg-icons/faBell';
 import { VStack, Stack } from 'react-native-flex-layout';
-import { Text } from '../components';
-import colors from '../styles/colors';
+import { Text } from '../components/Text';
+import colors, { defaultColor } from '../styles/colors';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 const Tab = createBottomTabNavigator();
@@ -31,7 +31,7 @@ export const TabWithIcon = ({
   focussedIconDefinition: IconDefinition;
   title: string;
 }) => {
-  const color = focused ? colors.purple[500] : colors.blackAlpha[500];
+  const color = focused ? defaultColor[500] : colors.blackAlpha[500];
   const icon = focused ? focussedIconDefinition : iconDefinition;
   return (
     <VStack spacing={3} center>
