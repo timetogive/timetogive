@@ -1,15 +1,6 @@
 import { ReactNode } from 'react';
 import { TextProps, Text as ReactNativeText } from 'react-native';
-
-type Size = 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-
-type Weight =
-  | 'light'
-  | 'regular'
-  | 'medium'
-  | 'semi-bold'
-  | 'bold'
-  | 'extra-bold';
+import { Size, Weight } from '../types';
 
 // OpenSans_300Light,
 // OpenSans_400Regular,

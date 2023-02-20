@@ -239,6 +239,6 @@ const colors = {
   },
 };
 
-export const defaultColor = colors.purple;
+export const defaultColor = colors.blue;
 
 export default colors;

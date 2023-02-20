@@ -18,9 +18,11 @@ type Query = UseQueryResult<Profile | null>;
 const Context = createContext<{
   user: Query['data'];
   isReady: Query['isSuccess'];
+  refetch: () => void;
 }>({
   user: undefined,
   isReady: false,
+  refetch: () => {},
 });
 
 interface Props {
@@ -60,6 +62,10 @@ export const SessionProvider = ({
     }
   );
 
+  const refetch = () => {
+    userQuery.refetch();
+  };
+
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent) => {
@@ -82,7 +88,11 @@ export const SessionProvider = ({
 
   return (
     <Context.Provider
-      value={{ user: userQuery.data, isReady: userQuery.isSuccess }}
+      value={{
+        user: userQuery.data,
+        isReady: userQuery.isSuccess,
+        refetch,
+      }}
     >
       {children}
     </Context.Provider>

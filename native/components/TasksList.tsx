@@ -33,19 +33,17 @@ interface Props {
 export const TasksList = ({ tasks }: Props) => {
   return (
     <VStack
-      spacing={20}
       pt={110}
       style={{ backgroundColor: defaultColor[50], flex: 1 }}
-      ph={15}
+      pr={15}
+      shouldWrapChildren
     >
       {tasks.map((t, i) => (
-        <Stack key={t.id}>
-          <TaskCard
-            title={t.title}
-            reason={t.reason}
-            description={t.description}
-          />
-        </Stack>
+        <TaskCard
+          title={t.title}
+          reason={t.reason}
+          description={t.description}
+        />
       ))}
     </VStack>
   );

@@ -18,6 +18,9 @@ import { SignUp } from './screens/SignUp';
 import { Main } from './screens/Main';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashPreLoadProvider from './providers/splashPreLoad';
+import { ProfileIsComplete } from './components/ProfileIsComplete';
+import { ProfileNotComplete } from './components/ProfileNotComplete';
+import { MissingProfile } from './screens/MissingProfile';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +35,7 @@ export type RootStackParamList = {
   Main: undefined;
   SignIn: undefined;
   SignUp: undefined;
+  MissingProfile: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -46,16 +50,30 @@ export default function App() {
               <SessionProvider>
                 <NavigationContainer>
                   <SignedIn>
-                    <Stack.Navigator>
-                      <Stack.Screen
-                        name="Main"
-                        component={Main}
-                        options={{
-                          title: 'Main',
-                          headerShown: false,
-                        }}
-                      />
-                    </Stack.Navigator>
+                    <ProfileIsComplete>
+                      <Stack.Navigator>
+                        <Stack.Screen
+                          name="Main"
+                          component={Main}
+                          options={{
+                            title: 'Main',
+                            headerShown: false,
+                          }}
+                        />
+                      </Stack.Navigator>
+                    </ProfileIsComplete>
+                    <ProfileNotComplete>
+                      <Stack.Navigator>
+                        <Stack.Screen
+                          name="MissingProfile"
+                          component={MissingProfile}
+                          options={{
+                            title: 'MissingProfile',
+                            headerShown: false,
+                          }}
+                        />
+                      </Stack.Navigator>
+                    </ProfileNotComplete>
                   </SignedIn>
                   <SignedOut>
                     <Stack.Navigator>

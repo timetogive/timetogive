@@ -27,11 +27,21 @@ module.exports = {
     web: {
       favicon: './assets/favicon.png',
     },
+    plugins: [
+      [
+        'expo-image-picker',
+        {
+          photosPermission: 'Allow TimeToGive to access your photos',
+        },
+      ],
+    ],
     extra: {
       supabaseAccessToken: process.env.SUPABASE_ACCESS_TOKEN,
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
       supabaseProjectId: process.env.SUPABASE_PROJECT_ID,
+      multiAvatarApiUrl: process.env.MULTIAVATAR_API_URL,
+      multiAvatarApiKey: process.env.MULTIAVATAR_API_KEY,
     },
   },
 };

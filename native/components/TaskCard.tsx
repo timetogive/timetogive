@@ -12,8 +12,11 @@ import {
   Flex,
   Spacer,
   VStack,
+  StackProps,
 } from 'react-native-flex-layout';
 import { Text } from './Text';
+import { Chip } from './Chip';
+
 import colors, { defaultColor } from '../styles/colors';
 import { faAngleDown } from '@fortawesome/pro-solid-svg-icons/faAngleDown';
 import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot';
@@ -61,38 +64,68 @@ interface Props {
 
 export const TaskCard = ({ title, description, reason }: Props) => {
   return (
-    <Stack
-      radius={5}
-      style={{
-        shadowColor: colors.gray[300],
-        shadowOffset: { width: -4, height: 6 },
-        shadowOpacity: 0.7,
-        shadowRadius: 20,
-        elevation: 6,
-        backgroundColor: colors.white,
-      }}
-      p={25}
-      h={150}
-      overflow="hidden"
-    >
-      <VStack spacing={25}>
-        <HStack justify="between">
-          <Stack style={{ flex: 1 }}>
-            <Text weight="bold">{title}</Text>
-          </Stack>
-          <Stack
-            w={40}
-            h={40}
-            style={{
-              backgroundColor: defaultColor[50],
-            }}
-            radius={10}
-            center
-          >
-            <TaskIcon reason={reason} />
-          </Stack>
-        </HStack>
-      </VStack>
-    </Stack>
+    <HStack>
+      {/* Distance bar */}
+      <Stack w={50} items="center">
+        <Stack
+          w={0.5}
+          grow={1}
+          style={{ backgroundColor: colors.gray[300] }}
+        ></Stack>
+        <VStack
+          position="absolute"
+          top={10}
+          style={{ backgroundColor: defaultColor[50] }}
+          p={5}
+          shouldWrapChildren
+          center
+        >
+          <Text size="xs" weight="light" color={colors.gray[700]}>
+            10
+          </Text>
+          <Text size="xxs" weight="light" color={colors.gray[700]}>
+            km
+          </Text>
+        </VStack>
+      </Stack>
+      {/* Main card */}
+      <Stack
+        radius={5}
+        p={25}
+        h={150}
+        mb={20}
+        style={{
+          shadowColor: colors.gray[200],
+          shadowOffset: { width: -4, height: 6 },
+          shadowOpacity: 0.7,
+          shadowRadius: 20,
+          elevation: 6,
+          backgroundColor: colors.white,
+          flex: 1,
+        }}
+      >
+        <VStack spacing={25}>
+          <HStack justify="between">
+            <Stack pr={5} style={{ flex: 1 }}>
+              <Text weight="bold">{title}</Text>
+            </Stack>
+            <Stack
+              w={40}
+              h={40}
+              style={{
+                backgroundColor: defaultColor[50],
+              }}
+              radius={10}
+              center
+            >
+              <TaskIcon reason={reason} />
+            </Stack>
+          </HStack>
+          <HStack>
+            <Chip textSize="xxs">20 min task</Chip>
+          </HStack>
+        </VStack>
+      </Stack>
+    </HStack>
   );
 };
