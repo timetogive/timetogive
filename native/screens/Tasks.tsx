@@ -48,8 +48,6 @@ export const Tasks = () => {
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
   const location = useSelectedLocation();
 
-  const insets = useSafeAreaInsets();
-
   const SearchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
@@ -102,7 +100,6 @@ export const Tasks = () => {
           distance={location.selectedLocation.distance}
         />
       )}
-
       <LocationBar mode={mode} onChangeMode={setMapListMode} />
     </>
   );

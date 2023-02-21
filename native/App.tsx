@@ -21,6 +21,8 @@ import SplashPreLoadProvider from './providers/splashPreLoad';
 import { ProfileIsComplete } from './components/ProfileIsComplete';
 import { ProfileNotComplete } from './components/ProfileNotComplete';
 import { MissingProfile } from './screens/MissingProfile';
+import { CreateTask } from './screens/CreateTask';
+import { TaskReason } from './types';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,9 +38,10 @@ export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   MissingProfile: undefined;
+  CreateTask: { reason: TaskReason };
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const NavStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
@@ -51,8 +54,8 @@ export default function App() {
                 <NavigationContainer>
                   <SignedIn>
                     <ProfileIsComplete>
-                      <Stack.Navigator>
-                        <Stack.Screen
+                      <NavStack.Navigator>
+                        <NavStack.Screen
                           name="Main"
                           component={Main}
                           options={{
@@ -60,11 +63,19 @@ export default function App() {
                             headerShown: false,
                           }}
                         />
-                      </Stack.Navigator>
+                        <NavStack.Screen
+                          name="CreateTask"
+                          options={{
+                            title: 'CreateTask',
+                            headerShown: false,
+                          }}
+                          component={CreateTask}
+                        />
+                      </NavStack.Navigator>
                     </ProfileIsComplete>
                     <ProfileNotComplete>
-                      <Stack.Navigator>
-                        <Stack.Screen
+                      <NavStack.Navigator>
+                        <NavStack.Screen
                           name="MissingProfile"
                           component={MissingProfile}
                           options={{
@@ -72,22 +83,22 @@ export default function App() {
                             headerShown: false,
                           }}
                         />
-                      </Stack.Navigator>
+                      </NavStack.Navigator>
                     </ProfileNotComplete>
                   </SignedIn>
                   <SignedOut>
-                    <Stack.Navigator>
-                      <Stack.Screen
+                    <NavStack.Navigator>
+                      <NavStack.Screen
                         name="SignIn"
                         options={{ headerShown: false }}
                         component={SignIn}
                       />
-                      <Stack.Screen
+                      <NavStack.Screen
                         name="SignUp"
                         options={{ headerShown: false }}
                         component={SignUp}
                       />
-                    </Stack.Navigator>
+                    </NavStack.Navigator>
                   </SignedOut>
                 </NavigationContainer>
               </SessionProvider>

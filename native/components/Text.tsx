@@ -17,7 +17,7 @@ interface Props extends TextProps {
   color?: string;
 }
 
-const translateFontSize = (size?: Size) => {
+export const translateFontSize = (size?: Size) => {
   switch (size) {
     case 'xxs':
       return 11;

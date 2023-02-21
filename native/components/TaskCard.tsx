@@ -18,43 +18,8 @@ import { Text } from './Text';
 import { Chip } from './Chip';
 
 import colors, { defaultColor } from '../styles/colors';
-import { faAngleDown } from '@fortawesome/pro-solid-svg-icons/faAngleDown';
-import { faLocationDot } from '@fortawesome/pro-light-svg-icons/faLocationDot';
-import { faList } from '@fortawesome/pro-light-svg-icons/faList';
-
-import { TaskReason } from '../types';
-
-interface TaskIconProps {
-  reason: string;
-}
-
-const getIcon = ({ reason }: TaskIconProps) => {
-  switch (reason) {
-    case 'Charity':
-      return faHouseHeart;
-    case 'Community':
-      return faPeopleGroup;
-    case 'In Need':
-      return faHandWave;
-    case 'Mutual Benefit':
-      return faHandshake;
-    case 'Return For Pledge':
-      return faHandHoldingDollar;
-    default:
-      return faHandWave;
-  }
-};
-
-const TaskIcon = ({ reason }: TaskIconProps) => {
-  const icon = getIcon({ reason });
-  return (
-    <FontAwesomeIcon
-      icon={icon}
-      size={20}
-      color={defaultColor[500]}
-    />
-  );
-};
+import { getTtgIcon } from '../lib/tasksHelpers';
+import { TtgIcon } from './TtgIcon';
 
 interface Props {
   title: string;
@@ -118,7 +83,7 @@ export const TaskCard = ({ title, description, reason }: Props) => {
               radius={10}
               center
             >
-              <TaskIcon reason={reason} />
+              <TtgIcon reason={reason} />
             </Stack>
           </HStack>
           <HStack>

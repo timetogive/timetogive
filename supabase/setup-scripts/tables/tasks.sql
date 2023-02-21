@@ -15,12 +15,6 @@ CREATE TYPE public.task_reason AS ENUM (
    'Return For Pledge' -- it's a job that might normally be paid for but will be paid for via a pledge
 );
 
-CREATE TYPE public.task_estimate_units AS ENUM (
-   'Minutes',
-   'Hours',
-   'Days'
-);
-
 CREATE TYPE public.task_timing AS ENUM (
     'Any Time',
     'Specific Time'
@@ -35,10 +29,11 @@ create table public.tasks(
    pledge text, -- if there is a pledge what is it - e.g. "Will give £5 to cancer research"
    title text not null, -- e.g. "Fix wifi for elderly person"
    description text, -- e.g. "This task is for an elderly person living in Asheridge who is having an issue with her wifi. Any tech savvy people with who can help?"
-   effort_estimate integer, -- e.g. 10
-   effort_estimate_units task_estimate_units default 'Minutes', -- Minutes, Hours, Days
-   effort_estimate_in_minutes integer, -- normalised to minutes for query performance reasons
-   people_estimate int default 1, -- estimated number of people to help (single-person or multi person task)
+   effort_days integer,
+   effort_hours integer,
+   effort_minutes integer,
+   effort_normalised_minutes integer, -- for performance we convert the days, hours and minutes into minutes
+   effort_people int default 1, -- estimated number of people to help (single-person or multi person task)
    timing task_timing not null default 'Any Time', -- is the help needed at a specific time
    geo_location geography(Point) not null, -- always needs a geolocation (even if not relevant - so that tasks always have a geographical target)
    fuzzy_geo_location geography(Point) not null, -- random location close to the geolocation (to protect privacy)
