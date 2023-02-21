@@ -19,6 +19,8 @@ import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
 import { min } from 'react-native-reanimated';
 import { NumberVolunteersSheetModal } from '../components/NumberVolunteers';
+import { SetLocationSheetModal } from '../components/SetLocation';
+import { LongLat } from '../providers/selectedLocation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
 
@@ -50,6 +52,10 @@ export const CreateTask = ({ route, navigation }: Props) => {
   const [minutes, setMinutes] = useState(30);
   const [volunteerModalOpen, setVolunteerModalOpen] = useState(false);
   const [volunteers, setVolunteers] = useState(1);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [location, setLocation] = useState<LongLat | undefined>(
+    undefined
+  );
 
   const title = `Create ${reasonToTitle(reason).toLowerCase()}`;
 
@@ -159,6 +165,29 @@ export const CreateTask = ({ route, navigation }: Props) => {
             </HStack>
           </TouchableOpacity>
         </VStack>
+        <VStack spacing={10} shouldWrapChildren pt={35}>
+          <Text size="xs" weight="semi-bold">
+            Location
+          </Text>
+          <TouchableOpacity
+            onPress={() => setLocationModalOpen(true)}
+          >
+            <HStack
+              justify="between"
+              shouldWrapChildren
+              items="center"
+            >
+              <Text size="md" color={colors.gray[500]}>
+                Set location
+              </Text>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                size={15}
+                color={colors.gray[500]}
+              />
+            </HStack>
+          </TouchableOpacity>
+        </VStack>
       </VStack>
 
       <DaysHoursMinutesSheetModal
@@ -176,6 +205,10 @@ export const CreateTask = ({ route, navigation }: Props) => {
         onClose={() => setVolunteerModalOpen(false)}
         volunteers={volunteers}
         onVolunteersChange={setVolunteers}
+      />
+      <SetLocationSheetModal
+        isOpen={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
       />
     </>
   );
