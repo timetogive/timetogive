@@ -30,7 +30,7 @@ import { supabase } from '../lib';
 
 interface Props {
   longLat?: LongLat;
-  onLongLatChange?: (volunteers: number) => void;
+  onLongLatChange?: (longLat: LongLat) => void;
 }
 
 export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
@@ -44,31 +44,61 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
     undefined
   );
 
+  const mapRegionTracker = useRef<Region | undefined>();
+
   const goCurrentLocation = async () => {
-    console.log('Calling goCurrentLocation');
     // Otherwise go and get the current location
     const currentLongLat = await selectedLocation.getCurrentLongLat();
-    console.log('Got the current location');
-    console.log(currentLongLat);
 
-    mapRef.current?.animateToRegion({
+    const region = {
       latitude: currentLongLat.latitude,
       longitude: currentLongLat.longitude,
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
-    });
+    };
+
+    mapRef.current?.animateToRegion(region);
+  };
+
+  const onRegionChange = (region: Region) => {
+    console.log('Region changed');
+    console.log(region);
+    mapRegionTracker.current = region;
+  };
+
+  const setRegionAndTracker = (longLat: LongLat) => {
+    const region = {
+      latitude: longLat.latitude,
+      longitude: longLat.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    };
+    setMapRegion(region);
+    mapRegionTracker.current = region;
+  };
+
+  const confirmPinLocation = () => {
+    if (
+      mapRegionTracker.current?.longitude &&
+      mapRegionTracker.current?.latitude
+    ) {
+      onLongLatChange &&
+        onLongLatChange({
+          longitude: mapRegionTracker.current.longitude,
+          latitude: mapRegionTracker.current.latitude,
+        });
+    }
   };
 
   // After mounting, determine which location to set the map to
+  // based on a prioritisation of factors and inputs
   useEffect(() => {
     (async () => {
       // If the long lat is passed in, use that
       if (longLat) {
-        setMapRegion({
+        setRegionAndTracker({
           latitude: longLat.latitude,
           longitude: longLat.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
         });
         setReady(true);
         return;
@@ -78,11 +108,9 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         await selectedLocation.canAccessCurrentLocation();
       // No access to the current location then use a default
       if (!canAccessCurrentLocation) {
-        setMapRegion({
+        setRegionAndTracker({
           latitude: defaultLongLat.latitude,
           longitude: defaultLongLat.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
         });
         setReady(true);
         return;
@@ -90,11 +118,9 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
       // Otherwise go and get the current location
       const currentLongLat =
         await selectedLocation.getCurrentLongLat();
-      setMapRegion({
+      setRegionAndTracker({
         latitude: currentLongLat.latitude,
         longitude: currentLongLat.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
       });
       setReady(true);
     })();
@@ -111,6 +137,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         region={mapRegion}
+        onRegionChangeComplete={onRegionChange}
         ref={mapRef}
       />
 
@@ -158,9 +185,13 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         bottom={insets.bottom + 20}
         mh={20}
       >
-        <Button color={colors.pink[500]} style={{ width: '100%' }}>
+        <Button
+          color={colors.pink[500]}
+          style={{ width: '100%' }}
+          onPress={() => confirmPinLocation()}
+        >
           <Text color={colors.white} size="xs">
-            Set task location
+            Pin location looks good
           </Text>
         </Button>
       </Stack>
@@ -207,6 +238,11 @@ export const SetLocationSheetModal = ({
     }
   }, [isOpen]);
 
+  const interceptOnLongLatChange = (longLat: LongLat) => {
+    hideModal();
+    onLongLatChange && onLongLatChange(longLat);
+  };
+
   return (
     <BottomSheetModalProvider>
       <BottomSheetModal
@@ -218,7 +254,7 @@ export const SetLocationSheetModal = ({
         <Box style={{ flex: 1 }} pt={10} overflow="hidden">
           <SetLocation
             longLat={longLat}
-            onLongLatChange={onLongLatChange}
+            onLongLatChange={interceptOnLongLatChange}
           />
         </Box>
       </BottomSheetModal>

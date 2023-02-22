@@ -18,9 +18,12 @@ import { reasonToTitle } from '../lib/tasksHelpers';
 import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
 import { min } from 'react-native-reanimated';
-import { NumberVolunteersSheetModal } from '../components/NumberVolunteers';
+import { IntegerPickerSheetModal } from '../components/IntegerPicker';
 import { SetLocationSheetModal } from '../components/SetLocation';
 import { LongLat } from '../providers/selectedLocation';
+import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Switch } from '@rneui/themed';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
 
@@ -38,8 +41,8 @@ const effortText = (days: number, hours: number, minutes: number) => {
   return final;
 };
 
-const volunteersText = (volunteers: number) => {
-  const text = `${volunteers} ${pluralize('volunteer', volunteers)}`;
+const integerText = (value: number, word: string) => {
+  const text = `${value} ${pluralize(word, value)}`;
   return text;
 };
 
@@ -56,12 +59,18 @@ export const CreateTask = ({ route, navigation }: Props) => {
   const [location, setLocation] = useState<LongLat | undefined>(
     undefined
   );
+  const [remote, setRemote] = useState(false);
+  const [lifespanDaysModalOpen, setLifespanDaysModalOpen] =
+    useState(false);
+  const [lifespanDays, setLifespanDays] = useState(30);
 
   const title = `Create ${reasonToTitle(reason).toLowerCase()}`;
 
   const effText = effortText(days, hours, minutes);
 
-  const volText = volunteersText(volunteers);
+  const volText = integerText(volunteers, 'volunteer');
+
+  const lifespanText = integerText(lifespanDays, 'day');
 
   return (
     <>
@@ -83,112 +92,167 @@ export const CreateTask = ({ route, navigation }: Props) => {
         </HStack>
       </Box>
 
-      <VStack ph={15}>
-        <Box pv={20}>
-          <Text size="xl" weight="bold">
-            {title}
-          </Text>
-        </Box>
-        <VStack>
-          <Text size="xs" weight="semi-bold">
-            Title
-          </Text>
-          <Input
-            placeholder="e.g. Sorting clothes in our high street shop"
-            inputStyle={{
-              fontSize: translateFontSize('sm'),
-            }}
-            containerStyle={{
-              paddingHorizontal: 0,
-            }}
-            inputContainerStyle={{
-              borderBottomWidth: 0,
-            }}
-          />
-        </VStack>
-        <VStack>
-          <Text size="xs" weight="semi-bold">
-            Description
-          </Text>
-          <Input
-            placeholder="e.g. Willing and able volunteers to help with a backlog of clothing that needs sorting through"
-            inputStyle={{
-              fontSize: translateFontSize('sm'),
-              lineHeight: 25,
-            }}
-            containerStyle={{
-              paddingHorizontal: 0,
-            }}
-            inputContainerStyle={{
-              borderBottomWidth: 0,
-            }}
-            multiline
-          />
-        </VStack>
-        <VStack spacing={10} shouldWrapChildren>
-          <Text size="xs" weight="semi-bold">
-            How long will it take? (approximately)
-          </Text>
-          <TouchableOpacity onPress={() => setDhmModalOpen(true)}>
+      <ScrollView>
+        <VStack ph={15} pb={insets.bottom + 15}>
+          {/* Title */}
+          <Box pv={20}>
+            <Text size="xl" weight="bold">
+              {title}
+            </Text>
+          </Box>
+          <VStack>
+            <Text size="xs" weight="semi-bold">
+              Title
+            </Text>
+            <Input
+              placeholder="e.g. Sorting clothes in our high street shop"
+              inputStyle={{
+                fontSize: translateFontSize('sm'),
+              }}
+              containerStyle={{
+                paddingHorizontal: 0,
+              }}
+              inputContainerStyle={{
+                borderBottomWidth: 0,
+              }}
+            />
+          </VStack>
+
+          {/* Description */}
+          <VStack>
+            <Text size="xs" weight="semi-bold">
+              Description
+            </Text>
+            <Input
+              placeholder="e.g. Willing and able volunteers to help with a backlog of clothing that needs sorting through"
+              inputStyle={{
+                fontSize: translateFontSize('sm'),
+                lineHeight: 25,
+              }}
+              containerStyle={{
+                paddingHorizontal: 0,
+              }}
+              inputContainerStyle={{
+                borderBottomWidth: 0,
+              }}
+              multiline
+            />
+          </VStack>
+
+          {/* Effort */}
+          <VStack spacing={10} shouldWrapChildren>
+            <Text size="xs" weight="semi-bold">
+              How long will it take? (approximately)
+            </Text>
+            <TouchableOpacity onPress={() => setDhmModalOpen(true)}>
+              <HStack
+                justify="between"
+                shouldWrapChildren
+                items="center"
+              >
+                <Text size="md">{effText}</Text>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={15}
+                  color={colors.gray[500]}
+                />
+              </HStack>
+            </TouchableOpacity>
+          </VStack>
+
+          {/* People */}
+          <VStack spacing={10} shouldWrapChildren pt={35}>
+            <Text size="xs" weight="semi-bold">
+              How many volunteers do you need?
+            </Text>
+            <TouchableOpacity
+              onPress={() => setVolunteerModalOpen(true)}
+            >
+              <HStack
+                justify="between"
+                shouldWrapChildren
+                items="center"
+              >
+                <Text size="md">{volText}</Text>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={15}
+                  color={colors.gray[500]}
+                />
+              </HStack>
+            </TouchableOpacity>
+          </VStack>
+
+          {/* Remote */}
+          <VStack spacing={10} shouldWrapChildren pt={35}>
+            <Text size="xs" weight="semi-bold">
+              Can this task be done remotely?
+            </Text>
             <HStack
               justify="between"
               shouldWrapChildren
               items="center"
             >
-              <Text size="md">{effText}</Text>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                size={15}
-                color={colors.gray[500]}
-              />
+              <Text size="md">{remote ? 'Yes' : 'No'}</Text>
+              <Switch value={remote} onValueChange={setRemote} />
             </HStack>
-          </TouchableOpacity>
-        </VStack>
-        <VStack spacing={10} shouldWrapChildren pt={35}>
-          <Text size="xs" weight="semi-bold">
-            How many volunteers do you need?
-          </Text>
-          <TouchableOpacity
-            onPress={() => setVolunteerModalOpen(true)}
-          >
-            <HStack
-              justify="between"
-              shouldWrapChildren
-              items="center"
+          </VStack>
+
+          {/* Location */}
+          <VStack spacing={10} shouldWrapChildren pt={35}>
+            <Text size="xs" weight="semi-bold">
+              Location
+            </Text>
+            <TouchableOpacity
+              onPress={() => setLocationModalOpen(true)}
             >
-              <Text size="md">{volText}</Text>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                size={15}
-                color={colors.gray[500]}
-              />
-            </HStack>
-          </TouchableOpacity>
-        </VStack>
-        <VStack spacing={10} shouldWrapChildren pt={35}>
-          <Text size="xs" weight="semi-bold">
-            Location
-          </Text>
-          <TouchableOpacity
-            onPress={() => setLocationModalOpen(true)}
-          >
-            <HStack
-              justify="between"
-              shouldWrapChildren
-              items="center"
+              {location ? (
+                <Stack minH={240} pointerEvents="box-only">
+                  <StaticMapWithMarker longLat={location} />
+                </Stack>
+              ) : (
+                <HStack
+                  justify="between"
+                  shouldWrapChildren
+                  items="center"
+                >
+                  <Text size="md" color={colors.gray[500]}>
+                    Set location
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    size={15}
+                    color={colors.gray[500]}
+                  />
+                </HStack>
+              )}
+            </TouchableOpacity>
+          </VStack>
+
+          {/* Lifespan */}
+          <VStack spacing={10} shouldWrapChildren pt={35}>
+            <Text size="xs" weight="semi-bold">
+              Automatically close this task
+            </Text>
+            <TouchableOpacity
+              onPress={() => setLifespanDaysModalOpen(true)}
             >
-              <Text size="md" color={colors.gray[500]}>
-                Set location
-              </Text>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                size={15}
-                color={colors.gray[500]}
-              />
-            </HStack>
-          </TouchableOpacity>
+              <HStack
+                justify="between"
+                shouldWrapChildren
+                items="center"
+              >
+                <Text size="md">after {lifespanText}</Text>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={15}
+                  color={colors.gray[500]}
+                />
+              </HStack>
+            </TouchableOpacity>
+          </VStack>
         </VStack>
-      </VStack>
+      </ScrollView>
 
       <DaysHoursMinutesSheetModal
         isOpen={dhmModalOpen}
@@ -200,15 +264,29 @@ export const CreateTask = ({ route, navigation }: Props) => {
         onHoursChange={setHours}
         onMinutesChange={setMinutes}
       />
-      <NumberVolunteersSheetModal
+      <IntegerPickerSheetModal
         isOpen={volunteerModalOpen}
         onClose={() => setVolunteerModalOpen(false)}
-        volunteers={volunteers}
-        onVolunteersChange={setVolunteers}
+        value={volunteers}
+        onChange={setVolunteers}
+        label="volunteer"
+        min={1}
+        max={50}
+      />
+      <IntegerPickerSheetModal
+        isOpen={lifespanDaysModalOpen}
+        onClose={() => setLifespanDaysModalOpen(false)}
+        value={lifespanDays}
+        onChange={setLifespanDays}
+        label="day"
+        min={1}
+        max={30}
       />
       <SetLocationSheetModal
         isOpen={locationModalOpen}
+        longLat={location}
         onClose={() => setLocationModalOpen(false)}
+        onLongLatChange={setLocation}
       />
     </>
   );

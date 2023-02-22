@@ -6,6 +6,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { Picker } from '@react-native-picker/picker';
 import { Button } from '@rneui/themed';
+import pluralize from 'pluralize';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, VStack, Box } from 'react-native-flex-layout';
 import { Text, translateFontSize } from './Text';
@@ -13,49 +14,66 @@ import { Text, translateFontSize } from './Text';
 const pickerFontSize = translateFontSize('sm');
 
 interface Props {
-  volunteers: number;
-  onVolunteersChange?: (volunteers: number) => void;
+  value: number;
+  min: number;
+  max: number;
+  onChange?: (value: number) => void;
+  label?: string;
 }
 
-export const NumberVolunteers = ({
-  volunteers,
-  onVolunteersChange,
+export const IntegerPicker = ({
+  min,
+  max,
+  value,
+  onChange,
+  label,
 }: Props) => {
+  const finalLabel = label ? pluralize(label, value) : undefined;
+  const length = max - min + 1;
   return (
     <HStack justify="center">
       <Box w={80}>
         <Picker
-          selectedValue={volunteers}
+          selectedValue={value}
           onValueChange={(itemValue) =>
-            onVolunteersChange && onVolunteersChange(itemValue)
+            onChange && onChange(itemValue)
           }
           itemStyle={{
             fontSize: pickerFontSize,
           }}
         >
-          {[...Array(50)].map((_, i) => (
-            <Picker.Item key={i} label={i.toFixed(0)} value={i} />
+          {[...Array(length)].map((_, i) => (
+            <Picker.Item
+              key={i}
+              label={(i + min).toFixed(0)}
+              value={i + min}
+            />
           ))}
         </Picker>
       </Box>
-      <VStack justify="center">
-        <Text size="xs">volunteers</Text>
-      </VStack>
+      {finalLabel && (
+        <VStack justify="center">
+          <Text size="xs">{finalLabel}</Text>
+        </VStack>
+      )}
     </HStack>
   );
 };
 
-interface NumberVolunteersSheetModalProps extends Props {
+interface IntegerPickerSheetModalProps extends Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const NumberVolunteersSheetModal = ({
+export const IntegerPickerSheetModal = ({
   isOpen,
   onClose,
-  volunteers,
-  onVolunteersChange,
-}: NumberVolunteersSheetModalProps) => {
+  value,
+  onChange,
+  label,
+  min,
+  max,
+}: IntegerPickerSheetModalProps) => {
   // Bottom sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const showModal = useCallback(() => {
@@ -93,9 +111,12 @@ export const NumberVolunteersSheetModal = ({
         onDismiss={onClose}
       >
         <VStack ph={5}>
-          <NumberVolunteers
-            volunteers={volunteers}
-            onVolunteersChange={onVolunteersChange}
+          <IntegerPicker
+            value={value}
+            onChange={onChange}
+            label={label}
+            min={min}
+            max={max}
           />
           <Button onPress={() => hideModal()}>Close</Button>
         </VStack>

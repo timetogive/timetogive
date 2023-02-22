@@ -40,7 +40,8 @@ create table public.tasks(
    fuzzy_geo_location geography(Point) not null, -- random location close to the geolocation (to protect privacy)
    created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null, -- when the task was created
    has_images boolean default false,
-   images_data jsonb default '[]'::jsonb not null
+   images_data jsonb default '[]'::jsonb not null,
+   lifespan_days integer not null default 30 -- how long the task should be live for
 );
 
 alter table public.tasks enable row level security;
