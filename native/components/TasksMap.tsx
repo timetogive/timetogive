@@ -37,10 +37,6 @@ const MapMarker = ({
 };
 
 export const TasksMap = ({ tasks, longLat, distance }: Props) => {
-  console.log(
-    `TasksMap | Longitude : ${longLat.longitude} | Latitude : ${longLat.latitude} `
-  );
-
   // Map state
   const [mapRegion, setMapRegion] = useState<Region>({
     latitude: longLat.latitude,

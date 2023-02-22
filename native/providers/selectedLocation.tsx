@@ -32,9 +32,16 @@ export interface SelectedLocation {
 }
 
 interface Context {
+  // Can we access the current location on the device
+  canAccessCurrentLocation: () => Promise<boolean>;
+  // The live long lat of the user - might throw an error alert
+  getCurrentLongLat: () => Promise<LongLat>;
+  // The global long lat of the user - whatever they've selected
+  getSelectedLongLat: () => Promise<LongLat>;
+  // Set the global long lat of the user to the current location - might throw an error alert
+  setSelectedToCurrentLocation: () => void;
+  // Manually set the global long lat of the user
   set: (selectedLocation: SelectedLocation) => void;
-  getLongLat: () => Promise<LongLat>;
-  setToCurrentLocation: () => void;
   selectedLocation: SelectedLocation;
 }
 
@@ -53,18 +60,20 @@ const defaultSelectedLocation: SelectedLocation = {
   distance: 10000,
 };
 
-const SelectedLocationContext = createContext<Context>({
+const LocationContext = createContext<Context>({
+  canAccessCurrentLocation: async () => false,
+  getCurrentLongLat: async () => defaultLongLat,
+  getSelectedLongLat: async () => defaultLongLat,
+  setSelectedToCurrentLocation: () => undefined,
   set: () => undefined,
   selectedLocation: defaultSelectedLocation,
-  getLongLat: async () => defaultLongLat,
-  setToCurrentLocation: () => undefined,
 });
 
 interface Props {
   children: ReactNode;
 }
 
-export const SelectedLocationProvider = ({
+export const LocationProvider = ({
   children,
 }: Props): JSX.Element => {
   const [selectedLocation, setSelectedLocation] =
@@ -72,7 +81,7 @@ export const SelectedLocationProvider = ({
 
   useEffect(() => {
     (async () => {
-      await setToCurrentLocation();
+      await setSelectedToCurrentLocation();
     })();
   }, []);
 
@@ -80,15 +89,42 @@ export const SelectedLocationProvider = ({
     setSelectedLocation(selectedLocation);
   };
 
-  const getLongLat = async (): Promise<LongLat> => {
+  const canAccessCurrentLocation = async (): Promise<boolean> => {
+    const { status } =
+      await Location.requestForegroundPermissionsAsync();
+
+    return status === 'granted';
+  };
+  // Returns the current live location of the user
+  // Will pop an alert if the user has not granted permission
+  const getCurrentLongLat = async (): Promise<LongLat> => {
+    const canAccess = await canAccessCurrentLocation();
+
+    if (!canAccess) {
+      Alert.alert(
+        'Permission Denied',
+        'Your device would now allow your current location to be used. Go to app settings and allow location to be used',
+        [
+          {
+            text: 'OK',
+          },
+          { text: 'Settings', onPress: () => Linking.openSettings() },
+        ]
+      );
+      return defaultLongLat;
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+
+    return {
+      longitude: location.coords.longitude,
+      latitude: location.coords.latitude,
+    };
+  };
+
+  const getSelectedLongLat = async (): Promise<LongLat> => {
     if (selectedLocation.mode === SelectedLocationMode.Current) {
-      let location = await Location.getCurrentPositionAsync({});
-      if (location) {
-        return {
-          longitude: location.coords.longitude,
-          latitude: location.coords.latitude,
-        };
-      }
+      return await getCurrentLongLat();
     }
     if (
       selectedLocation.custom?.longitude &&
@@ -102,8 +138,7 @@ export const SelectedLocationProvider = ({
     return defaultLongLat;
   };
 
-  const setToCurrentLocation = async () => {
-    console.log('setToCurrentLocation');
+  const setSelectedToCurrentLocation = async () => {
     let { status } =
       await Location.requestForegroundPermissionsAsync();
     console.log(status);
@@ -114,6 +149,7 @@ export const SelectedLocationProvider = ({
       });
       return;
     }
+    // Fall back show alert and set to a default location
     Alert.alert(
       'Permission Denied',
       'Your device would now allow your current location to be used. Go to app settings and allow location to be used',
@@ -129,25 +165,27 @@ export const SelectedLocationProvider = ({
   };
 
   return (
-    <SelectedLocationContext.Provider
+    <LocationContext.Provider
       value={{
+        canAccessCurrentLocation,
+        getCurrentLongLat,
+        getSelectedLongLat,
+        setSelectedToCurrentLocation,
         set,
         selectedLocation,
-        getLongLat,
-        setToCurrentLocation,
       }}
     >
       {children}
-    </SelectedLocationContext.Provider>
+    </LocationContext.Provider>
   );
 };
 
-export const useSelectedLocation = () => {
-  const context = useContext(SelectedLocationContext);
+export const useLocation = () => {
+  const context = useContext(LocationContext);
 
   if (context === undefined) {
     throw new Error(
-      '`useSelectedLocation` hook must be used within a `SelectedLocationProvider` component'
+      '`useLocation` hook must be used within a `LocationProvider` component'
     );
   }
   return context;

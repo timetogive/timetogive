@@ -10,7 +10,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SessionProvider } from './providers/session';
-import { SelectedLocationProvider } from './providers/selectedLocation';
+import { LocationProvider } from './providers/selectedLocation';
 import { SignedIn } from './components/SignedIn';
 import { SignedOut } from './components/SignedOut';
 import { SignIn } from './screens/SignIn';
@@ -49,7 +49,7 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <SafeAreaProvider>
-            <SelectedLocationProvider>
+            <LocationProvider>
               <SessionProvider>
                 <NavigationContainer>
                   <SignedIn>
@@ -102,7 +102,7 @@ export default function App() {
                   </SignedOut>
                 </NavigationContainer>
               </SessionProvider>
-            </SelectedLocationProvider>
+            </LocationProvider>
           </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>

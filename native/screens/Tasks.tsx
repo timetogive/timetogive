@@ -10,7 +10,7 @@ import { Text } from '../components/Text';
 import {
   defaultLongLat,
   LongLat,
-  useSelectedLocation,
+  useLocation,
 } from '../providers/selectedLocation';
 import { MapListMode } from '../types';
 
@@ -46,13 +46,13 @@ export const Tasks = () => {
     MapListMode.List
   );
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
-  const location = useSelectedLocation();
+  const location = useLocation();
 
   const SearchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
-      const ll = await location.getLongLat();
-      console.log('In Tasks calling getLongLat');
+      const ll = await location.getSelectedLongLat();
+      console.log('In Tasks calling getSelectedLongLat');
       setLongLat(ll);
       console.log(ll);
       const query = supabaseCall(

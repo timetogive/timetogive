@@ -35,9 +35,9 @@ create table public.tasks(
    effort_normalised_minutes integer, -- for performance we convert the days, hours and minutes into minutes
    effort_people int default 1, -- estimated number of people to help (single-person or multi person task)
    timing task_timing not null default 'Any Time', -- is the help needed at a specific time
+   remote boolean not null default false, -- can this task be done remotely?
    geo_location geography(Point) not null, -- always needs a geolocation (even if not relevant - so that tasks always have a geographical target)
    fuzzy_geo_location geography(Point) not null, -- random location close to the geolocation (to protect privacy)
-   remote boolean not null default false, -- can this task be done remotely?
    created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null, -- when the task was created
    has_images boolean default false,
    images_data jsonb default '[]'::jsonb not null

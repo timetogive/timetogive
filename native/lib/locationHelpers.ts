@@ -1,5 +1,5 @@
 import {
-  useSelectedLocation,
+  useLocation,
   SelectedLocationMode,
   SelectedLocation,
 } from '../providers/selectedLocation';
@@ -20,7 +20,7 @@ const getMainText = (selectedLocation: SelectedLocation) => {
 };
 
 export const locationText = () => {
-  const location = useSelectedLocation();
+  const location = useLocation();
 
   const mainText = getMainText(location.selectedLocation);
 
