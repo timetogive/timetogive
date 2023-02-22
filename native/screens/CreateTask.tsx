@@ -1,6 +1,7 @@
 import {
   faChevronLeft,
   faChevronRight,
+  faInfoCircle,
 } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -46,6 +47,14 @@ const integerText = (value: number, word: string) => {
   return text;
 };
 
+const InfoTip = ({ text }: { text: string }) => {
+  return (
+    <Text size="xxs" color={defaultColor[300]}>
+      {text}
+    </Text>
+  );
+};
+
 export const CreateTask = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const { reason } = route.params;
@@ -74,6 +83,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
 
   return (
     <>
+      {/* Top box with back button */}
       <Box
         pv={4}
         bg={defaultColor[500]}
@@ -92,166 +102,174 @@ export const CreateTask = ({ route, navigation }: Props) => {
         </HStack>
       </Box>
 
+      {/* Create task form */}
       <ScrollView>
-        <VStack ph={15} pb={insets.bottom + 15}>
-          {/* Title */}
+        <Box ph={15} pb={insets.bottom + 15}>
           <Box pv={20}>
             <Text size="xl" weight="bold">
               {title}
             </Text>
           </Box>
-          <VStack>
-            <Text size="xs" weight="semi-bold">
-              Title
-            </Text>
-            <Input
-              placeholder="e.g. Sorting clothes in our high street shop"
-              inputStyle={{
-                fontSize: translateFontSize('sm'),
-              }}
-              containerStyle={{
-                paddingHorizontal: 0,
-              }}
-              inputContainerStyle={{
-                borderBottomWidth: 0,
-              }}
-            />
-          </VStack>
 
-          {/* Description */}
-          <VStack>
-            <Text size="xs" weight="semi-bold">
-              Description
-            </Text>
-            <Input
-              placeholder="e.g. Willing and able volunteers to help with a backlog of clothing that needs sorting through"
-              inputStyle={{
-                fontSize: translateFontSize('sm'),
-                lineHeight: 25,
-              }}
-              containerStyle={{
-                paddingHorizontal: 0,
-              }}
-              inputContainerStyle={{
-                borderBottomWidth: 0,
-              }}
-              multiline
-            />
-          </VStack>
+          {/* Title */}
+          <VStack spacing={30}>
+            <VStack>
+              <Text size="xs" weight="semi-bold">
+                Title
+              </Text>
+              <Input
+                placeholder="e.g. Sorting clothes in our high street shop"
+                inputStyle={{
+                  fontSize: translateFontSize('sm'),
+                }}
+                containerStyle={{
+                  paddingHorizontal: 0,
+                }}
+                errorStyle={{ margin: 0, padding: 0 }}
+              />
+              <InfoTip text="Keep it short and sweet" />
+            </VStack>
 
-          {/* Effort */}
-          <VStack spacing={10} shouldWrapChildren>
-            <Text size="xs" weight="semi-bold">
-              How long will it take? (approximately)
-            </Text>
-            <TouchableOpacity onPress={() => setDhmModalOpen(true)}>
-              <HStack
-                justify="between"
-                shouldWrapChildren
-                items="center"
-              >
-                <Text size="md">{effText}</Text>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  size={15}
-                  color={colors.gray[500]}
-                />
-              </HStack>
-            </TouchableOpacity>
-          </VStack>
+            {/* Description */}
+            <VStack>
+              <Text size="xs" weight="semi-bold">
+                Description
+              </Text>
+              <Input
+                placeholder="e.g. Willing and able volunteers to help with a backlog of clothing that needs sorting through"
+                inputStyle={{
+                  fontSize: translateFontSize('sm'),
+                  lineHeight: 25,
+                  paddingBottom: 10,
+                }}
+                containerStyle={{
+                  paddingHorizontal: 0,
+                }}
+                errorStyle={{ margin: 0, padding: 0 }}
+                multiline
+              />
+              <InfoTip text="Add as much information as you can, the more the better." />
+            </VStack>
 
-          {/* People */}
-          <VStack spacing={10} shouldWrapChildren pt={35}>
-            <Text size="xs" weight="semi-bold">
-              How many volunteers do you need?
-            </Text>
-            <TouchableOpacity
-              onPress={() => setVolunteerModalOpen(true)}
-            >
-              <HStack
-                justify="between"
-                shouldWrapChildren
-                items="center"
-              >
-                <Text size="md">{volText}</Text>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  size={15}
-                  color={colors.gray[500]}
-                />
-              </HStack>
-            </TouchableOpacity>
-          </VStack>
-
-          {/* Remote */}
-          <VStack spacing={10} shouldWrapChildren pt={35}>
-            <Text size="xs" weight="semi-bold">
-              Can this task be done remotely?
-            </Text>
-            <HStack
-              justify="between"
-              shouldWrapChildren
-              items="center"
-            >
-              <Text size="md">{remote ? 'Yes' : 'No'}</Text>
-              <Switch value={remote} onValueChange={setRemote} />
-            </HStack>
-          </VStack>
-
-          {/* Location */}
-          <VStack spacing={10} shouldWrapChildren pt={35}>
-            <Text size="xs" weight="semi-bold">
-              Location
-            </Text>
-            <TouchableOpacity
-              onPress={() => setLocationModalOpen(true)}
-            >
-              {location ? (
-                <Stack minH={240} pointerEvents="box-only">
-                  <StaticMapWithMarker longLat={location} />
-                </Stack>
-              ) : (
+            {/* Effort */}
+            <VStack spacing={10} shouldWrapChildren>
+              <Text size="xs" weight="semi-bold">
+                How long will it take?
+              </Text>
+              <TouchableOpacity onPress={() => setDhmModalOpen(true)}>
                 <HStack
                   justify="between"
                   shouldWrapChildren
                   items="center"
                 >
-                  <Text size="md" color={colors.gray[500]}>
-                    Set location
-                  </Text>
+                  <Text size="md">{effText}</Text>
                   <FontAwesomeIcon
                     icon={faChevronRight}
                     size={15}
                     color={colors.gray[500]}
                   />
                 </HStack>
-              )}
-            </TouchableOpacity>
-          </VStack>
+              </TouchableOpacity>
+              <InfoTip text="This can be approximate" />
+            </VStack>
 
-          {/* Lifespan */}
-          <VStack spacing={10} shouldWrapChildren pt={35}>
-            <Text size="xs" weight="semi-bold">
-              Automatically close this task
-            </Text>
-            <TouchableOpacity
-              onPress={() => setLifespanDaysModalOpen(true)}
-            >
+            {/* People */}
+            <VStack spacing={10} shouldWrapChildren>
+              <Text size="xs" weight="semi-bold">
+                How many volunteers do you need?
+              </Text>
+              <TouchableOpacity
+                onPress={() => setVolunteerModalOpen(true)}
+              >
+                <HStack
+                  justify="between"
+                  shouldWrapChildren
+                  items="center"
+                >
+                  <Text size="md">{volText}</Text>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    size={15}
+                    color={colors.gray[500]}
+                  />
+                </HStack>
+              </TouchableOpacity>
+              <InfoTip text="Less volunteers = more interest" />
+            </VStack>
+
+            {/* Remote */}
+            <VStack spacing={10} shouldWrapChildren>
+              <Text size="xs" weight="semi-bold">
+                Can this task be done remotely?
+              </Text>
               <HStack
                 justify="between"
                 shouldWrapChildren
                 items="center"
               >
-                <Text size="md">after {lifespanText}</Text>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  size={15}
-                  color={colors.gray[500]}
-                />
+                <Text size="md">{remote ? 'Yes' : 'No'}</Text>
+                <Switch value={remote} onValueChange={setRemote} />
               </HStack>
-            </TouchableOpacity>
+              <InfoTip text="Remote tasks widen the net for volunteers. So if it's not a physical task, think about whether or not it could be done remotely." />
+            </VStack>
+
+            {/* Location */}
+            <VStack spacing={10} shouldWrapChildren>
+              <Text size="xs" weight="semi-bold">
+                Location
+              </Text>
+              <TouchableOpacity
+                onPress={() => setLocationModalOpen(true)}
+              >
+                {location ? (
+                  <Stack minH={240} pointerEvents="box-only">
+                    <StaticMapWithMarker longLat={location} />
+                  </Stack>
+                ) : (
+                  <HStack
+                    justify="between"
+                    shouldWrapChildren
+                    items="center"
+                  >
+                    <Text size="md" color={colors.gray[500]}>
+                      Set location
+                    </Text>
+                    <FontAwesomeIcon
+                      icon={faChevronRight}
+                      size={15}
+                      color={colors.gray[500]}
+                    />
+                  </HStack>
+                )}
+              </TouchableOpacity>
+              <InfoTip text="For safety we never reveal the exact location in the listing. We still require the location for remote tasks because members still like to know where and who the task will help." />
+            </VStack>
+
+            {/* Lifespan */}
+            <VStack spacing={10} shouldWrapChildren>
+              <Text size="xs" weight="semi-bold">
+                Automatically close this task
+              </Text>
+              <TouchableOpacity
+                onPress={() => setLifespanDaysModalOpen(true)}
+              >
+                <HStack
+                  justify="between"
+                  shouldWrapChildren
+                  items="center"
+                >
+                  <Text size="md">after {lifespanText}</Text>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    size={15}
+                    color={colors.gray[500]}
+                  />
+                </HStack>
+              </TouchableOpacity>
+              <InfoTip text="Tasks automatically close after this period of time if they don't attract any volunteers. You can also close a task any time you like." />
+            </VStack>
           </VStack>
-        </VStack>
+        </Box>
       </ScrollView>
 
       <DaysHoursMinutesSheetModal
