@@ -1,7 +1,3 @@
-\echo '---------------------------'
-\echo 'Dropping functions'
-\echo '---------------------------'
-
-drop function if exists public.search_tasks;
-
+\ir handle_new_user.sql
 \ir search_tasks.sql
+\ir create_task.sql

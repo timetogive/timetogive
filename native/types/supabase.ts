@@ -39,22 +39,22 @@ export interface Database {
         Row: {
           created_datetime: string
           description: string | null
-          effort_estimate: number | null
-          effort_estimate_in_minutes: number | null
-          effort_estimate_units:
-            | Database["public"]["Enums"]["task_estimate_units"]
-            | null
+          effort_days: number | null
+          effort_hours: number | null
+          effort_minutes: number | null
+          effort_normalised_minutes: number | null
+          effort_people: number | null
           fuzzy_geo_location: unknown
           geo_location: unknown
           has_images: boolean | null
           id: string
           images_data: Json
-          people_estimate: number | null
+          lifespan_days: number
           pledge: string | null
           reason: Database["public"]["Enums"]["task_reason"]
           remote: boolean
           status: Database["public"]["Enums"]["task_status"]
-          timing: Database["public"]["Enums"]["task_timing"]
+          timing: string
           title: string
           user_id: string
           will_pledge: boolean
@@ -62,22 +62,22 @@ export interface Database {
         Insert: {
           created_datetime?: string
           description?: string | null
-          effort_estimate?: number | null
-          effort_estimate_in_minutes?: number | null
-          effort_estimate_units?:
-            | Database["public"]["Enums"]["task_estimate_units"]
-            | null
+          effort_days?: number | null
+          effort_hours?: number | null
+          effort_minutes?: number | null
+          effort_normalised_minutes?: number | null
+          effort_people?: number | null
           fuzzy_geo_location: unknown
           geo_location: unknown
           has_images?: boolean | null
           id?: string
           images_data?: Json
-          people_estimate?: number | null
+          lifespan_days?: number
           pledge?: string | null
           reason?: Database["public"]["Enums"]["task_reason"]
           remote?: boolean
           status?: Database["public"]["Enums"]["task_status"]
-          timing?: Database["public"]["Enums"]["task_timing"]
+          timing?: string
           title: string
           user_id: string
           will_pledge?: boolean
@@ -85,22 +85,22 @@ export interface Database {
         Update: {
           created_datetime?: string
           description?: string | null
-          effort_estimate?: number | null
-          effort_estimate_in_minutes?: number | null
-          effort_estimate_units?:
-            | Database["public"]["Enums"]["task_estimate_units"]
-            | null
+          effort_days?: number | null
+          effort_hours?: number | null
+          effort_minutes?: number | null
+          effort_normalised_minutes?: number | null
+          effort_people?: number | null
           fuzzy_geo_location?: unknown
           geo_location?: unknown
           has_images?: boolean | null
           id?: string
           images_data?: Json
-          people_estimate?: number | null
+          lifespan_days?: number
           pledge?: string | null
           reason?: Database["public"]["Enums"]["task_reason"]
           remote?: boolean
           status?: Database["public"]["Enums"]["task_status"]
-          timing?: Database["public"]["Enums"]["task_timing"]
+          timing?: string
           title?: string
           user_id?: string
           will_pledge?: boolean
@@ -111,6 +111,25 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      create_task: {
+        Args: {
+          reason: Database["public"]["Enums"]["task_reason"]
+          will_pledge: boolean
+          title: string
+          description: string
+          effort_days: number
+          effort_hours: number
+          effort_minutes: number
+          effort_people: number
+          timing: string
+          remote: boolean
+          longitude: number
+          latitude: number
+          lifespan_days: number
+          pledge?: string
+        }
+        Returns: string
+      }
       search_tasks: {
         Args: {
           p_longitude: number
@@ -125,11 +144,11 @@ export interface Database {
           longitude: number
           latitude: number
           created_datetime: string
+          distance: number
         }[]
       }
     }
     Enums: {
-      task_estimate_units: "Minutes" | "Hours" | "Days"
       task_reason:
         | "Charity"
         | "Community"
@@ -137,7 +156,6 @@ export interface Database {
         | "Mutual Benefit"
         | "Return For Pledge"
       task_status: "Live" | "Closed"
-      task_timing: "Any Time" | "Specific Time"
     }
     CompositeTypes: {
       [_ in never]: never

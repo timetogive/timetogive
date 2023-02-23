@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "update-supabase-types": "env-cmd npx supabase gen types typescript --project-id '$SUPABASE_PROJECT_ID' --schema public > ./types/supabase.ts"
   },
   "dependencies": {
     "@expo-google-fonts/open-sans": "^0.2.2",
@@ -56,6 +57,7 @@
     "@types/react": "~18.0.14",
     "@types/react-native": "~0.70.6",
     "env-cmd": "^10.1.0",
+    "supabase": "^1.38.6",
     "typescript": "^4.6.3"
   },
   "private": true

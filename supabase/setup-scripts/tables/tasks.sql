@@ -15,10 +15,6 @@ CREATE TYPE public.task_reason AS ENUM (
    'Return For Pledge' -- it's a job that might normally be paid for but will be paid for via a pledge
 );
 
-CREATE TYPE public.task_timing AS ENUM (
-    'Any Time',
-    'Specific Time'
-);
 
 create table public.tasks(
    id uuid not null primary key default uuid_generate_v4(),
@@ -34,7 +30,7 @@ create table public.tasks(
    effort_minutes integer,
    effort_normalised_minutes integer, -- for performance we convert the days, hours and minutes into minutes
    effort_people int default 1, -- estimated number of people to help (single-person or multi person task)
-   timing task_timing not null default 'Any Time', -- is the help needed at a specific time
+   timing text not null default 'Any Time', -- is the help needed at a specific time
    remote boolean not null default false, -- can this task be done remotely?
    geo_location geography(Point) not null, -- always needs a geolocation (even if not relevant - so that tasks always have a geographical target)
    fuzzy_geo_location geography(Point) not null, -- random location close to the geolocation (to protect privacy)

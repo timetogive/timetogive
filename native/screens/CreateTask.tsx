@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button, Input } from '@rneui/themed';
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Box, Stack, VStack, HStack } from 'react-native-flex-layout';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +25,8 @@ import { LongLat } from '../providers/selectedLocation';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
+import axios from 'axios';
+import { supabase } from '../lib';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
 
@@ -37,7 +39,6 @@ const effortText = (days: number, hours: number, minutes: number) => {
     minutes === 0
       ? []
       : [`${minutes} ${pluralize('minute', minutes)}`];
-  console.log({ daysText, hoursText, minutesText });
   const final = [...daysText, ...hoursText, ...minutesText].join(' ');
   return final;
 };
@@ -58,6 +59,12 @@ const InfoTip = ({ text }: { text: string }) => {
 export const CreateTask = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const { reason } = route.params;
+
+  // State variables for the form
+  const [title, setTitle] = useState<string | undefined>(undefined);
+  const [description, setDescription] = useState<string | undefined>(
+    undefined
+  );
   const [dhmModalOpen, setDhmModalOpen] = useState(false);
   const [days, setDays] = useState(0);
   const [hours, setHours] = useState(0);
@@ -72,14 +79,54 @@ export const CreateTask = ({ route, navigation }: Props) => {
   const [lifespanDaysModalOpen, setLifespanDaysModalOpen] =
     useState(false);
   const [lifespanDays, setLifespanDays] = useState(30);
+  const [timing, setTiming] = useState<string | undefined>(undefined);
 
-  const title = `Create ${reasonToTitle(reason).toLowerCase()}`;
+  // State variables for submission
+  const [saving, setSaving] = useState(false);
 
+  // Generated text
+  const screenTitle = `Create ${reasonToTitle(reason).toLowerCase()}`;
   const effText = effortText(days, hours, minutes);
-
   const volText = integerText(volunteers, 'volunteer');
-
   const lifespanText = integerText(lifespanDays, 'day');
+
+  const clickSubmit = async () => {
+    if (!title || !description || !timing || !location) {
+      Alert.alert('Missing fields', 'Please fill in all fields');
+      return;
+    }
+    setSaving(true);
+    const payload = {
+      reason,
+      will_pledge: false,
+      title,
+      description,
+      effort_days: days,
+      effort_hours: hours,
+      effort_minutes: minutes,
+      effort_people: volunteers,
+      timing,
+      remote,
+      longitude: location?.longitude,
+      latitude: location?.latitude,
+      lifespan_days: lifespanDays,
+    };
+    console.log(payload);
+    const { data, error } = await supabase.rpc(
+      'create_task',
+      payload
+    );
+
+    if (error) {
+      Alert.alert('Error', error.message);
+      setSaving(false);
+      return;
+    }
+
+    Alert.alert('Success', `Created task ${data}`);
+    setSaving(false);
+    return;
+  };
 
   return (
     <>
@@ -104,10 +151,10 @@ export const CreateTask = ({ route, navigation }: Props) => {
 
       {/* Create task form */}
       <ScrollView>
-        <Box ph={15} pb={insets.bottom + 15}>
+        <Box ph={15} pb={insets.bottom + 15} bg={colors.white}>
           <Box pv={20}>
             <Text size="xl" weight="bold">
-              {title}
+              {screenTitle}
             </Text>
           </Box>
 
@@ -118,6 +165,8 @@ export const CreateTask = ({ route, navigation }: Props) => {
                 Title
               </Text>
               <Input
+                value={title}
+                onChangeText={setTitle}
                 placeholder="e.g. Sorting clothes in our high street shop"
                 inputStyle={{
                   fontSize: translateFontSize('sm'),
@@ -136,6 +185,8 @@ export const CreateTask = ({ route, navigation }: Props) => {
                 Description
               </Text>
               <Input
+                value={description}
+                onChangeText={setDescription}
                 placeholder="e.g. Willing and able volunteers to help with a backlog of clothing that needs sorting through"
                 inputStyle={{
                   fontSize: translateFontSize('sm'),
@@ -149,6 +200,29 @@ export const CreateTask = ({ route, navigation }: Props) => {
                 multiline
               />
               <InfoTip text="Add as much information as you can, the more the better." />
+            </VStack>
+
+            {/* Timing */}
+            <VStack>
+              <Text size="xs" weight="semi-bold">
+                Timing
+              </Text>
+              <Input
+                value={timing}
+                onChangeText={setTiming}
+                placeholder="e.g. any time, or any time after 10am on the weekends"
+                inputStyle={{
+                  fontSize: translateFontSize('sm'),
+                  lineHeight: 25,
+                  paddingBottom: 10,
+                }}
+                containerStyle={{
+                  paddingHorizontal: 0,
+                }}
+                errorStyle={{ margin: 0, padding: 0 }}
+                multiline
+              />
+              <InfoTip text="Provide any information on when the task can be completed" />
             </VStack>
 
             {/* Effort */}
@@ -170,7 +244,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
                   />
                 </HStack>
               </TouchableOpacity>
-              <InfoTip text="This can be approximate" />
+              <InfoTip text="This can be approximate but be realistic" />
             </VStack>
 
             {/* People */}
@@ -268,6 +342,11 @@ export const CreateTask = ({ route, navigation }: Props) => {
               </TouchableOpacity>
               <InfoTip text="Tasks automatically close after this period of time if they don't attract any volunteers. You can also close a task any time you like." />
             </VStack>
+
+            {/* Submit */}
+            <Button onPress={() => clickSubmit()} loading={saving}>
+              Submit
+            </Button>
           </VStack>
         </Box>
       </ScrollView>
