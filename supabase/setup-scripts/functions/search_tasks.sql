@@ -6,9 +6,12 @@ create or replace function public.search_tasks(
     p_distance double precision
 ) returns table (
     id public.tasks.id%type,
+    user_id public.tasks.user_id%type,
+    avatar_url public.profiles.avatar_url%type,
     title public.tasks.title%type,
     description public.tasks.description%type,
     reason public.tasks.reason%type,
+    timing public.tasks.timing%type,
     longitude double precision,
     latitude double precision,
     created_datetime public.tasks.created_datetime%type,
@@ -30,9 +33,12 @@ begin
     select_clause := '
         select
           t.id
+        , t.user_id
+        , p.avatar_url
         , t.title
         , t.description
         , t.reason
+        , t.timing
         , ST_X(t.fuzzy_geo_location::geometry) as longitude
         , ST_Y(t.fuzzy_geo_location::geometry) as latitude
         , t.created_datetime
@@ -41,9 +47,13 @@ begin
 
     from_clause := '
         from   public.tasks t
+        ,      public.profiles p
     ';
     
-    where_clause := 'where ST_DWithin(t.geo_location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, $3)';
+    where_clause := '
+        where t.user_id = p.id
+        and ST_DWithin(t.geo_location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, $3)
+    ';
 
     order_by_clause := '
         order by t.created_datetime desc

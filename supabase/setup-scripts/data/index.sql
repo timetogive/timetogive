@@ -1,4 +1,4 @@
-delete from tasks;
+-- delete from tasks;
 
 -- insert into tasks (
 --    user_id,

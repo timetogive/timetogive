@@ -138,9 +138,12 @@ export interface Database {
         }
         Returns: {
           id: string
+          user_id: string
+          avatar_url: string
           title: string
           description: string
           reason: Database["public"]["Enums"]["task_reason"]
+          timing: string
           longitude: number
           latitude: number
           created_datetime: string

@@ -1,6 +1,5 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocationBar } from '../components/LocationBar';
-import { TasksList } from '../components/TasksList';
 import { TasksMap } from '../components/TasksMap';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
@@ -13,6 +12,10 @@ import {
   useLocation,
 } from '../providers/selectedLocation';
 import { MapListMode } from '../types';
+import { FlatList } from 'react-native-gesture-handler';
+import { TaskCard } from '../components/TaskCard';
+import { RefreshControl } from 'react-native';
+import colors, { defaultColor } from '../styles/colors';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -48,11 +51,11 @@ export const Tasks = () => {
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
   const location = useLocation();
 
-  const SearchTasksQuery = useInfiniteQuery(
+  const searchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
       const ll = await location.getSelectedLongLat();
-      console.log('In Tasks calling getSelectedLongLat');
+      console.log('Calling SearchTasks');
       setLongLat(ll);
       console.log(ll);
       const query = supabaseCall(
@@ -79,20 +82,47 @@ export const Tasks = () => {
 
   useEffect(() => {
     console.log('In Tasks, selected location has changed');
-    SearchTasksQuery.refetch();
+    searchTasksQuery.refetch();
   }, [location.selectedLocation]);
 
   const tasks =
-    SearchTasksQuery.data?.pages.flatMap(({ data }) => data) || [];
+    searchTasksQuery.data?.pages.flatMap(({ data }) => data) || [];
 
-  if (SearchTasksQuery.isLoading || SearchTasksQuery.isIdle) {
+  if (searchTasksQuery.isLoading || searchTasksQuery.isIdle) {
     return <Text>Loading...</Text>;
   }
 
   return (
     <>
+      <LocationBar mode={mode} onChangeMode={setMapListMode} />
       {mode === MapListMode.List ? (
-        <TasksList tasks={tasks} />
+        <FlatList
+          data={tasks}
+          renderItem={(task) => (
+            <TaskCard
+              key={task.item.id}
+              title={task.item.title}
+              reason={task.item.reason}
+              avatarUrl={task.item.avatar_url}
+              description={task.item.description}
+              timing={task.item.timing}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={searchTasksQuery.isLoading}
+              onRefresh={searchTasksQuery.refetch}
+              title="Pull to refresh"
+            />
+          }
+          style={{
+            backgroundColor: colors.white,
+            flex: 1,
+            paddingTop: 10,
+            paddingRight: 15,
+          }}
+        />
       ) : (
         <TasksMap
           tasks={tasks}
@@ -100,7 +130,6 @@ export const Tasks = () => {
           distance={location.selectedLocation.distance}
         />
       )}
-      <LocationBar mode={mode} onChangeMode={setMapListMode} />
     </>
   );
 };

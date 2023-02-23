@@ -66,19 +66,21 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
         }
       />
       <Stack
-        position="absolute"
-        top={0}
-        left={0}
-        right={0}
         pt={insets.top + 5}
         pb={10}
         ph={insets.left + 20}
-        h={100}
         style={{
           ...(mode === MapListMode.List
             ? { backgroundColor: defaultColor[500] }
             : {}),
         }}
+        {...{}}
+        // Absolute position when in map mode
+        position={mode === MapListMode.Map ? 'absolute' : 'relative'}
+        top={mode === MapListMode.Map ? 0 : undefined}
+        left={mode === MapListMode.Map ? 0 : undefined}
+        right={mode === MapListMode.Map ? 0 : undefined}
+        zIndex={mode === MapListMode.Map ? 100 : undefined}
       >
         <HStack justify="between" items="center">
           <HStack

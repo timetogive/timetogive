@@ -20,7 +20,7 @@ drop function if exists public.create_task;
 \echo '---------------------------'
 \echo 'Dropping tables'
 \echo '---------------------------'
---drop table if exists public.profiles cascade;
+-- drop table if exists public.profiles cascade;
 drop table if exists public.tasks cascade;
 
 \echo '---------------------------'
@@ -32,5 +32,5 @@ drop type if exists public.task_reason;
 \echo '---------------------------'
 \echo 'Dropping buckets (this is a delete)'
 \echo '---------------------------'
-delete from storage.objects where bucket_id = 'avatars';
-delete from storage.buckets where id = 'avatars';
+-- delete from storage.objects where bucket_id = 'avatars';
+-- delete from storage.buckets where id = 'avatars';
