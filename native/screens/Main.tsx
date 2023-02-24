@@ -31,8 +31,18 @@ import {
   CreateActionMenu,
   CreateActionMenuBottomSheetModal,
 } from '../components/CreateActionMenu';
+import { Advice } from './Advice';
+import { Notifications } from './Notifications';
+import { Menu } from './Menu';
 
-const Tab = createBottomTabNavigator();
+export type MainTabParamList = {
+  Tasks: undefined;
+  Advice: undefined;
+  Notifications: undefined;
+  Menu: undefined;
+};
+
+const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export const TabWithIcon = ({
   focused,
@@ -180,13 +190,13 @@ export const Main = () => {
               <TabWithIcon
                 iconDefinition={faMessagesQuestion}
                 focussedIconDefinition={faMessagesQuestionSolid}
-                title="Questions"
+                title="Advice"
                 focused={focused}
               />
             ),
           }}
           name="Advice"
-          component={Tasks}
+          component={Advice}
         />
 
         <Tab.Screen
@@ -203,7 +213,7 @@ export const Main = () => {
             ),
           }}
           name="Notifications"
-          component={Tasks}
+          component={Notifications}
         />
         <Tab.Screen
           options={{
@@ -219,7 +229,7 @@ export const Main = () => {
             ),
           }}
           name="Menu"
-          component={Tasks}
+          component={Menu}
         />
       </Tab.Navigator>
     </>

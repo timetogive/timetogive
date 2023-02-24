@@ -35,6 +35,35 @@ export interface Database {
           website?: string | null
         }
       }
+      task_messages: {
+        Row: {
+          created_datetime: string
+          from_user_id: string
+          id: string
+          is_read: boolean
+          message_text: string
+          task_id: string
+          to_user_id: string
+        }
+        Insert: {
+          created_datetime?: string
+          from_user_id: string
+          id?: string
+          is_read?: boolean
+          message_text: string
+          task_id: string
+          to_user_id: string
+        }
+        Update: {
+          created_datetime?: string
+          from_user_id?: string
+          id?: string
+          is_read?: boolean
+          message_text?: string
+          task_id?: string
+          to_user_id?: string
+        }
+      }
       tasks: {
         Row: {
           created_datetime: string
@@ -127,6 +156,14 @@ export interface Database {
           latitude: number
           lifespan_days: number
           pledge?: string
+        }
+        Returns: string
+      }
+      create_task_message: {
+        Args: {
+          task_id: string
+          to_user_id: string
+          message_text: string
         }
         Returns: string
       }

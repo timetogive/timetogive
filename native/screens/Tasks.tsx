@@ -16,6 +16,10 @@ import { FlatList } from 'react-native-gesture-handler';
 import { TaskCard } from '../components/TaskCard';
 import { RefreshControl } from 'react-native';
 import colors, { defaultColor } from '../styles/colors';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { RootStackParamList } from '../App';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { MainTabParamList } from './Main';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -44,7 +48,9 @@ export const supabaseCall = (
   return query;
 };
 
-export const Tasks = () => {
+type Props = NativeStackScreenProps<MainTabParamList, 'Tasks'>;
+
+export const Tasks = ({ navigation }: Props) => {
   const [mode, setMapListMode] = useState<MapListMode>(
     MapListMode.List
   );
@@ -101,11 +107,14 @@ export const Tasks = () => {
           renderItem={(task) => (
             <TaskCard
               key={task.item.id}
+              taskId={task.item.id}
+              taskUserId={task.item.user_id}
               title={task.item.title}
               reason={task.item.reason}
               avatarUrl={task.item.avatar_url}
               description={task.item.description}
               timing={task.item.timing}
+              navigation={navigation}
             />
           )}
           keyExtractor={(item) => item.id}

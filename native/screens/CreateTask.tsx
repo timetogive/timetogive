@@ -28,8 +28,6 @@ import { Switch } from '@rneui/themed';
 import axios from 'axios';
 import { supabase } from '../lib';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
-
 const effortText = (days: number, hours: number, minutes: number) => {
   const daysText =
     days === 0 ? [] : [`${days} ${pluralize('day', days)}`];
@@ -55,6 +53,8 @@ const InfoTip = ({ text }: { text: string }) => {
     </Text>
   );
 };
+
+type Props = NativeStackScreenProps<RootStackParamList, 'CreateTask'>;
 
 export const CreateTask = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();

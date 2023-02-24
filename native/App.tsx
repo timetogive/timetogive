@@ -23,6 +23,7 @@ import { ProfileNotComplete } from './components/ProfileNotComplete';
 import { MissingProfile } from './screens/MissingProfile';
 import { CreateTask } from './screens/CreateTask';
 import { TaskReason } from './types';
+import { CreateTaskMessage } from './screens/CreateTaskMessage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   MissingProfile: undefined;
   CreateTask: { reason: TaskReason };
+  CreateTaskMessage: { taskId: string; toUserId: string };
 };
 
 const NavStack = createNativeStackNavigator<RootStackParamList>();
@@ -70,6 +72,14 @@ export default function App() {
                             headerShown: false,
                           }}
                           component={CreateTask}
+                        />
+                        <NavStack.Screen
+                          name="CreateTaskMessage"
+                          options={{
+                            title: 'CreateTaskMessage',
+                            headerShown: false,
+                          }}
+                          component={CreateTaskMessage}
                         />
                       </NavStack.Navigator>
                     </ProfileIsComplete>
