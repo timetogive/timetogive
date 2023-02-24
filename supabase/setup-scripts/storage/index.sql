@@ -3,8 +3,8 @@
 \echo '---------------------------'
 
 -- Set up Storage!
-insert into storage.buckets (id, name)
-  values ('avatars', 'avatars');
+insert into storage.buckets (id, name, public)
+  values ('avatars', 'avatars', true);
 
 -- Set up access controls for storage.
 -- See https://supabase.com/docs/guides/storage#policy-examples for more details.

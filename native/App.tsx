@@ -20,10 +20,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashPreLoadProvider from './providers/splashPreLoad';
 import { ProfileIsComplete } from './components/ProfileIsComplete';
 import { ProfileNotComplete } from './components/ProfileNotComplete';
-import { MissingProfile } from './screens/MissingProfile';
+import { MissingAvatar } from './screens/MissingAvatar';
 import { CreateTask } from './screens/CreateTask';
 import { TaskReason } from './types';
 import { CreateTaskMessage } from './screens/CreateTaskMessage';
+import { MissingProfile } from './screens/MissingProfile';
 
 const queryClient = new QueryClient({
   defaultOptions: {

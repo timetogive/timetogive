@@ -9,15 +9,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Input } from '@rneui/themed';
 import { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import { VStack, HStack, Box, Stack } from 'react-native-flex-layout';
+import { FlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
+import { MessageBubble } from '../components/MessageBubble';
+import { MessageRow } from '../components/MessageRow';
 import { Text, translateFontSize } from '../components/Text';
 import { supabase } from '../lib/supabase';
+import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { MapListMode } from '../types';
 
@@ -36,15 +40,31 @@ const getProfileSupabaseCall = (userId: string) => {
   return query;
 };
 
+const getMessagesSupabaseCall = (
+  taskId: string,
+  fromUserId: string,
+  toUserId: string
+) => {
+  const query = supabase
+    .from('task_messages')
+    .select('*')
+    .eq('task_id', taskId)
+    .or(`from_user_id.eq.${fromUserId},from_user_id.eq.${toUserId}`)
+    .order('created_datetime', { ascending: true });
+
+  return query;
+};
+
 export const CreateTaskMessage = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
-  const { toUserId } = route.params;
+  const session = useSession();
+  const { toUserId, taskId } = route.params;
 
   const [message, setMessage] = useState<string | undefined>(
     undefined
   );
 
-  const searchTasksQuery = useQuery(
+  const profileQuery = useQuery(
     ['GetProfile', toUserId],
     async () => {
       const query = getProfileSupabaseCall(toUserId);
@@ -54,7 +74,47 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
     { enabled: !!toUserId }
   );
 
-  const toUser = searchTasksQuery.data;
+  const toUser = profileQuery.data;
+
+  const messagesQuery = useQuery(
+    ['GetTaskMessages', taskId, toUserId],
+    async () => {
+      const query = getMessagesSupabaseCall(
+        taskId,
+        session.user?.id || '',
+        toUserId
+      );
+      const { data } = await query;
+      return data;
+    },
+    { enabled: !!toUserId }
+  );
+
+  const messages = messagesQuery.data;
+
+  const sendMessage = async () => {
+    if (!message) {
+      return;
+    }
+    const payload = {
+      task_id: taskId,
+      to_user_id: toUserId,
+      message_text: message,
+    };
+    console.log(payload);
+    const { error, data } = await supabase.rpc(
+      'create_task_message',
+      payload
+    );
+
+    if (error) {
+      Alert.alert('Error', error.message);
+      return;
+    }
+
+    setMessage(undefined);
+    messagesQuery.refetch();
+  };
 
   return (
     <>
@@ -93,9 +153,37 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
           </HStack>
         )}
       </BackBar>
-      <VStack justify="end" style={{ flex: 1 }} shouldWrapChildren>
-        <Text>Messages will go here</Text>
-      </VStack>
+      <FlatList
+        data={messages}
+        renderItem={(message) => (
+          <MessageRow
+            isMine={message.item.from_user_id === session.user?.id}
+            messageText={message.item.message_text}
+          />
+        )}
+        keyExtractor={(item) => item.id}
+        style={{
+          backgroundColor: colors.white,
+          paddingTop: 10,
+          paddingHorizontal: 10,
+        }}
+        contentContainerStyle={{
+          justifyContent: 'flex-end',
+          flex: 1,
+        }}
+      />
+
+      {/* <VStack justify="end" style={{ flex: 1 }} spacing={20}>
+        {messages &&
+          messages.map((message) => (
+            <HStack justify="end">
+              <MessageBubble
+                isMine={message.from_user_id === session.user?.id}
+                messageText={message.message_text}
+              />
+            </HStack>
+          ))}
+      </VStack> */}
       <HStack
         pb={insets.bottom - 5}
         bg={defaultColor[800]}
@@ -139,11 +227,8 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
             }}
           />
         </HStack>
-        cc
         {message && (
-          <TouchableOpacity
-            onPress={() => console.log('Send message pressed')}
-          >
+          <TouchableOpacity onPress={() => sendMessage()}>
             <Stack
               style={{ backgroundColor: colors.white }}
               center

@@ -12,27 +12,33 @@ export interface Database {
       profiles: {
         Row: {
           avatar_url: string | null
+          description: string | null
           full_name: string | null
           id: string
+          public_link1: string | null
+          public_link2: string | null
+          public_link3: string | null
           updated_at: string | null
-          username: string | null
-          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          description?: string | null
           full_name?: string | null
           id: string
+          public_link1?: string | null
+          public_link2?: string | null
+          public_link3?: string | null
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          description?: string | null
           full_name?: string | null
           id?: string
+          public_link1?: string | null
+          public_link2?: string | null
+          public_link3?: string | null
           updated_at?: string | null
-          username?: string | null
-          website?: string | null
         }
       }
       task_messages: {

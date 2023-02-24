@@ -22,14 +22,12 @@ begin
         task_id,
         from_user_id,
         to_user_id,
-        message_text,
-        created_datetime
+        message_text
     ) values (
         task_id,
         from_user_id,
         to_user_id,
-        message_text,
-        created_datetime
+        message_text
     ) returning id into return_id;
 
     -- We're returning the id of the message
