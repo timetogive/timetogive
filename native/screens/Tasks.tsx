@@ -20,6 +20,7 @@ import { CompositeScreenProps } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainTabParamList } from './Main';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -48,7 +49,10 @@ const supabaseCall = (
   return query;
 };
 
-type Props = NativeStackScreenProps<MainTabParamList, 'Tasks'>;
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'Tasks'>,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
 export const Tasks = ({ navigation }: Props) => {
   const [mode, setMapListMode] = useState<MapListMode>(
@@ -109,12 +113,14 @@ export const Tasks = ({ navigation }: Props) => {
               key={task.item.id}
               taskId={task.item.id}
               taskUserId={task.item.user_id}
+              taskUserAvatarUrl={task.item.avatar_url}
               title={task.item.title}
               reason={task.item.reason}
-              avatarUrl={task.item.avatar_url}
-              description={task.item.description}
               timing={task.item.timing}
-              navigation={navigation}
+              onPress={() =>
+                navigation.navigate('Task', { taskId: task.item.id })
+              }
+              showDistanceBar
             />
           )}
           keyExtractor={(item) => item.id}

@@ -9,7 +9,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Input } from '@rneui/themed';
 import { useState } from 'react';
-import { Alert, TouchableOpacity } from 'react-native';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+} from 'react-native';
 import { VStack, HStack, Box, Stack } from 'react-native-flex-layout';
 import { FlatList } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -58,6 +63,9 @@ const getMessagesSupabaseCall = (
 export const CreateTaskMessage = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
+
+  console.log(session.user?.full_name);
+
   const { toUserId, taskId } = route.params;
 
   const [message, setMessage] = useState<string | undefined>(
@@ -117,7 +125,7 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
   };
 
   return (
-    <>
+    <Stack style={{ flex: 1 }}>
       <BackBar navigation={navigation}>
         {toUser && (
           <HStack spacing={10}>
@@ -153,101 +161,98 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
           </HStack>
         )}
       </BackBar>
-      <FlatList
-        data={messages}
-        renderItem={(message) => (
-          <MessageRow
-            isMine={message.item.from_user_id === session.user?.id}
-            messageText={message.item.message_text}
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <VStack justify="end" style={{ flex: 1 }}>
+          <FlatList
+            data={messages}
+            renderItem={(message) => (
+              <MessageRow
+                isMine={
+                  message.item.from_user_id === session.user?.id
+                }
+                messageText={message.item.message_text}
+              />
+            )}
+            keyExtractor={(item) => item.id}
+            style={{
+              backgroundColor: colors.white,
+              paddingTop: 10,
+              paddingHorizontal: 10,
+            }}
+            contentContainerStyle={{
+              justifyContent: 'flex-end',
+              flex: 1,
+            }}
           />
-        )}
-        keyExtractor={(item) => item.id}
-        style={{
-          backgroundColor: colors.white,
-          paddingTop: 10,
-          paddingHorizontal: 10,
-        }}
-        contentContainerStyle={{
-          justifyContent: 'flex-end',
-          flex: 1,
-        }}
-      />
-
-      {/* <VStack justify="end" style={{ flex: 1 }} spacing={20}>
-        {messages &&
-          messages.map((message) => (
-            <HStack justify="end">
-              <MessageBubble
-                isMine={message.from_user_id === session.user?.id}
-                messageText={message.message_text}
+          <HStack
+            pb={insets.bottom - 5}
+            bg={defaultColor[800]}
+            spacing={10}
+            ph={20}
+            pt={10}
+            items="center"
+          >
+            <HStack
+              bg={colors.white}
+              style={{ flex: 1 }}
+              radius={25}
+              ph={15}
+              minH={40}
+              maxH={150}
+              items="center"
+            >
+              <Input
+                value={message}
+                multiline
+                onChangeText={setMessage}
+                placeholder="Type message here..."
+                labelStyle={{
+                  margin: 0,
+                  padding: 0,
+                  height: 0,
+                }}
+                inputContainerStyle={{
+                  borderBottomWidth: 0,
+                }}
+                inputStyle={{
+                  fontSize: translateFontSize('sm'),
+                  color: colors.gray[600],
+                  lineHeight: 25,
+                  paddingVertical: 15,
+                }}
+                errorStyle={{
+                  margin: 0,
+                  padding: 0,
+                  height: 0,
+                }}
               />
             </HStack>
-          ))}
-      </VStack> */}
-      <HStack
-        pb={insets.bottom - 5}
-        bg={defaultColor[800]}
-        spacing={10}
-        ph={20}
-        pt={10}
-        items="center"
-      >
-        <HStack
-          bg={colors.white}
-          style={{ flex: 1 }}
-          radius={25}
-          ph={15}
-          minH={40}
-          maxH={150}
-          items="center"
-        >
-          <Input
-            value={message}
-            multiline
-            onChangeText={setMessage}
-            placeholder="Type message here..."
-            labelStyle={{
-              margin: 0,
-              padding: 0,
-              height: 0,
-            }}
-            inputContainerStyle={{
-              borderBottomWidth: 0,
-            }}
-            inputStyle={{
-              fontSize: translateFontSize('sm'),
-              color: colors.gray[600],
-              lineHeight: 25,
-              paddingVertical: 15,
-            }}
-            errorStyle={{
-              margin: 0,
-              padding: 0,
-              height: 0,
-            }}
-          />
-        </HStack>
-        {message && (
-          <TouchableOpacity onPress={() => sendMessage()}>
-            <Stack
-              style={{ backgroundColor: colors.white }}
-              center
-              radius={100}
-              h={40}
-              w={40}
-              p={5}
-            >
-              <VStack center>
-                <FontAwesomeIcon
-                  icon={faPaperPlaneTop}
-                  size={20}
-                  color={defaultColor[500]}
-                />
-              </VStack>
-            </Stack>
-          </TouchableOpacity>
-        )}
-      </HStack>
-    </>
+            {message && (
+              <TouchableOpacity onPress={() => sendMessage()}>
+                <Stack
+                  style={{ backgroundColor: colors.white }}
+                  center
+                  radius={100}
+                  h={40}
+                  w={40}
+                  p={5}
+                >
+                  <VStack center>
+                    <FontAwesomeIcon
+                      icon={faPaperPlaneTop}
+                      size={20}
+                      color={defaultColor[500]}
+                    />
+                  </VStack>
+                </Stack>
+              </TouchableOpacity>
+            )}
+          </HStack>
+        </VStack>
+      </KeyboardAvoidingView>
+    </Stack>
   );
 };

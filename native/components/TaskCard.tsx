@@ -27,65 +27,62 @@ import {
   faStar,
 } from '@fortawesome/pro-solid-svg-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 interface Props {
   taskId: string;
   taskUserId: string;
+  taskUserAvatarUrl?: string;
   title: string;
-  description: string;
   reason: string;
-  avatarUrl: string;
   timing: string;
-  navigation?: NativeStackNavigationProp<ParamListBase>;
+  showDistanceBar: boolean;
+  onPress?: () => void;
 }
 
 export const TaskCard = ({
   taskId,
   taskUserId,
+  taskUserAvatarUrl,
   title,
-  description,
-  avatarUrl,
   reason,
   timing,
-  navigation,
+  showDistanceBar,
+  onPress,
 }: Props) => {
-  console.log(avatarUrl);
+  console.log(taskUserAvatarUrl);
   return (
-    <TouchableOpacity
-      onPress={() =>
-        navigation &&
-        navigation.navigate('CreateTaskMessage', {
-          taskId,
-          toUserId: taskUserId,
-        })
-      }
-    >
+    <TouchableOpacity onPress={onPress}>
       <HStack>
         {/* Distance bar */}
-        <Stack w={50} items="center">
-          <Stack
-            w={0.5}
-            grow={1}
-            style={{ backgroundColor: colors.gray[300] }}
-          ></Stack>
-          <VStack
-            position="absolute"
-            top={10}
-            style={{ backgroundColor: colors.white }}
-            p={5}
-            shouldWrapChildren
-            center
-          >
-            <Text size="xs" weight="light" color={colors.gray[700]}>
-              10
-            </Text>
-            <Text size="xxs" weight="light" color={colors.gray[700]}>
-              km
-            </Text>
-          </VStack>
-        </Stack>
+        {showDistanceBar && (
+          <Stack w={50} items="center">
+            <Stack
+              w={0.5}
+              grow={1}
+              style={{ backgroundColor: colors.gray[300] }}
+            ></Stack>
+            <VStack
+              position="absolute"
+              top={10}
+              style={{ backgroundColor: colors.white }}
+              p={5}
+              shouldWrapChildren
+              center
+            >
+              <Text size="xs" weight="light" color={colors.gray[700]}>
+                10
+              </Text>
+              <Text
+                size="xxs"
+                weight="light"
+                color={colors.gray[700]}
+              >
+                km
+              </Text>
+            </VStack>
+          </Stack>
+        )}
+
         {/* Main card */}
         <Stack
           radius={5}
@@ -103,7 +100,7 @@ export const TaskCard = ({
         >
           <VStack spacing={20}>
             <HStack justify="between" items="start">
-              <VStack spacing={12}>
+              <VStack spacing={12} style={{ flex: 1 }}>
                 <Stack pr={5} style={{ flex: 1 }}>
                   <Text weight="bold">{title}</Text>
                 </Stack>
@@ -138,20 +135,23 @@ export const TaskCard = ({
             </HStack>
             <HStack justify="between" items="end" shouldWrapChildren>
               <HStack spacing={10}>
-                <Stack
-                  center
-                  h={36}
-                  w={36}
-                  bg={colors.blue[100]}
-                  radius={18}
-                  overflow="hidden"
-                >
-                  <SvgUri
-                    width="100%"
-                    height="100%"
-                    uri={avatarUrl}
-                  />
-                </Stack>
+                {taskUserAvatarUrl && (
+                  <Stack
+                    center
+                    h={36}
+                    w={36}
+                    bg={colors.blue[100]}
+                    radius={18}
+                    overflow="hidden"
+                  >
+                    <SvgUri
+                      width="100%"
+                      height="100%"
+                      uri={taskUserAvatarUrl}
+                    />
+                  </Stack>
+                )}
+
                 <VStack spacing={2} shouldWrapChildren>
                   <Text size="xxs">James Allchin</Text>
                   <HStack items="center" spacing={4}>
