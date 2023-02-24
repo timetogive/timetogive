@@ -15,30 +15,30 @@ import colors, { defaultColor } from '../styles/colors';
 
 interface Props {
   navigation: NativeStackNavigationProp<ParamListBase>;
+  children?: React.ReactNode;
 }
 
-export const BackBar = ({ navigation }: Props) => {
+export const BackBar = ({ navigation, children }: Props) => {
   const insets = useSafeAreaInsets();
   return (
-    <>
-      {/* Top box with back button */}
-      <Box
-        pv={4}
-        bg={defaultColor[500]}
-        pt={insets.top + 5}
-        pb={15}
-        ph={20}
-      >
-        <HStack spacing={10} items="center">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              color={colors.white}
-              size={25}
-            />
-          </TouchableOpacity>
-        </HStack>
-      </Box>
-    </>
+    <HStack
+      pv={4}
+      bg={defaultColor[500]}
+      pt={insets.top + 5}
+      pb={15}
+      ph={20}
+      items="center"
+    >
+      <HStack spacing={10} items="center">
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            color={colors.white}
+            size={25}
+          />
+        </TouchableOpacity>
+      </HStack>
+      {children}
+    </HStack>
   );
 };

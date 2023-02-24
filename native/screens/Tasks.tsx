@@ -23,7 +23,7 @@ import { MainTabParamList } from './Main';
 
 const RESULTS_PER_PAGE = 500;
 
-export const supabaseCall = (
+const supabaseCall = (
   pageParam: number,
   longitude: number,
   latitude: number,

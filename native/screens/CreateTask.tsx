@@ -27,6 +27,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
 import axios from 'axios';
 import { supabase } from '../lib';
+import { BackBar } from '../components/BackBar';
 
 const effortText = (days: number, hours: number, minutes: number) => {
   const daysText =
@@ -131,24 +132,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
   return (
     <>
       {/* Top box with back button */}
-      <Box
-        pv={4}
-        bg={defaultColor[500]}
-        pt={insets.top + 5}
-        pb={15}
-        ph={20}
-      >
-        <HStack spacing={10} items="center">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              color={colors.white}
-              size={25}
-            />
-          </TouchableOpacity>
-        </HStack>
-      </Box>
-
+      <BackBar navigation={navigation} />
       {/* Create task form */}
       <ScrollView>
         <Box ph={15} pb={insets.bottom + 15} bg={colors.white}>
