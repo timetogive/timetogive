@@ -173,6 +173,14 @@ export interface Database {
         }
         Returns: string
       }
+      get_task: {
+        Args: {
+          p_id: string
+          p_longitude?: number
+          p_latitude?: number
+        }
+        Returns: Database["public"]["CompositeTypes"]["task_full_info"]
+      }
       search_tasks: {
         Args: {
           p_longitude: number
@@ -204,7 +212,29 @@ export interface Database {
       task_status: "Live" | "Closed"
     }
     CompositeTypes: {
-      [_ in never]: never
+      task_full_info: {
+        id: string
+        user_id: string
+        status: Database["public"]["Enums"]["task_status"]
+        reason: Database["public"]["Enums"]["task_reason"]
+        will_pledge: boolean
+        pledge: string
+        title: string
+        description: string
+        effort_days: number
+        effort_hours: number
+        effort_minutes: number
+        effort_normalised_minutes: number
+        effort_people: number
+        timing: string
+        remote: boolean
+        longitude: number
+        latitude: number
+        created_datetime: string
+        distance: number
+        user_full_name: string
+        user_avatar_url: string
+      }
     }
   }
 }

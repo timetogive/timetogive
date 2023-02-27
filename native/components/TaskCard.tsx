@@ -1,11 +1,4 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faHouseHeart } from '@fortawesome/pro-solid-svg-icons/faHouseHeart';
-import { faPeopleGroup } from '@fortawesome/pro-solid-svg-icons/faPeopleGroup';
-import { faHandWave } from '@fortawesome/pro-light-svg-icons/faHandWave';
-import { faHandshake } from '@fortawesome/pro-solid-svg-icons/faHandshake';
-import { faHandHoldingDollar } from '@fortawesome/pro-solid-svg-icons/faHandHoldingDollar';
-import { FlatList, ViewProps } from 'react-native';
-import { SearchTasksResult } from '../types';
 import {
   Stack,
   HStack,
