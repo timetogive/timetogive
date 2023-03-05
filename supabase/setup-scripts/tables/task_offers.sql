@@ -4,24 +4,28 @@
 \echo '---------------------------'
 
 CREATE TYPE public.task_offer_status AS ENUM (
-   'Pending', 
+   'Pending',
    'Accepted',
    'Declined'
 );
 
 create table public.task_offers(
    id uuid not null primary key default uuid_generate_v4(),
+   user_id uuid references public.profiles not null, -- who sent the offer
    task_id uuid references public.tasks not null, -- references a specific task
-   from_user_id uuid references public.profiles not null, -- who sent the message
-   status task_status not null default 'Pending',
+   task_owner_id uuid references public.profiles not null, -- who owns the task (denormalised for convenience)
+   status task_offer_status not null default 'Pending',
    created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null -- when the offer was made
 );
+
+CREATE UNIQUE INDEX task_offers_limits ON public.task_offers (user_id, task_id, status)
+    WHERE status = 'Pending' or status = 'Accepted';
 
 -- Set up Row Level Security (RLS)
 -- See https://supabase.com/docs/guides/auth/row-level-security for more details.
 alter table public.task_offers
   enable row level security;
 
-create policy "Users can only access messages they are involved in."
+create policy "Users can only access their own task offers"
     on public.task_offers for select
-    using ( auth.uid() = from_user_id);
+    using ( auth.uid() = user_id or auth.uid() = task_owner_id );

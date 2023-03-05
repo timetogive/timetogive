@@ -70,6 +70,32 @@ export interface Database {
           to_user_id?: string
         }
       }
+      task_offers: {
+        Row: {
+          created_datetime: string
+          id: string
+          status: Database["public"]["Enums"]["task_offer_status"]
+          task_id: string
+          task_owner_id: string
+          user_id: string
+        }
+        Insert: {
+          created_datetime?: string
+          id?: string
+          status?: Database["public"]["Enums"]["task_offer_status"]
+          task_id: string
+          task_owner_id: string
+          user_id: string
+        }
+        Update: {
+          created_datetime?: string
+          id?: string
+          status?: Database["public"]["Enums"]["task_offer_status"]
+          task_id?: string
+          task_owner_id?: string
+          user_id?: string
+        }
+      }
       tasks: {
         Row: {
           created_datetime: string
@@ -173,6 +199,12 @@ export interface Database {
         }
         Returns: string
       }
+      create_task_offer: {
+        Args: {
+          p_task_id: string
+        }
+        Returns: string
+      }
       get_task: {
         Args: {
           p_id: string
@@ -214,6 +246,7 @@ export interface Database {
       }
     }
     Enums: {
+      task_offer_status: "Pending" | "Accepted" | "Declined"
       task_reason:
         | "Charity"
         | "Community"

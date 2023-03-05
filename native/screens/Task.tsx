@@ -7,6 +7,7 @@ import {
 } from '@fortawesome/sharp-solid-svg-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
+import { useState } from 'react';
 import { Alert } from 'react-native';
 import { Stack, HStack, VStack } from 'react-native-flex-layout';
 import {
@@ -66,6 +67,8 @@ export const Task = ({ route, navigation }: Props) => {
 
   const { taskId } = route.params;
 
+  const [busy, setBusy] = useState<boolean>(false);
+
   const taskQuery = useQuery(
     ['GetTask', taskId],
     async () => {
@@ -93,6 +96,18 @@ export const Task = ({ route, navigation }: Props) => {
   );
 
   const conversations = taskConversationsQuery.data;
+
+  const volunteerForTask = async () => {
+    setBusy(true);
+    const { data, error } = await supabase.rpc('create_task_offer', {
+      p_task_id: taskId,
+    });
+    console.log(`error`);
+    console.log(error);
+    console.log(`data`);
+    console.log(data);
+    setBusy(false);
+  };
 
   const isMyTask = task?.user_id === session.user?.id;
 
@@ -297,7 +312,13 @@ export const Task = ({ route, navigation }: Props) => {
           >
             Message {task.user_full_name}
           </Button>
-          <Button color={colors.gray[500]}>Volunteer for task</Button>
+          <Button
+            color={colors.gray[500]}
+            onPress={() => volunteerForTask()}
+            loading={busy}
+          >
+            Volunteer for task
+          </Button>
         </VStack>
       )}
     </VStack>
