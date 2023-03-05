@@ -18,6 +18,7 @@ import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
+import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { TaskCard } from '../components/TaskCard';
 import { Text } from '../components/Text';
 import { supabase } from '../lib';
@@ -133,8 +134,12 @@ export const Task = ({ route, navigation }: Props) => {
         />
         {conversations && conversations.length > 0 && (
           <VStack shouldWrapChildren bg={colors.white} mt={20}>
-            <VStack ph={15} pv={10}>
-              <Text size="sm" color={colors.gray[700]}>
+            <VStack ph={20} pv={10}>
+              <Text
+                size="sm"
+                color={colors.gray[700]}
+                weight="semi-bold"
+              >
                 Conversations on this task
               </Text>
             </VStack>
@@ -144,13 +149,10 @@ export const Task = ({ route, navigation }: Props) => {
                   onPress={() =>
                     navigation.navigate('CreateTaskMessage', {
                       taskId,
-                      toUserId:
-                        c.from_user_id === session.user?.id
-                          ? c.to_user_id
-                          : c.from_user_id,
+                      toUserId: c.user_id,
                     })
                   }
-                  key={`${c.from_user_id}-${c.to_user_id}`}
+                  key={`${c.user_id}`}
                 >
                   <HStack
                     justify="between"
@@ -173,18 +175,12 @@ export const Task = ({ route, navigation }: Props) => {
                         <SvgUri
                           width="100%"
                           height="100%"
-                          uri={
-                            c.from_user_id === session.user?.id
-                              ? c.to_avatar_url
-                              : c.from_avatar_url
-                          }
+                          uri={c.avatar_url}
                         />
                       </Stack>
                       <VStack spacing={2} shouldWrapChildren>
                         <Text size="xxs" color={colors.gray[500]}>
-                          {c.from_user_id === session.user?.id
-                            ? c.to_full_name
-                            : c.from_full_name}
+                          {c.full_name}
                         </Text>
                         <HStack items="center" spacing={4}>
                           <FontAwesomeIcon
@@ -208,7 +204,7 @@ export const Task = ({ route, navigation }: Props) => {
                         h={25}
                       >
                         <Text color={colors.white} size="xxs">
-                          {c.unread_count}
+                          {c.my_unread_count}
                         </Text>
                       </VStack>
                       <FontAwesomeIcon
@@ -223,7 +219,64 @@ export const Task = ({ route, navigation }: Props) => {
             </VStack>
           </VStack>
         )}
-        <VStack></VStack>
+        <VStack shouldWrapChildren bg={colors.white} mt={20}>
+          <VStack ph={20} pv={10}>
+            <Text
+              size="sm"
+              color={colors.gray[700]}
+              weight="semi-bold"
+            >
+              Full details
+            </Text>
+          </VStack>
+          <VStack ph={20} pv={10}>
+            <Text size="sm" color={colors.gray[700]}>
+              {task.description}
+            </Text>
+          </VStack>
+        </VStack>
+        <VStack shouldWrapChildren bg={colors.white} mt={20}>
+          <VStack ph={20} pv={10}>
+            <Text
+              size="sm"
+              color={colors.gray[700]}
+              weight="semi-bold"
+            >
+              Timing
+            </Text>
+          </VStack>
+          <VStack ph={20} pv={10}>
+            <Text size="sm" color={colors.gray[700]}>
+              {task.timing}
+            </Text>
+          </VStack>
+        </VStack>
+        <VStack shouldWrapChildren bg={colors.white} mt={20}>
+          <VStack ph={20} pv={10}>
+            <Text
+              size="sm"
+              color={colors.gray[700]}
+              weight="semi-bold"
+            >
+              Location
+            </Text>
+          </VStack>
+          <Stack ph={20}>
+            <Stack
+              minH={200}
+              pointerEvents="box-only"
+              radius={20}
+              overflow="hidden"
+            >
+              <StaticMapWithMarker
+                longLat={{
+                  longitude: task.longitude,
+                  latitude: task.latitude,
+                }}
+              />
+            </Stack>
+          </Stack>
+        </VStack>
       </ScrollView>
       {!isMyTask && (
         <VStack

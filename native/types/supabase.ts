@@ -186,14 +186,10 @@ export interface Database {
           p_id: string
         }
         Returns: {
-          from_user_id: string
-          from_avatar_url: string
-          from_full_name: string
-          to_user_id: string
-          to_avatar_url: string
-          to_full_name: string
-          total_count: number
-          unread_count: number
+          user_id: string
+          avatar_url: string
+          full_name: string
+          my_unread_count: number
         }[]
       }
       search_tasks: {
