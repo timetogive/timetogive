@@ -112,7 +112,6 @@ export const CreateTask = ({ route, navigation }: Props) => {
       latitude: location?.latitude,
       lifespan_days: lifespanDays,
     };
-    console.log(payload);
     const { data, error } = await supabase.rpc(
       'create_task',
       payload

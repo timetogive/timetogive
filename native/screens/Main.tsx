@@ -97,7 +97,6 @@ const TabBar = ({
 
   const onCreateMenuItemPress = (action: string) => {
     setCreateModalOpen(false);
-    console.log(`action ${action}`);
     navigation.navigate('CreateTask', { reason: action });
   };
 

@@ -42,7 +42,6 @@ export const TaskCard = ({
   showDistanceBar,
   onPress,
 }: Props) => {
-  console.log(taskUserAvatarUrl);
   return (
     <TouchableOpacity onPress={onPress}>
       <HStack>
@@ -80,13 +79,15 @@ export const TaskCard = ({
         <Stack
           radius={5}
           p={25}
-          mb={20}
+          mb={showDistanceBar ? 20 : 0}
           style={{
-            shadowColor: colors.gray[200],
-            shadowOffset: { width: -4, height: 6 },
-            shadowOpacity: 0.7,
-            shadowRadius: 20,
-            elevation: 2,
+            ...(showDistanceBar && {
+              shadowColor: colors.gray[200],
+              shadowOffset: { width: -4, height: 6 },
+              shadowOpacity: 0.7,
+              shadowRadius: 20,
+              elevation: 2,
+            }),
             backgroundColor: colors.white,
             flex: 1,
           }}

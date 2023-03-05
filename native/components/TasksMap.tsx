@@ -47,7 +47,6 @@ export const TasksMap = ({ tasks, longLat, distance }: Props) => {
 
   useEffect(() => {
     (async () => {
-      console.log('longLat has changed!!!');
       setMapRegion({
         latitude: longLat.latitude,
         longitude: longLat.longitude,

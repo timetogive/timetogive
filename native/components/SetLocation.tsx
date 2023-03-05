@@ -61,8 +61,6 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
   };
 
   const onRegionChange = (region: Region) => {
-    console.log('Region changed');
-    console.log(region);
     mapRegionTracker.current = region;
   };
 

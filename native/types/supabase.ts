@@ -181,6 +181,21 @@ export interface Database {
         }
         Returns: Database["public"]["CompositeTypes"]["task_full_info"]
       }
+      get_task_conversations: {
+        Args: {
+          p_id: string
+        }
+        Returns: {
+          from_user_id: string
+          from_avatar_url: string
+          from_full_name: string
+          to_user_id: string
+          to_avatar_url: string
+          to_full_name: string
+          total_count: number
+          unread_count: number
+        }[]
+      }
       search_tasks: {
         Args: {
           p_longitude: number

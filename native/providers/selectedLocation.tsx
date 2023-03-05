@@ -158,9 +158,6 @@ export const LocationProvider = ({
         { text: 'Settings', onPress: () => Linking.openSettings() },
       ]
     );
-    console.log(
-      'Location permission denied - setting a default location'
-    );
     setSelectedLocation(defaultSelectedLocation);
   };
 

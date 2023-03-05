@@ -65,9 +65,7 @@ export const Tasks = ({ navigation }: Props) => {
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
       const ll = await location.getSelectedLongLat();
-      console.log('Calling SearchTasks');
       setLongLat(ll);
-      console.log(ll);
       const query = supabaseCall(
         pageParam,
         ll.longitude,
