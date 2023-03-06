@@ -6,6 +6,7 @@ import { SvgUri } from 'react-native-svg';
 import colors from '../styles/colors';
 import { GetTaskOffersResult } from '../types';
 import { Text } from '../components/Text';
+import { AcceptDeclineButtons } from './AcceptDeclineButtons';
 
 interface Props {
   offers?: GetTaskOffersResult | null;
@@ -77,22 +78,10 @@ export const TaskOffers = ({
                     </HStack>
                   </VStack>
                 </HStack>
-                <HStack spacing={5}>
-                  <Button
-                    color={colors.green[700]}
-                    onPress={() => onAccept(o.id)}
-                    size="sm"
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    color={colors.red[700]}
-                    onPress={() => onDecline(o.id)}
-                    size="sm"
-                  >
-                    Decline
-                  </Button>
-                </HStack>
+                <AcceptDeclineButtons
+                  onAccept={() => onAccept(o.id)}
+                  onDecline={() => onDecline(o.id)}
+                />
               </HStack>
             ))}
           </VStack>

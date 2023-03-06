@@ -7,6 +7,7 @@ import {
 import { Button } from '@rneui/themed';
 import { HStack, VStack } from 'react-native-flex-layout';
 import colors from '../styles/colors';
+import { AcceptDeclineButtons } from './AcceptDeclineButtons';
 import { Text } from './Text';
 
 interface Props {
@@ -36,30 +37,14 @@ export const OfferAcceptDecline = ({
       >
         <Text size="sm">🎉</Text>
         <Text size="sm" color={colors.white}>
-          {offererName} has offered to help
+          {offererName} has volunteered
         </Text>
       </HStack>
-      <HStack justify="end">
-        <HStack spacing={5}>
-          <Button
-            color={colors.green[700]}
-            onPress={() => onAccept()}
-            size="md"
-          >
-            <Text size="xs" color={colors.white}>
-              Accept
-            </Text>
-          </Button>
-          <Button
-            color={colors.red[700]}
-            onPress={() => onDecline()}
-            size="md"
-          >
-            <Text size="xs" color={colors.white}>
-              Decline
-            </Text>
-          </Button>
-        </HStack>
+      <HStack justify="end" style={{ flex: 1 }}>
+        <AcceptDeclineButtons
+          onAccept={onAccept}
+          onDecline={onDecline}
+        />
       </HStack>
     </HStack>
   );

@@ -19,6 +19,7 @@ import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
+import { InfoBar } from '../components/InfoBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { TaskCard } from '../components/TaskCard';
 import { TaskConversations } from '../components/TaskConversations';
@@ -32,7 +33,7 @@ import {
 } from '../lib/supabaseCalls';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
-import { Profile } from '../types';
+import { Profile, TaskOfferStatus, TaskStatus } from '../types';
 
 // For some reason supabase type safety infers that the join from tasks
 // to profiles is an array, even though it's a single object. The
@@ -51,8 +52,6 @@ export const Task = ({ route, navigation }: Props) => {
   const session = useSession();
 
   const { taskId } = route.params;
-
-  const [busy, setBusy] = useState<boolean>(false);
 
   const taskQuery = useQuery(
     ['GetTask', taskId],
@@ -98,24 +97,48 @@ export const Task = ({ route, navigation }: Props) => {
 
   const offers = taskOffersQuery.data;
 
+  const pendingOffers = offers?.filter((o) => o.status === 'Pending');
+
+  const [volunteerCallBusy, setVolunteerCallBusy] =
+    useState<boolean>(false);
+
   const volunteerForTask = async () => {
-    setBusy(true);
-    const { data, error } = await supabase.rpc('create_task_offer', {
+    setVolunteerCallBusy(true);
+    await supabase.rpc('create_task_offer', {
       p_task_id: taskId,
     });
     taskQuery.refetch();
     taskOffersQuery.refetch();
-    setBusy(false);
+    setVolunteerCallBusy(false);
+  };
+
+  const actionTaskOffer = async (
+    taskOfferId: string,
+    status: TaskOfferStatus
+  ) => {
+    const { data, error } = await supabase.rpc('action_task_offer', {
+      p_task_offer_id: taskOfferId,
+      p_status: status,
+    });
+    if (error) {
+      console.log('Error');
+      console.log(error);
+    }
+    taskQuery.refetch();
+    taskOffersQuery.refetch();
   };
 
   const isMyTask = task?.user_id === session.user?.id;
 
-  const myOffer = offers?.find(
-    (o) => o.user_id === session.user?.id && o.status === 'Pending'
+  const myOffer = pendingOffers?.find(
+    (o) => o.user_id === session.user?.id
   );
 
-  console.log('myOffer');
-  console.log(myOffer);
+  const canVolunteer =
+    task &&
+    (['Partially Assigned', 'Live'] as TaskStatus[]).includes(
+      task?.status
+    );
 
   if (!task) {
     return <Text>Loading...</Text>;
@@ -124,24 +147,18 @@ export const Task = ({ route, navigation }: Props) => {
   return (
     <VStack style={{ flex: 1 }}>
       <BackBar navigation={navigation}></BackBar>
-      {isMyTask && (
-        <HStack
-          ph={20}
-          pv={10}
-          bg={defaultColor[800]}
-          justify="between"
-          items="center"
-          shouldWrapChildren
-        >
-          <Text color={colors.white} size="sm">
-            You created this task
-          </Text>
-          <FontAwesomeIcon
-            icon={faInfoCircle}
-            color={colors.white}
-            size={20}
-          />
-        </HStack>
+      {isMyTask && <InfoBar message="You created this task" />}
+      {task.status === 'Assigned' && (
+        <InfoBar message="This task has already been assigned" />
+      )}
+      {task.status === 'Partially Assigned' && (
+        <InfoBar message="This task still needs more volunteers" />
+      )}
+      {task.status === 'Closed' && (
+        <InfoBar message="Sorry. This is now closed." />
+      )}
+      {task.status === 'Completed' && (
+        <InfoBar message="This task has already been completed" />
       )}
       <ScrollView>
         <TaskCard
@@ -164,9 +181,13 @@ export const Task = ({ route, navigation }: Props) => {
         ></TaskConversations>
         {isMyTask && (
           <TaskOffers
-            offers={offers}
-            onAccept={(offerId: string) => console.log(offerId)}
-            onDecline={(offerId: string) => console.log(offerId)}
+            offers={pendingOffers}
+            onAccept={(offerId: string) =>
+              actionTaskOffer(offerId, 'Accepted')
+            }
+            onDecline={(offerId: string) =>
+              actionTaskOffer(offerId, 'Declined')
+            }
           ></TaskOffers>
         )}
 
@@ -263,11 +284,11 @@ export const Task = ({ route, navigation }: Props) => {
           >
             Message {task.user_full_name}
           </Button>
-          {!myOffer && (
+          {!myOffer && canVolunteer && (
             <Button
               color={colors.gray[500]}
               onPress={() => volunteerForTask()}
-              loading={busy}
+              loading={volunteerCallBusy}
             >
               Volunteer for task
             </Button>

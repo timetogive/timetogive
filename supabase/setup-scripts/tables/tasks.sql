@@ -4,7 +4,10 @@
 
 CREATE TYPE public.task_status AS ENUM (
    'Live', /* The default */
-   'Closed' /* Listing has been closed automatically or by user */
+   'Partially Assigned', /* If the task has more than one person needed */
+   'Assigned', /* Once fully assigned or assigned to a single person task*/
+   'Completed', /* Once completed it is marked completed */
+   'Closed' /* Listing has been closed automatically or manually closed by the user */
 );
 
 CREATE TYPE public.task_reason AS ENUM (

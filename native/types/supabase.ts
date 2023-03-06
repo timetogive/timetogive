@@ -175,6 +175,13 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      action_task_offer: {
+        Args: {
+          p_task_offer_id: string
+          p_status: Database["public"]["Enums"]["task_offer_status"]
+        }
+        Returns: string
+      }
       create_task: {
         Args: {
           reason: Database["public"]["Enums"]["task_reason"]
@@ -263,14 +270,19 @@ export interface Database {
       }
     }
     Enums: {
-      task_offer_status: "Pending" | "Accepted" | "Declined"
+      task_offer_status: "Pending" | "Accepted" | "Declined" | "Cancelled"
       task_reason:
         | "Charity"
         | "Community"
         | "In Need"
         | "Mutual Benefit"
         | "Return For Pledge"
-      task_status: "Live" | "Closed"
+      task_status:
+        | "Live"
+        | "Closed"
+        | "Partially Assigned"
+        | "Assigned"
+        | "Completed"
     }
     CompositeTypes: {
       task_full_info: {
