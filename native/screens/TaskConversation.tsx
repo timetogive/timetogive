@@ -24,78 +24,91 @@ import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
 import { MessageBubble } from '../components/MessageBubble';
 import { MessageRow } from '../components/MessageRow';
+import { OfferAcceptDecline } from '../components/OfferAcceptDecline';
+import { OfferCancel } from '../components/OfferCancel';
 import { Text, translateFontSize } from '../components/Text';
 import { supabase } from '../lib/supabase';
+import {
+  getMessagesSupabaseCall,
+  getPendingOfferSupabaseCall,
+  getProfileSupabaseCall,
+  getTaskSupabaseCall,
+} from '../lib/supabaseCalls';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { MapListMode } from '../types';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
-  'CreateTaskMessage'
+  'TaskConversation'
 >;
 
-const getProfileSupabaseCall = (userId: string) => {
-  const query = supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  return query;
-};
-
-const getMessagesSupabaseCall = (
-  taskId: string,
-  fromUserId: string,
-  toUserId: string
-) => {
-  const query = supabase
-    .from('task_messages')
-    .select('*')
-    .eq('task_id', taskId)
-    .or(`from_user_id.eq.${fromUserId},from_user_id.eq.${toUserId}`)
-    .order('created_datetime', { ascending: true });
-
-  return query;
-};
-
-export const CreateTaskMessage = ({ route, navigation }: Props) => {
+export const TaskConversation = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
 
   console.log(session.user?.full_name);
 
-  const { toUserId, taskId } = route.params;
+  const { userId, taskId } = route.params;
 
   const [message, setMessage] = useState<string | undefined>(
     undefined
   );
 
   const profileQuery = useQuery(
-    ['GetProfile', toUserId],
+    ['GetProfile', userId],
     async () => {
-      const query = getProfileSupabaseCall(toUserId);
+      const query = getProfileSupabaseCall(userId);
       const { data } = await query;
       return data;
     },
-    { enabled: !!toUserId }
+    { enabled: !!userId }
   );
 
-  const toUser = profileQuery.data;
+  const user = profileQuery.data;
+
+  const taskQuery = useQuery(
+    ['GetTask', taskId],
+    async () => {
+      const query = getTaskSupabaseCall(taskId);
+      const { data, error } = await query;
+      return data;
+    },
+    { enabled: !!taskId }
+  );
+
+  const task = taskQuery.data;
+  const isMyTask = task?.user_id === session.user?.id;
+
+  const pendingOfferQuery = useQuery(
+    ['GetPendingOffer', taskId, userId],
+    async () => {
+      const query = getPendingOfferSupabaseCall(
+        taskId,
+        isMyTask ? userId : session.user?.id || ''
+      );
+      const { data, error } = await query;
+      console.log('GetPendingOffer');
+      console.log(data);
+      return data;
+    },
+    { enabled: !!task && !!userId && !!session.user }
+  );
+
+  const pendingOffer = pendingOfferQuery.data;
 
   const messagesQuery = useQuery(
-    ['GetTaskMessages', taskId, toUserId],
+    ['GetTaskConversationMessages', taskId, userId],
     async () => {
       const query = getMessagesSupabaseCall(
         taskId,
         session.user?.id || '',
-        toUserId
+        userId
       );
       const { data } = await query;
       return data;
     },
-    { enabled: !!toUserId }
+    { enabled: !!userId && !!taskId }
   );
 
   const messages = messagesQuery.data;
@@ -106,7 +119,7 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
     }
     const payload = {
       task_id: taskId,
-      to_user_id: toUserId,
+      to_user_id: userId,
       message_text: message,
     };
     console.log(payload);
@@ -127,7 +140,7 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
   return (
     <Stack style={{ flex: 1 }}>
       <BackBar navigation={navigation}>
-        {toUser && (
+        {user && (
           <HStack spacing={10}>
             <Stack
               center
@@ -140,12 +153,12 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
               <SvgUri
                 width="100%"
                 height="100%"
-                uri={toUser.avatar_url}
+                uri={user.avatar_url}
               />
             </Stack>
             <VStack spacing={2} shouldWrapChildren>
               <Text size="xxs" color={colors.white}>
-                James Allchin
+                {user.full_name}
               </Text>
               <HStack items="center" spacing={4}>
                 <FontAwesomeIcon
@@ -173,8 +186,14 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
                 isMine={
                   message.item.from_user_id === session.user?.id
                 }
-                messageText={message.item.message_text}
-              />
+              >
+                <MessageBubble
+                  isMine={
+                    message.item.from_user_id === session.user?.id
+                  }
+                  messageText={message.item.message_text}
+                />
+              </MessageRow>
             )}
             keyExtractor={(item) => item.id}
             style={{
@@ -187,6 +206,16 @@ export const CreateTaskMessage = ({ route, navigation }: Props) => {
               flex: 1,
             }}
           />
+          {isMyTask && pendingOffer && user?.full_name && (
+            <OfferAcceptDecline
+              offererName={user.full_name}
+              onAccept={() => console.log('Accepted')}
+              onDecline={() => console.log('Declined')}
+            />
+          )}
+          {!isMyTask && pendingOffer && (
+            <OfferCancel onCancel={() => console.log('Cancelled')} />
+          )}
           <HStack
             pb={insets.bottom - 5}
             bg={defaultColor[800]}

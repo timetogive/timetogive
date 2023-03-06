@@ -31,7 +31,7 @@ export const TaskOffers = ({
               color={colors.gray[700]}
               weight="semi-bold"
             >
-              Offers to help
+              Volunteers
             </Text>
           </VStack>
           <VStack spacing={10} shouldWrapChildren>
@@ -44,6 +44,7 @@ export const TaskOffers = ({
                 borderBottom={0.5}
                 borderColor={colors.gray[200]}
                 pv={10}
+                key={o.id}
               >
                 <HStack spacing={10}>
                   <Stack

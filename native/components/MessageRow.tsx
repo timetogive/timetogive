@@ -1,14 +1,15 @@
+import { ReactNode } from 'react';
 import { Box, HStack } from 'react-native-flex-layout';
 import colors from '../styles/colors';
 import { MessageBubble } from './MessageBubble';
 import { Text } from './Text';
 
 interface Props {
-  messageText: string;
   isMine: boolean;
+  children: ReactNode;
 }
 
-export const MessageRow = ({ messageText, isMine }: Props) => {
+export const MessageRow = ({ isMine, children }: Props) => {
   return (
     <HStack
       justify={isMine ? 'end' : 'start'}
@@ -16,7 +17,7 @@ export const MessageRow = ({ messageText, isMine }: Props) => {
       ml={isMine ? 50 : 0}
       mr={isMine ? 0 : 50}
     >
-      <MessageBubble isMine={isMine} messageText={messageText} />
+      {children}
     </HStack>
   );
 };

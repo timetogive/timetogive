@@ -25,38 +25,14 @@ import { TaskConversations } from '../components/TaskConversations';
 import { TaskOffers } from '../components/TaskOffers';
 import { Text } from '../components/Text';
 import { supabase } from '../lib';
+import {
+  getTaskSupabaseCall,
+  getConversationsSupabaseCall,
+  getOffersSupabaseCall,
+} from '../lib/supabaseCalls';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { Profile } from '../types';
-
-const getTaskSupabaseCall = (
-  taskId: string,
-  longitude?: number,
-  latitude?: number
-) => {
-  const query = supabase.rpc('get_task', {
-    p_id: taskId,
-    ...(!!longitude && !!latitude
-      ? { p_longitude: longitude, p_latitude: latitude }
-      : undefined),
-  });
-
-  return query;
-};
-
-const getConversationsSupabaseCall = (taskId: string) => {
-  const query = supabase.rpc('get_task_conversations', {
-    p_id: taskId,
-  });
-  return query;
-};
-
-const getOffersSupabaseCall = (taskId: string) => {
-  const query = supabase.rpc('get_task_offers', {
-    p_task_id: taskId,
-  });
-  return query;
-};
 
 // For some reason supabase type safety infers that the join from tasks
 // to profiles is an array, even though it's a single object. The
@@ -127,10 +103,8 @@ export const Task = ({ route, navigation }: Props) => {
     const { data, error } = await supabase.rpc('create_task_offer', {
       p_task_id: taskId,
     });
-    console.log(`error`);
-    console.log(error);
-    console.log(`data`);
-    console.log(data);
+    taskQuery.refetch();
+    taskOffersQuery.refetch();
     setBusy(false);
   };
 
@@ -139,6 +113,9 @@ export const Task = ({ route, navigation }: Props) => {
   const myOffer = offers?.find(
     (o) => o.user_id === session.user?.id && o.status === 'Pending'
   );
+
+  console.log('myOffer');
+  console.log(myOffer);
 
   if (!task) {
     return <Text>Loading...</Text>;
@@ -179,9 +156,9 @@ export const Task = ({ route, navigation }: Props) => {
         <TaskConversations
           conversations={conversations}
           onClickConversation={(userId: string) =>
-            navigation.navigate('CreateTaskMessage', {
+            navigation.navigate('TaskConversation', {
               taskId,
-              toUserId: userId,
+              userId,
             })
           }
         ></TaskConversations>
@@ -278,9 +255,9 @@ export const Task = ({ route, navigation }: Props) => {
         >
           <Button
             onPress={() =>
-              navigation.navigate('CreateTaskMessage', {
+              navigation.navigate('TaskConversation', {
                 taskId,
-                toUserId: task.user_id,
+                userId: task.user_id,
               })
             }
           >

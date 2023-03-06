@@ -3,10 +3,15 @@
 \echo 'Setting up task_offers'
 \echo '---------------------------'
 
+drop table task_offers;
+
+drop type task_offer_status;
+
 CREATE TYPE public.task_offer_status AS ENUM (
    'Pending',
    'Accepted',
-   'Declined'
+   'Declined',
+   'Cancelled'
 );
 
 create table public.task_offers(

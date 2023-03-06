@@ -23,7 +23,7 @@ import { ProfileNotComplete } from './components/ProfileNotComplete';
 import { MissingAvatar } from './screens/MissingAvatar';
 import { CreateTask } from './screens/CreateTask';
 import { TaskReason } from './types';
-import { CreateTaskMessage } from './screens/CreateTaskMessage';
+import { TaskConversation } from './screens/TaskConversation';
 import { MissingProfile } from './screens/MissingProfile';
 import { Task } from './screens/Task';
 
@@ -42,7 +42,7 @@ export type RootStackParamList = {
   SignUp: undefined;
   MissingProfile: undefined;
   CreateTask: { reason: TaskReason };
-  CreateTaskMessage: { taskId: string; toUserId: string };
+  TaskConversation: { taskId: string; userId: string };
   Task: { taskId: string };
 };
 
@@ -85,12 +85,12 @@ export default function App() {
                           component={CreateTask}
                         />
                         <NavStack.Screen
-                          name="CreateTaskMessage"
+                          name="TaskConversation"
                           options={{
-                            title: 'CreateTaskMessage',
+                            title: 'TaskConversation',
                             headerShown: false,
                           }}
-                          component={CreateTaskMessage}
+                          component={TaskConversation}
                         />
                       </NavStack.Navigator>
                     </ProfileIsComplete>
