@@ -5,3 +5,7 @@
 \ir get_task.sql
 \ir get_task_conversations.sql
 \ir create_task_offer.sql
+\ir get_task_offers.sql
+
+-- This tells postgrest to reload the schema
+NOTIFY pgrst, 'reload schema';

@@ -21,6 +21,8 @@ import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { TaskCard } from '../components/TaskCard';
+import { TaskConversations } from '../components/TaskConversations';
+import { TaskOffers } from '../components/TaskOffers';
 import { Text } from '../components/Text';
 import { supabase } from '../lib';
 import { useSession } from '../providers/session';
@@ -45,6 +47,13 @@ const getTaskSupabaseCall = (
 const getConversationsSupabaseCall = (taskId: string) => {
   const query = supabase.rpc('get_task_conversations', {
     p_id: taskId,
+  });
+  return query;
+};
+
+const getOffersSupabaseCall = (taskId: string) => {
+  const query = supabase.rpc('get_task_offers', {
+    p_task_id: taskId,
   });
   return query;
 };
@@ -97,6 +106,22 @@ export const Task = ({ route, navigation }: Props) => {
 
   const conversations = taskConversationsQuery.data;
 
+  const taskOffersQuery = useQuery(
+    ['GetTaskOffers', taskId],
+    async () => {
+      const query = getOffersSupabaseCall(taskId);
+      const { data, error } = await query;
+      console.log(data);
+      if (error) {
+        Alert.alert('Error', error.message);
+      }
+      return data;
+    },
+    { enabled: !!taskId }
+  );
+
+  const offers = taskOffersQuery.data;
+
   const volunteerForTask = async () => {
     setBusy(true);
     const { data, error } = await supabase.rpc('create_task_offer', {
@@ -110,6 +135,10 @@ export const Task = ({ route, navigation }: Props) => {
   };
 
   const isMyTask = task?.user_id === session.user?.id;
+
+  const myOffer = offers?.find(
+    (o) => o.user_id === session.user?.id && o.status === 'Pending'
+  );
 
   if (!task) {
     return <Text>Loading...</Text>;
@@ -147,7 +176,24 @@ export const Task = ({ route, navigation }: Props) => {
           timing={task.timing}
           showDistanceBar={false}
         />
-        {conversations && conversations.length > 0 && (
+        <TaskConversations
+          conversations={conversations}
+          onClickConversation={(userId: string) =>
+            navigation.navigate('CreateTaskMessage', {
+              taskId,
+              toUserId: userId,
+            })
+          }
+        ></TaskConversations>
+        {isMyTask && (
+          <TaskOffers
+            offers={offers}
+            onAccept={(offerId: string) => console.log(offerId)}
+            onDecline={(offerId: string) => console.log(offerId)}
+          ></TaskOffers>
+        )}
+
+        {myOffer && (
           <VStack shouldWrapChildren bg={colors.white} mt={20}>
             <VStack ph={20} pv={10}>
               <Text
@@ -155,85 +201,13 @@ export const Task = ({ route, navigation }: Props) => {
                 color={colors.gray[700]}
                 weight="semi-bold"
               >
-                Conversations on this task
+                You have sent an offer to help. Let's see what comes
+                back.
               </Text>
-            </VStack>
-            <VStack spacing={10} shouldWrapChildren>
-              {conversations.map((c) => (
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate('CreateTaskMessage', {
-                      taskId,
-                      toUserId: c.user_id,
-                    })
-                  }
-                  key={`${c.user_id}`}
-                >
-                  <HStack
-                    justify="between"
-                    shouldWrapChildren
-                    items="center"
-                    ph={25}
-                    borderBottom={0.5}
-                    borderColor={colors.gray[200]}
-                    pv={10}
-                  >
-                    <HStack spacing={10}>
-                      <Stack
-                        center
-                        h={36}
-                        w={36}
-                        bg={colors.blue[100]}
-                        radius={18}
-                        overflow="hidden"
-                      >
-                        <SvgUri
-                          width="100%"
-                          height="100%"
-                          uri={c.avatar_url}
-                        />
-                      </Stack>
-                      <VStack spacing={2} shouldWrapChildren>
-                        <Text size="xxs" color={colors.gray[500]}>
-                          {c.full_name}
-                        </Text>
-                        <HStack items="center" spacing={4}>
-                          <FontAwesomeIcon
-                            icon={faStar}
-                            color={colors.yellow[400]}
-                            size={15}
-                          />
-                          <Text size="xs" color={colors.gray[500]}>
-                            5.0
-                          </Text>
-                        </HStack>
-                      </VStack>
-                    </HStack>
-
-                    <HStack spacing={5}>
-                      <VStack
-                        center
-                        radius={15}
-                        bg={colors.red[500]}
-                        w={25}
-                        h={25}
-                      >
-                        <Text color={colors.white} size="xxs">
-                          {c.my_unread_count}
-                        </Text>
-                      </VStack>
-                      <FontAwesomeIcon
-                        icon={faChevronRight}
-                        size={15}
-                        color={colors.gray[500]}
-                      />
-                    </HStack>
-                  </HStack>
-                </TouchableOpacity>
-              ))}
             </VStack>
           </VStack>
         )}
+
         <VStack shouldWrapChildren bg={colors.white} mt={20}>
           <VStack ph={20} pv={10}>
             <Text
@@ -312,13 +286,15 @@ export const Task = ({ route, navigation }: Props) => {
           >
             Message {task.user_full_name}
           </Button>
-          <Button
-            color={colors.gray[500]}
-            onPress={() => volunteerForTask()}
-            loading={busy}
-          >
-            Volunteer for task
-          </Button>
+          {!myOffer && (
+            <Button
+              color={colors.gray[500]}
+              onPress={() => volunteerForTask()}
+              loading={busy}
+            >
+              Volunteer for task
+            </Button>
+          )}
         </VStack>
       )}
     </VStack>

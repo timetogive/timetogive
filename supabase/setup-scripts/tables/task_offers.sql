@@ -15,7 +15,8 @@ create table public.task_offers(
    task_id uuid references public.tasks not null, -- references a specific task
    task_owner_id uuid references public.profiles not null, -- who owns the task (denormalised for convenience)
    status task_offer_status not null default 'Pending',
-   created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null -- when the offer was made
+   created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null, -- when the offer was made
+   processed_datetime TIMESTAMP WITH TIME ZONE -- when the offer was processed (to accepted to declined)
 );
 
 CREATE UNIQUE INDEX task_offers_limits ON public.task_offers (user_id, task_id, status)

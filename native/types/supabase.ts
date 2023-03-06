@@ -74,6 +74,7 @@ export interface Database {
         Row: {
           created_datetime: string
           id: string
+          processed_datetime: string | null
           status: Database["public"]["Enums"]["task_offer_status"]
           task_id: string
           task_owner_id: string
@@ -82,6 +83,7 @@ export interface Database {
         Insert: {
           created_datetime?: string
           id?: string
+          processed_datetime?: string | null
           status?: Database["public"]["Enums"]["task_offer_status"]
           task_id: string
           task_owner_id: string
@@ -90,6 +92,7 @@ export interface Database {
         Update: {
           created_datetime?: string
           id?: string
+          processed_datetime?: string | null
           status?: Database["public"]["Enums"]["task_offer_status"]
           task_id?: string
           task_owner_id?: string
@@ -222,6 +225,20 @@ export interface Database {
           avatar_url: string
           full_name: string
           my_unread_count: number
+        }[]
+      }
+      get_task_offers: {
+        Args: {
+          p_task_id: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          avatar_url: string
+          full_name: string
+          status: Database["public"]["Enums"]["task_offer_status"]
+          created_datetime: string
+          processed_datetime: string
         }[]
       }
       search_tasks: {
