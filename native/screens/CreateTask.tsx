@@ -15,7 +15,7 @@ import { RootStackParamList } from '../App';
 import { DaysHoursMinutesSheetModal } from '../components/DaysHoursMinutes';
 import { SafeWrapper } from '../components/SafeWrapper';
 import { Text, translateFontSize } from '../components/Text';
-import { reasonToTitle } from '../lib/tasksHelpers';
+import { effortText, reasonToTitle } from '../lib/tasksHelpers';
 import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
 import { min } from 'react-native-reanimated';
@@ -28,19 +28,6 @@ import { Switch } from '@rneui/themed';
 import axios from 'axios';
 import { supabase } from '../lib';
 import { BackBar } from '../components/BackBar';
-
-const effortText = (days: number, hours: number, minutes: number) => {
-  const daysText =
-    days === 0 ? [] : [`${days} ${pluralize('day', days)}`];
-  const hoursText =
-    hours === 0 ? [] : [`${hours} ${pluralize('hour', hours)}`];
-  const minutesText =
-    minutes === 0
-      ? []
-      : [`${minutes} ${pluralize('minute', minutes)}`];
-  const final = [...daysText, ...hoursText, ...minutesText].join(' ');
-  return final;
-};
 
 const integerText = (value: number, word: string) => {
   const text = `${value} ${pluralize(word, value)}`;

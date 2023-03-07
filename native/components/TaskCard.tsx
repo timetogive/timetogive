@@ -24,10 +24,12 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 interface Props {
   taskId: string;
   taskUserId: string;
+  taskUserFullName?: string;
   taskUserAvatarUrl?: string;
   title: string;
   reason: string;
   timing: string;
+  duration: string;
   showDistanceBar: boolean;
   onPress?: () => void;
 }
@@ -36,9 +38,11 @@ export const TaskCard = ({
   taskId,
   taskUserId,
   taskUserAvatarUrl,
+  taskUserFullName,
   title,
   reason,
   timing,
+  duration,
   showDistanceBar,
   onPress,
 }: Props) => {
@@ -147,7 +151,7 @@ export const TaskCard = ({
                 )}
 
                 <VStack spacing={2} shouldWrapChildren>
-                  <Text size="xxs">James Allchin</Text>
+                  <Text size="xxs">{taskUserFullName}</Text>
                   <HStack items="center" spacing={4}>
                     <FontAwesomeIcon
                       icon={faStar}
@@ -160,7 +164,7 @@ export const TaskCard = ({
                   </HStack>
                 </VStack>
               </HStack>
-              <Chip textSize="xxs">20 min task</Chip>
+              <Chip textSize="xxs">{duration}</Chip>
             </HStack>
 
             <HStack

@@ -1,5 +1,7 @@
 -- Search for tasks via a location and radius
 
+drop function public.search_tasks;
+
 create or replace function public.search_tasks(
     p_longitude double precision,
     p_latitude double precision,
@@ -8,10 +10,16 @@ create or replace function public.search_tasks(
     id public.tasks.id%type,
     user_id public.tasks.user_id%type,
     avatar_url public.profiles.avatar_url%type,
+    full_name public.profiles.full_name%type,
     title public.tasks.title%type,
     description public.tasks.description%type,
     reason public.tasks.reason%type,
     timing public.tasks.timing%type,
+    effort_days public.tasks.effort_days%type,
+    effort_hours public.tasks.effort_hours%type,
+    effort_minutes public.tasks.effort_minutes%type,
+    effort_normalised_minutes public.tasks.effort_normalised_minutes%type,
+    effort_people public.tasks.effort_people%type,
     longitude double precision,
     latitude double precision,
     created_datetime public.tasks.created_datetime%type,
@@ -35,10 +43,16 @@ begin
           t.id
         , t.user_id
         , p.avatar_url
+        , p.full_name
         , t.title
         , t.description
         , t.reason
         , t.timing
+        , t.effort_days
+        , t.effort_hours
+        , t.effort_minutes
+        , t.effort_normalised_minutes
+        , t.effort_people
         , ST_X(t.fuzzy_geo_location::geometry) as longitude
         , ST_Y(t.fuzzy_geo_location::geometry) as latitude
         , t.created_datetime

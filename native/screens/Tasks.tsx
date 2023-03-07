@@ -21,6 +21,7 @@ import { RootStackParamList } from '../App';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainTabParamList } from './Main';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { effortText } from '../lib/tasksHelpers';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -111,10 +112,16 @@ export const Tasks = ({ navigation }: Props) => {
               key={task.item.id}
               taskId={task.item.id}
               taskUserId={task.item.user_id}
+              taskUserFullName={task.item.full_name}
               taskUserAvatarUrl={task.item.avatar_url}
               title={task.item.title}
               reason={task.item.reason}
               timing={task.item.timing}
+              duration={effortText(
+                task.item.effort_days,
+                task.item.effort_hours,
+                task.item.effort_minutes
+              )}
               onPress={() =>
                 navigation.navigate('Task', { taskId: task.item.id })
               }

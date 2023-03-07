@@ -24,6 +24,7 @@ import {
   getConversationsSupabaseCall,
   getOffersSupabaseCall,
 } from '../lib/supabaseCalls';
+import { effortText } from '../lib/tasksHelpers';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { Profile, TaskOfferStatus, TaskStatus } from '../types';
@@ -164,10 +165,16 @@ export const Task = ({ route, navigation }: Props) => {
         <TaskCard
           taskId={task.id}
           taskUserId={task.user_id}
+          taskUserFullName={task.user_full_name}
           taskUserAvatarUrl={task.user_avatar_url}
           title={task.title}
           reason={task.reason}
           timing={task.timing}
+          duration={effortText(
+            task.effort_days,
+            task.effort_hours,
+            task.effort_minutes
+          )}
           showDistanceBar={false}
         />
         <TaskConversations

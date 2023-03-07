@@ -5,6 +5,7 @@ import { faHandshake } from '@fortawesome/pro-solid-svg-icons/faHandshake';
 import { faHandHoldingDollar } from '@fortawesome/pro-solid-svg-icons/faHandHoldingDollar';
 import { faMessagesQuestion } from '@fortawesome/pro-solid-svg-icons/faMessagesQuestion';
 import { TaskReason } from '../types';
+import pluralize from 'pluralize';
 
 export const getTtgIcon = (reason: string) => {
   switch (reason) {
@@ -40,4 +41,21 @@ export const reasonToTitle = (reason: TaskReason) => {
     default:
       return 'Task';
   }
+};
+
+export const effortText = (
+  days: number,
+  hours: number,
+  minutes: number
+) => {
+  const daysText =
+    days === 0 ? [] : [`${days} ${pluralize('day', days)}`];
+  const hoursText =
+    hours === 0 ? [] : [`${hours} ${pluralize('hour', hours)}`];
+  const minutesText =
+    minutes === 0
+      ? []
+      : [`${minutes} ${pluralize('minute', minutes)}`];
+  const final = [...daysText, ...hoursText, ...minutesText].join(' ');
+  return final;
 };

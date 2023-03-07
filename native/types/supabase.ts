@@ -258,10 +258,16 @@ export interface Database {
           id: string
           user_id: string
           avatar_url: string
+          full_name: string
           title: string
           description: string
           reason: Database["public"]["Enums"]["task_reason"]
           timing: string
+          effort_days: number
+          effort_hours: number
+          effort_minutes: number
+          effort_normalised_minutes: number
+          effort_people: number
           longitude: number
           latitude: number
           created_datetime: string
