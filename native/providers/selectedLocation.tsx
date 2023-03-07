@@ -57,7 +57,7 @@ const defaultSelectedLocation: SelectedLocation = {
     ...defaultLongLat,
     name: 'Chesham',
   },
-  distance: 10000,
+  distance: 100000,
 };
 
 const LocationContext = createContext<Context>({
@@ -145,7 +145,7 @@ export const LocationProvider = ({
     if (status === 'granted') {
       setSelectedLocation({
         mode: SelectedLocationMode.Current,
-        distance: 10000,
+        distance: 100000,
       });
       return;
     }

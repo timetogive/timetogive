@@ -48,7 +48,8 @@ begin
     ,      profiles p
     where  tof.task_id = p_task_id
     and    tof.user_id = p.id
-    and    (l_is_owner = true or tof.user_id = l_auth_user_id);
+    and    (l_is_owner = true or tof.user_id = l_auth_user_id)
+    order  by tof.created_datetime desc;
 
 end;
 $$;

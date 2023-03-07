@@ -82,17 +82,19 @@ export const TaskConversations = ({
                   </HStack>
 
                   <HStack spacing={5}>
-                    <VStack
-                      center
-                      radius={15}
-                      bg={colors.red[500]}
-                      w={25}
-                      h={25}
-                    >
-                      <Text color={colors.white} size="xxs">
-                        {c.my_unread_count}
-                      </Text>
-                    </VStack>
+                    {c.my_unread_count > 0 && (
+                      <VStack
+                        center
+                        radius={15}
+                        bg={colors.red[500]}
+                        w={25}
+                        h={25}
+                      >
+                        <Text color={colors.white} size="xxs">
+                          {c.my_unread_count}
+                        </Text>
+                      </VStack>
+                    )}
                     <FontAwesomeIcon
                       icon={faChevronRight}
                       size={15}

@@ -1,18 +1,11 @@
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import {
-  faChevronRight,
-  faInfo,
-  faInfoCircle,
-  faStar,
-} from '@fortawesome/sharp-solid-svg-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { Stack, HStack, VStack } from 'react-native-flex-layout';
+import { Stack, VStack } from 'react-native-flex-layout';
 import {
   ScrollView,
-  TouchableOpacity,
+  RefreshControl,
 } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
@@ -34,16 +27,6 @@ import {
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { Profile, TaskOfferStatus, TaskStatus } from '../types';
-
-// For some reason supabase type safety infers that the join from tasks
-// to profiles is an array, even though it's a single object. The
-// one-to-one relationship is not being detected (foreign key to primary key).
-export function asObj<T>(object: any): T {
-  if (Array.isArray(object)) {
-    return object[0] as T;
-  }
-  return object as T;
-}
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 
@@ -70,10 +53,6 @@ export const Task = ({ route, navigation }: Props) => {
     async () => {
       const query = getConversationsSupabaseCall(taskId);
       const { data, error } = await query;
-      console.log(data);
-      if (error) {
-        Alert.alert('Error', error.message);
-      }
       return data;
     },
     { enabled: !!taskId }
@@ -107,8 +86,7 @@ export const Task = ({ route, navigation }: Props) => {
     await supabase.rpc('create_task_offer', {
       p_task_id: taskId,
     });
-    taskQuery.refetch();
-    taskOffersQuery.refetch();
+    await reload();
     setVolunteerCallBusy(false);
   };
 
@@ -124,21 +102,31 @@ export const Task = ({ route, navigation }: Props) => {
       console.log('Error');
       console.log(error);
     }
-    taskQuery.refetch();
-    taskOffersQuery.refetch();
+    await reload();
+  };
+
+  const reload = async () => {
+    await taskQuery.refetch();
+    await taskOffersQuery.refetch();
+    await taskConversationsQuery.refetch();
   };
 
   const isMyTask = task?.user_id === session.user?.id;
 
-  const myOffer = pendingOffers?.find(
-    (o) => o.user_id === session.user?.id
-  );
+  const myOffer = offers?.find((o) => o.user_id === session.user?.id);
 
-  const canVolunteer =
+  const taskIsOpen =
     task &&
     (['Partially Assigned', 'Live'] as TaskStatus[]).includes(
       task?.status
     );
+
+  const canVolunteer =
+    !isMyTask &&
+    (!myOffer ||
+      myOffer?.status === 'Cancelled' ||
+      myOffer?.status === 'Declined') &&
+    taskIsOpen;
 
   if (!task) {
     return <Text>Loading...</Text>;
@@ -149,18 +137,30 @@ export const Task = ({ route, navigation }: Props) => {
       <BackBar navigation={navigation}></BackBar>
       {isMyTask && <InfoBar message="You created this task" />}
       {task.status === 'Assigned' && (
-        <InfoBar message="This task has already been assigned" />
+        <InfoBar message="This task has been assigned" />
       )}
       {task.status === 'Partially Assigned' && (
         <InfoBar message="This task still needs more volunteers" />
       )}
       {task.status === 'Closed' && (
-        <InfoBar message="Sorry. This is now closed." />
+        <InfoBar message="This task is now closed" />
       )}
       {task.status === 'Completed' && (
-        <InfoBar message="This task has already been completed" />
+        <InfoBar message="This task has been completed" />
       )}
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={
+              taskQuery.isLoading ||
+              taskConversationsQuery.isLoading ||
+              taskOffersQuery.isLoading
+            }
+            onRefresh={reload}
+            title="Pull to refresh"
+          />
+        }
+      >
         <TaskCard
           taskId={task.id}
           taskUserId={task.user_id}
@@ -199,8 +199,12 @@ export const Task = ({ route, navigation }: Props) => {
                 color={colors.gray[700]}
                 weight="semi-bold"
               >
-                You have sent an offer to help. Let's see what comes
-                back.
+                {myOffer.status === 'Pending' &&
+                  `You have sent an offer to volunteer. Let's see what comes back.`}
+                {myOffer.status === 'Accepted' &&
+                  `Woohoo! Your offer to volunteer has been accepted.`}
+                {myOffer.status === 'Declined' &&
+                  `Your offer to volunteer has very kindly been declined. You can offer to volunteer again, or message ${task.user_full_name} if you are still keen.`}
               </Text>
             </VStack>
           </VStack>
@@ -284,7 +288,7 @@ export const Task = ({ route, navigation }: Props) => {
           >
             Message {task.user_full_name}
           </Button>
-          {!myOffer && canVolunteer && (
+          {canVolunteer && (
             <Button
               color={colors.gray[500]}
               onPress={() => volunteerForTask()}
