@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Input } from '@rneui/themed';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -24,8 +24,8 @@ import { RootStackParamList } from '../App';
 import { BackBar } from '../components/BackBar';
 import { MessageBubble } from '../components/MessageBubble';
 import { MessageRow } from '../components/MessageRow';
-import { OfferAcceptDecline } from '../components/OfferAcceptDecline';
-import { OfferCancel } from '../components/OfferCancel';
+import { AcceptDeclineConversationBar } from '../components/AcceptDeclineConversationBar';
+import { CancelConversationBar } from '../components/CancelConversationBar';
 import { Text, translateFontSize } from '../components/Text';
 import { supabase } from '../lib/supabase';
 import {
@@ -46,14 +46,18 @@ type Props = NativeStackScreenProps<
 export const TaskConversation = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
-
-  console.log(session.user?.full_name);
-
-  const { userId, taskId } = route.params;
-
+  const [messages, setMessages] = useState<
+    {
+      from_user_id: string;
+      to_user_id: string;
+      message_text: string;
+    }[]
+  >([]);
   const [message, setMessage] = useState<string | undefined>(
     undefined
   );
+
+  const { userId, taskId } = route.params;
 
   const profileQuery = useQuery(
     ['GetProfile', userId],
@@ -111,22 +115,104 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     { enabled: !!userId && !!taskId }
   );
 
-  const messages = messagesQuery.data;
+  useEffect(() => {
+    if (messagesQuery.data) {
+      setMessages(messagesQuery.data);
+    }
+  }, [messagesQuery.data]);
+
+  useEffect(() => {
+    console.log('messages changed');
+    console.log(messages);
+    const markRead = async () => {
+      // When the message list gets updated mark them as read
+      const { data, error } = await supabase.rpc(
+        'mark_task_conversation_read',
+        {
+          p_task_id: taskId,
+          p_user_id: userId,
+        }
+      );
+      console.log('data', data);
+      console.log('error', error);
+    };
+    markRead();
+  }, [messages]);
+
+  const myChannel = supabase.channel(`${taskId}-${session.user?.id}`);
+  const theirChannel = supabase.channel(`${taskId}-${userId}`);
+
+  // Setup realtime channels
+  useEffect(() => {
+    console.log('Calling useEffect');
+    myChannel
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Subscribed to my channel');
+        }
+      })
+      .on('broadcast', { event: 'message' }, ({ payload }: any) => {
+        console.log('Realtime update received');
+        const newMessages = messages.concat(payload);
+        setMessages(newMessages);
+      });
+    theirChannel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log('Subscribed to their channel');
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  useEffect(() => {
+    return () => {
+      myChannel.unsubscribe();
+      theirChannel.unsubscribe();
+      supabase.removeChannel(myChannel);
+      supabase.removeChannel(theirChannel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const sendMessage = async () => {
     if (!message) {
       return;
     }
-    const payload = {
-      task_id: taskId,
-      to_user_id: userId,
-      message_text: message,
-    };
-    console.log(payload);
+
+    // Send message via API (so it persists in the DB)
     const { error, data } = await supabase.rpc(
       'create_task_message',
-      payload
+      {
+        task_id: taskId,
+        to_user_id: userId,
+        message_text: message,
+      }
     );
+
+    // Pop a message into messages to avoid refetching
+    setMessages(
+      messages.concat({
+        to_user_id: userId,
+        from_user_id: session.user?.id || '',
+        message_text: message,
+      })
+    );
+
+    // Also broadcast the message via the realtime
+    // channel so that the other user gets it (if online)
+    theirChannel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        theirChannel.send({
+          type: 'broadcast',
+          event: 'message',
+          payload: {
+            to_user_id: userId,
+            from_user_id: session.user?.id || '',
+            message_text: message,
+          },
+        });
+      }
+    });
 
     if (error) {
       Alert.alert('Error', error.message);
@@ -134,7 +220,6 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     }
 
     setMessage(undefined);
-    messagesQuery.refetch();
   };
 
   return (
@@ -195,7 +280,9 @@ export const TaskConversation = ({ route, navigation }: Props) => {
                 />
               </MessageRow>
             )}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, i) =>
+              `${item.from_user_id}${item.to_user_id}${i}`
+            }
             style={{
               backgroundColor: colors.white,
               paddingTop: 10,
@@ -207,14 +294,16 @@ export const TaskConversation = ({ route, navigation }: Props) => {
             }}
           />
           {isMyTask && pendingOffer && user?.full_name && (
-            <OfferAcceptDecline
+            <AcceptDeclineConversationBar
               offererName={user.full_name}
               onAccept={() => console.log('Accepted')}
               onDecline={() => console.log('Declined')}
             />
           )}
           {!isMyTask && pendingOffer && (
-            <OfferCancel onCancel={() => console.log('Cancelled')} />
+            <CancelConversationBar
+              onCancel={() => console.log('Cancelled')}
+            />
           )}
           <HStack
             pb={insets.bottom - 5}

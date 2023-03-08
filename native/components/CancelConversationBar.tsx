@@ -7,20 +7,13 @@ import {
 import { Button } from '@rneui/themed';
 import { HStack, VStack } from 'react-native-flex-layout';
 import colors from '../styles/colors';
-import { AcceptDeclineButtons } from './AcceptDeclineButtons';
 import { Text } from './Text';
 
 interface Props {
-  offererName: string;
-  onAccept: () => void;
-  onDecline: () => void;
+  onCancel: () => void;
 }
 
-export const OfferAcceptDecline = ({
-  offererName,
-  onAccept,
-  onDecline,
-}: Props) => {
+export const CancelConversationBar = ({ onCancel }: Props) => {
   return (
     <HStack
       pv={10}
@@ -37,14 +30,21 @@ export const OfferAcceptDecline = ({
       >
         <Text size="sm">🎉</Text>
         <Text size="sm" color={colors.white}>
-          {offererName} has volunteered
+          You have volunteered for this task
         </Text>
       </HStack>
-      <HStack justify="end" style={{ flex: 1 }}>
-        <AcceptDeclineButtons
-          onAccept={onAccept}
-          onDecline={onDecline}
-        />
+      <HStack justify="end">
+        <HStack spacing={5}>
+          <Button
+            color={colors.red[700]}
+            onPress={() => onCancel()}
+            size="md"
+          >
+            <Text size="xs" color={colors.white}>
+              Cancel
+            </Text>
+          </Button>
+        </HStack>
       </HStack>
     </HStack>
   );

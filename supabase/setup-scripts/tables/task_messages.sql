@@ -3,13 +3,11 @@
 \echo 'Setting up task_messages'
 \echo '---------------------------'
 
--- These are one to one messages between the task owner and the enquirer
-
 create table public.task_messages(
    id uuid not null primary key default uuid_generate_v4(),
    task_id uuid references public.tasks not null, -- references a specific task
    from_user_id uuid references public.profiles not null, -- who sent the message
-   to_user_id uuid references public.profiles not null, -- who sent the message
+   to_user_id uuid references public.profiles not null, -- who received the message
    is_read boolean not null default false, -- has the message been read
    message_text text not null, -- the message
    created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null -- when the task was created

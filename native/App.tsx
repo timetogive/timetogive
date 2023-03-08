@@ -26,15 +26,7 @@ import { TaskReason } from './types';
 import { TaskConversation } from './screens/TaskConversation';
 import { MissingProfile } from './screens/MissingProfile';
 import { Task } from './screens/Task';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-    },
-  },
-});
+import { queryClient } from './lib/queryClient';
 
 export type RootStackParamList = {
   Main: undefined;

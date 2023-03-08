@@ -63,7 +63,7 @@ export const getMessagesSupabaseCall = (
 ) => {
   const query = supabase
     .from('task_messages')
-    .select('*')
+    .select('from_user_id, to_user_id, message_text')
     .eq('task_id', taskId)
     .or(`from_user_id.eq.${authUserId},from_user_id.eq.${userId}`)
     .order('created_datetime', { ascending: true });

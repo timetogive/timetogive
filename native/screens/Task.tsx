@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { Stack, VStack } from 'react-native-flex-layout';
+import { HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
   ScrollView,
   RefreshControl,
@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
+import { AcceptDeclineMenuBottomSheetModal } from '../components/AcceptDeclineMenu';
 import { BackBar } from '../components/BackBar';
 import { InfoBar } from '../components/InfoBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
@@ -34,6 +35,11 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 export const Task = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
+  const [acceptDeclineModalOpen, setAcceptDeclineModalOpen] =
+    useState<boolean>(false);
+  const [selectedOffer, setSelectedOffer] = useState<
+    { offerId: string; userId: string; fullName: string } | undefined
+  >(undefined);
 
   const { taskId } = route.params;
 
@@ -91,6 +97,15 @@ export const Task = ({ route, navigation }: Props) => {
     setVolunteerCallBusy(false);
   };
 
+  const offerPressed = (
+    offerId: string,
+    userId: string,
+    fullName: string
+  ) => {
+    setSelectedOffer({ offerId, userId, fullName });
+    setAcceptDeclineModalOpen(true);
+  };
+
   const actionTaskOffer = async (
     taskOfferId: string,
     status: TaskOfferStatus
@@ -103,6 +118,7 @@ export const Task = ({ route, navigation }: Props) => {
       console.log('Error');
       console.log(error);
     }
+    setAcceptDeclineModalOpen(false);
     await reload();
   };
 
@@ -134,71 +150,112 @@ export const Task = ({ route, navigation }: Props) => {
   }
 
   return (
-    <VStack style={{ flex: 1 }}>
-      <BackBar navigation={navigation}></BackBar>
-      {isMyTask && <InfoBar message="You created this task" />}
-      {task.status === 'Assigned' && (
-        <InfoBar message="This task has been assigned" />
-      )}
-      {task.status === 'Partially Assigned' && (
-        <InfoBar message="This task still needs more volunteers" />
-      )}
-      {task.status === 'Closed' && (
-        <InfoBar message="This task is now closed" />
-      )}
-      {task.status === 'Completed' && (
-        <InfoBar message="This task has been completed" />
-      )}
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={
-              taskQuery.isLoading ||
-              taskConversationsQuery.isLoading ||
-              taskOffersQuery.isLoading
-            }
-            onRefresh={reload}
-            title="Pull to refresh"
-          />
-        }
-      >
-        <TaskCard
-          taskId={task.id}
-          taskUserId={task.user_id}
-          taskUserFullName={task.user_full_name}
-          taskUserAvatarUrl={task.user_avatar_url}
-          title={task.title}
-          reason={task.reason}
-          timing={task.timing}
-          duration={effortText(
-            task.effort_days,
-            task.effort_hours,
-            task.effort_minutes
-          )}
-          showDistanceBar={false}
-        />
-        <TaskConversations
-          conversations={conversations}
-          onClickConversation={(userId: string) =>
-            navigation.navigate('TaskConversation', {
-              taskId,
-              userId,
-            })
-          }
-        ></TaskConversations>
-        {isMyTask && (
-          <TaskOffers
-            offers={pendingOffers}
-            onAccept={(offerId: string) =>
-              actionTaskOffer(offerId, 'Accepted')
-            }
-            onDecline={(offerId: string) =>
-              actionTaskOffer(offerId, 'Declined')
-            }
-          ></TaskOffers>
+    <>
+      <VStack style={{ flex: 1 }}>
+        <BackBar navigation={navigation}></BackBar>
+        {isMyTask && <InfoBar message="You created this task" />}
+        {task.status === 'Assigned' && (
+          <InfoBar message="This task has been assigned" />
         )}
+        {task.status === 'Partially Assigned' && (
+          <InfoBar message="This task still needs more volunteers" />
+        )}
+        {task.status === 'Closed' && (
+          <InfoBar message="This task is now closed" />
+        )}
+        {task.status === 'Completed' && (
+          <InfoBar message="This task has been completed" />
+        )}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={
+                taskQuery.isLoading ||
+                taskConversationsQuery.isLoading ||
+                taskOffersQuery.isLoading
+              }
+              onRefresh={reload}
+              title="Pull to refresh"
+            />
+          }
+        >
+          <TaskCard
+            taskId={task.id}
+            taskUserId={task.user_id}
+            taskUserFullName={task.user_full_name}
+            taskUserAvatarUrl={task.user_avatar_url}
+            title={task.title}
+            reason={task.reason}
+            timing={task.timing}
+            duration={effortText(
+              task.effort_days,
+              task.effort_hours,
+              task.effort_minutes
+            )}
+            showDistanceBar={false}
+          />
+          <TaskConversations
+            conversations={conversations}
+            onClickConversation={(userId: string) =>
+              navigation.navigate('TaskConversation', {
+                taskId,
+                userId,
+              })
+            }
+          ></TaskConversations>
+          {isMyTask && (
+            <TaskOffers
+              offers={offers}
+              onOfferPressed={offerPressed}
+            ></TaskOffers>
+          )}
 
-        {myOffer && (
+          {myOffer && (
+            <VStack shouldWrapChildren bg={colors.white} mt={20}>
+              <VStack ph={20} pv={10}>
+                {myOffer.status === 'Pending' && (
+                  <Text
+                    size="sm"
+                    color={colors.gray[700]}
+                    weight="semi-bold"
+                  >
+                    You have sent an offer to volunteer. Let's see
+                    what comes back.
+                  </Text>
+                )}
+                {myOffer.status === 'Accepted' && (
+                  <HStack
+                    items="center"
+                    spacing={5}
+                    shouldWrapChildren
+                  >
+                    <Text size="sm">🎉</Text>
+                    <Text
+                      size="sm"
+                      color={colors.gray[700]}
+                      weight="semi-bold"
+                    >
+                      Woohoo! Your offer to volunteer has been
+                      accepted.
+                    </Text>
+                  </HStack>
+                )}
+                {myOffer.status === 'Declined' && (
+                  <Text
+                    size="sm"
+                    color={colors.gray[700]}
+                    weight="semi-bold"
+                  >
+                    Your offer to volunteer has very kindly been
+                    declined. You can offer to volunteer again, or
+                    message ${task.user_full_name} if you are still
+                    keen.
+                  </Text>
+                )}
+              </VStack>
+            </VStack>
+          )}
+
           <VStack shouldWrapChildren bg={colors.white} mt={20}>
             <VStack ph={20} pv={10}>
               <Text
@@ -206,106 +263,109 @@ export const Task = ({ route, navigation }: Props) => {
                 color={colors.gray[700]}
                 weight="semi-bold"
               >
-                {myOffer.status === 'Pending' &&
-                  `You have sent an offer to volunteer. Let's see what comes back.`}
-                {myOffer.status === 'Accepted' &&
-                  `Woohoo! Your offer to volunteer has been accepted.`}
-                {myOffer.status === 'Declined' &&
-                  `Your offer to volunteer has very kindly been declined. You can offer to volunteer again, or message ${task.user_full_name} if you are still keen.`}
+                Full details
+              </Text>
+            </VStack>
+            <VStack ph={20} pv={10}>
+              <Text size="sm" color={colors.gray[700]}>
+                {task.description}
               </Text>
             </VStack>
           </VStack>
-        )}
-
-        <VStack shouldWrapChildren bg={colors.white} mt={20}>
-          <VStack ph={20} pv={10}>
-            <Text
-              size="sm"
-              color={colors.gray[700]}
-              weight="semi-bold"
-            >
-              Full details
-            </Text>
+          <VStack shouldWrapChildren bg={colors.white} mt={20}>
+            <VStack ph={20} pv={10}>
+              <Text
+                size="sm"
+                color={colors.gray[700]}
+                weight="semi-bold"
+              >
+                Timing
+              </Text>
+            </VStack>
+            <VStack ph={20} pv={10}>
+              <Text size="sm" color={colors.gray[700]}>
+                {task.timing}
+              </Text>
+            </VStack>
           </VStack>
-          <VStack ph={20} pv={10}>
-            <Text size="sm" color={colors.gray[700]}>
-              {task.description}
-            </Text>
-          </VStack>
-        </VStack>
-        <VStack shouldWrapChildren bg={colors.white} mt={20}>
-          <VStack ph={20} pv={10}>
-            <Text
-              size="sm"
-              color={colors.gray[700]}
-              weight="semi-bold"
-            >
-              Timing
-            </Text>
-          </VStack>
-          <VStack ph={20} pv={10}>
-            <Text size="sm" color={colors.gray[700]}>
-              {task.timing}
-            </Text>
-          </VStack>
-        </VStack>
-        <VStack shouldWrapChildren bg={colors.white} mt={20}>
-          <VStack ph={20} pv={10}>
-            <Text
-              size="sm"
-              color={colors.gray[700]}
-              weight="semi-bold"
-            >
-              Location
-            </Text>
-          </VStack>
-          <Stack ph={20}>
-            <Stack
-              minH={200}
-              pointerEvents="box-only"
-              radius={20}
-              overflow="hidden"
-            >
-              <StaticMapWithMarker
-                longLat={{
-                  longitude: task.longitude,
-                  latitude: task.latitude,
-                }}
-              />
+          <VStack shouldWrapChildren bg={colors.white} mt={20}>
+            <VStack ph={20} pv={10}>
+              <Text
+                size="sm"
+                color={colors.gray[700]}
+                weight="semi-bold"
+              >
+                Location
+              </Text>
+            </VStack>
+            <Stack ph={20}>
+              <Stack
+                minH={200}
+                pointerEvents="box-only"
+                radius={20}
+                overflow="hidden"
+              >
+                <StaticMapWithMarker
+                  longLat={{
+                    longitude: task.longitude,
+                    latitude: task.latitude,
+                  }}
+                />
+              </Stack>
             </Stack>
-          </Stack>
-        </VStack>
-      </ScrollView>
-      {!isMyTask && (
-        <VStack
-          position="absolute"
-          bottom={insets.bottom + 10}
-          left={insets.left}
-          right={insets.right}
-          ph={15}
-          spacing={10}
-        >
-          <Button
-            onPress={() =>
-              navigation.navigate('TaskConversation', {
-                taskId,
-                userId: task.user_id,
-              })
-            }
+          </VStack>
+        </ScrollView>
+        {!isMyTask && (
+          <VStack
+            position="absolute"
+            bottom={insets.bottom + 10}
+            left={insets.left}
+            right={insets.right}
+            ph={15}
+            spacing={10}
           >
-            Message {task.user_full_name}
-          </Button>
-          {canVolunteer && (
             <Button
-              color={colors.gray[500]}
-              onPress={() => volunteerForTask()}
-              loading={volunteerCallBusy}
+              onPress={() =>
+                navigation.navigate('TaskConversation', {
+                  taskId,
+                  userId: task.user_id,
+                })
+              }
             >
-              Volunteer for task
+              Message {task.user_full_name}
             </Button>
-          )}
-        </VStack>
-      )}
-    </VStack>
+            {canVolunteer && (
+              <Button
+                color={colors.gray[500]}
+                onPress={() => volunteerForTask()}
+                loading={volunteerCallBusy}
+              >
+                Volunteer for task
+              </Button>
+            )}
+          </VStack>
+        )}
+      </VStack>
+      <AcceptDeclineMenuBottomSheetModal
+        isOpen={acceptDeclineModalOpen}
+        onClose={() => setAcceptDeclineModalOpen(false)}
+        fullName={selectedOffer?.fullName}
+        onAccept={() =>
+          selectedOffer &&
+          actionTaskOffer(selectedOffer.offerId, 'Accepted')
+        }
+        onDecline={() =>
+          selectedOffer &&
+          actionTaskOffer(selectedOffer.offerId, 'Declined')
+        }
+        onMessage={() =>
+          selectedOffer &&
+          navigation.navigate('TaskConversation', {
+            taskId,
+            userId: selectedOffer?.userId,
+          })
+        }
+      />
+    </>
   );
 };

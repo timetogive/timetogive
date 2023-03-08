@@ -248,6 +248,13 @@ export interface Database {
           processed_datetime: string
         }[]
       }
+      mark_task_conversation_read: {
+        Args: {
+          p_task_id: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       search_tasks: {
         Args: {
           p_longitude: number
