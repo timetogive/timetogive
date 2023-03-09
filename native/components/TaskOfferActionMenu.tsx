@@ -36,34 +36,34 @@ export const TaskOfferActionMenu = ({
   onMessage,
 }: TaskOfferActionMenuProps) => {
   return (
-    <VStack spacing={10}>
+    <VStack spacing={10} shouldWrapChildren>
       {offerStatus === 'Pending' && (
-        <>
-          <Button onPress={() => onAccept && onAccept()} size="md">
-            <HStack items="center" spacing={10} shouldWrapChildren>
-              <Text size="xs" color={colors.white}>
-                Accept offer
-              </Text>
-              <FontAwesomeIcon
-                icon={faCircleCheck}
-                color={colors.white}
-                size={17}
-              />
-            </HStack>
-          </Button>
-          <Button onPress={() => onDecline && onDecline()} size="md">
-            <HStack items="center" spacing={10} shouldWrapChildren>
-              <Text size="xs" color={colors.white}>
-                Decline offer
-              </Text>
-              <FontAwesomeIcon
-                icon={faCircleXmark}
-                color={colors.white}
-                size={17}
-              />
-            </HStack>
-          </Button>
-        </>
+        <Button onPress={() => onAccept && onAccept()} size="md">
+          <HStack items="center" spacing={10} shouldWrapChildren>
+            <Text size="xs" color={colors.white}>
+              Accept offer
+            </Text>
+            <FontAwesomeIcon
+              icon={faCircleCheck}
+              color={colors.white}
+              size={17}
+            />
+          </HStack>
+        </Button>
+      )}
+      {offerStatus === 'Pending' && (
+        <Button onPress={() => onDecline && onDecline()} size="md">
+          <HStack items="center" spacing={10} shouldWrapChildren>
+            <Text size="xs" color={colors.white}>
+              Decline offer
+            </Text>
+            <FontAwesomeIcon
+              icon={faCircleXmark}
+              color={colors.white}
+              size={17}
+            />
+          </HStack>
+        </Button>
       )}
       <Button onPress={() => onMessage && onMessage()} size="md">
         <HStack items="center" spacing={10} shouldWrapChildren>

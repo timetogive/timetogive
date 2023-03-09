@@ -99,6 +99,7 @@ export const TasksMap = ({
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         region={mapRegion}
+        showsUserLocation
       >
         {tasks.map((task: any) => (
           <MapMarker
