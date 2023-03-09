@@ -48,7 +48,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
 
   const goCurrentLocation = async () => {
     // Otherwise go and get the current location
-    const currentLongLat = await selectedLocation.getCurrentLongLat();
+    const currentLongLat = await selectedLocation.getLiveLongLat();
 
     const region = {
       latitude: currentLongLat.latitude,
@@ -103,7 +103,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
       }
       // See if we can use the current location
       const canAccessCurrentLocation =
-        await selectedLocation.canAccessCurrentLocation();
+        await selectedLocation.canAccessLiveLocation();
       // No access to the current location then use a default
       if (!canAccessCurrentLocation) {
         setRegionAndTracker({
@@ -114,8 +114,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         return;
       }
       // Otherwise go and get the current location
-      const currentLongLat =
-        await selectedLocation.getCurrentLongLat();
+      const currentLongLat = await selectedLocation.getLiveLongLat();
       setRegionAndTracker({
         latitude: currentLongLat.latitude,
         longitude: currentLongLat.longitude,

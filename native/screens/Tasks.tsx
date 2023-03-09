@@ -22,6 +22,7 @@ import { MainTabParamList } from './Main';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { effortText } from '../lib/tasksHelpers';
 import { TaskCardWithDistanceBar } from '../components/TaskCardWithDistanceBar';
+import { getDistance } from '../lib';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -71,7 +72,7 @@ export const Tasks = ({ navigation }: Props) => {
         pageParam,
         ll.longitude,
         ll.latitude,
-        location.selectedLocation.distance
+        getDistance(location.selectedLocation)
       );
       const { data, count } = await query;
 

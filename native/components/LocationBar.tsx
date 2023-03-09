@@ -17,6 +17,7 @@ import colors, { defaultColor } from '../styles/colors';
 import { ButtonGroup } from '@rneui/themed';
 import { locationText } from '../lib';
 import { MapListMode } from '../types';
+import { faLocationArrow } from '@fortawesome/sharp-solid-svg-icons';
 
 interface Props {
   mode: MapListMode;
@@ -106,7 +107,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
             </Stack>
             <Stack>
               <FontAwesomeIcon
-                icon={faAngleDown}
+                icon={faLocationArrow}
                 size={14}
                 color={defaultColor[500]}
               ></FontAwesomeIcon>

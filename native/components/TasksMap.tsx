@@ -10,16 +10,21 @@ import MapView, {
   Marker,
   LatLng,
 } from 'react-native-maps';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { LongLat } from '../providers/selectedLocation';
 import React from 'react';
-import { Box, VStack } from 'react-native-flex-layout';
-import { faLocationPin } from '@fortawesome/sharp-solid-svg-icons';
+import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
+import {
+  faLocationArrow,
+  faLocationPin,
+} from '@fortawesome/sharp-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import colors from '../styles/colors';
+import colors, { defaultColor } from '../styles/colors';
 import { effortText, getTtgIcon } from '../lib/tasksHelpers';
 import { Text } from '../components/Text';
 import { TaskCard } from './TaskCard';
+import { Button } from '@rneui/themed';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -60,14 +65,12 @@ const MapMarker = memo(
 interface TasksMapProps {
   tasks: SearchTasksResult;
   longLat: LongLat;
-  distance: number;
   onTaskPressed: (taskId: string) => void;
 }
 
 export const TasksMap = ({
   tasks,
   longLat,
-  distance,
   onTaskPressed,
 }: TasksMapProps) => {
   // Map state
@@ -78,10 +81,15 @@ export const TasksMap = ({
     longitudeDelta: 0.0421,
   });
 
+  const mapRef = useRef<MapView>(null);
   const [selectedTask, setSelectedTask] = useState<
     SearchTasksResultItem | undefined
   >(undefined);
 
+  const [mapMoved, setMapMoved] = useState<boolean>(false);
+
+  // The location might get changed from up
+  // the component tree, so we need to update
   useEffect(() => {
     (async () => {
       setMapRegion({
@@ -96,9 +104,11 @@ export const TasksMap = ({
   return (
     <Box style={{ flex: 1 }}>
       <MapView
+        ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         region={mapRegion}
+        onTouchEnd={() => setMapMoved(true)}
         showsUserLocation
       >
         {tasks.map((task: any) => (
@@ -111,6 +121,31 @@ export const TasksMap = ({
           />
         ))}
       </MapView>
+      {mapMoved && (
+        <VStack
+          items="center"
+          position="absolute"
+          bottom={20}
+          w="100%"
+        >
+          <TouchableOpacity>
+            <Stack
+              ph={15}
+              radius={50}
+              style={{ backgroundColor: colors.pink[700] }}
+              justify="center"
+              spacing={10}
+              h={30}
+            >
+              <Stack>
+                <Text size="xs" color={colors.white}>
+                  Search This Area
+                </Text>
+              </Stack>
+            </Stack>
+          </TouchableOpacity>
+        </VStack>
+      )}
       {selectedTask && (
         <Box
           position="absolute"

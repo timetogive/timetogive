@@ -11,8 +11,9 @@ import { View, StyleSheet, Button, Alert } from 'react-native';
 import { Linking } from 'react-native';
 
 export enum SelectedLocationMode {
-  Current,
-  Custom,
+  LivePointWithRadius = 'LivePointWithRadius',
+  CustomPointWithRadius = 'CustomPointWithRadius',
+  CustomBox = 'CustomBox',
 }
 
 export interface LongLat {
@@ -22,24 +23,29 @@ export interface LongLat {
 
 // This context provider sets the selected location
 export interface SelectedLocation {
-  mode: SelectedLocationMode;
-  custom?: {
-    name?: string;
-    longitude: number;
-    latitude: number;
+  livePointWithRadius?: {
+    distance: number;
   };
-  distance: number; // distance in m
+  customPointWithRadius?: {
+    name?: string;
+    longLat: LongLat;
+    distance: number;
+  };
+  customBox?: {
+    name?: string;
+    points: LongLat[];
+  };
 }
 
 interface Context {
   // Can we access the current location on the device
-  canAccessCurrentLocation: () => Promise<boolean>;
+  canAccessLiveLocation: () => Promise<boolean>;
   // The live long lat of the user - might throw an error alert
-  getCurrentLongLat: () => Promise<LongLat>;
+  getLiveLongLat: () => Promise<LongLat>;
   // The global long lat of the user - whatever they've selected
   getSelectedLongLat: () => Promise<LongLat>;
-  // Set the global long lat of the user to the current location - might throw an error alert
-  setSelectedToCurrentLocation: () => void;
+  // Set the global long lat of the user to the live location - might throw an error alert
+  setSelectedToLiveLocation: () => void;
   // Manually set the global long lat of the user
   set: (selectedLocation: SelectedLocation) => void;
   selectedLocation: SelectedLocation;
@@ -52,19 +58,18 @@ export const defaultLongLat: LongLat = {
 
 // Set a default when the user hasn't set a location
 const defaultSelectedLocation: SelectedLocation = {
-  mode: SelectedLocationMode.Custom,
-  custom: {
-    ...defaultLongLat,
+  customPointWithRadius: {
     name: 'Chesham',
+    longLat: defaultLongLat,
+    distance: 100000,
   },
-  distance: 100000,
 };
 
 const LocationContext = createContext<Context>({
-  canAccessCurrentLocation: async () => false,
-  getCurrentLongLat: async () => defaultLongLat,
+  canAccessLiveLocation: async () => false,
+  getLiveLongLat: async () => defaultLongLat,
   getSelectedLongLat: async () => defaultLongLat,
-  setSelectedToCurrentLocation: () => undefined,
+  setSelectedToLiveLocation: () => undefined,
   set: () => undefined,
   selectedLocation: defaultSelectedLocation,
 });
@@ -81,7 +86,7 @@ export const LocationProvider = ({
 
   useEffect(() => {
     (async () => {
-      await setSelectedToCurrentLocation();
+      await setSelectedToLiveLocation();
     })();
   }, []);
 
@@ -89,7 +94,7 @@ export const LocationProvider = ({
     setSelectedLocation(selectedLocation);
   };
 
-  const canAccessCurrentLocation = async (): Promise<boolean> => {
+  const canAccessLiveLocation = async (): Promise<boolean> => {
     const { status } =
       await Location.requestForegroundPermissionsAsync();
 
@@ -97,13 +102,13 @@ export const LocationProvider = ({
   };
   // Returns the current live location of the user
   // Will pop an alert if the user has not granted permission
-  const getCurrentLongLat = async (): Promise<LongLat> => {
-    const canAccess = await canAccessCurrentLocation();
+  const getLiveLongLat = async (): Promise<LongLat> => {
+    const canAccess = await canAccessLiveLocation();
 
     if (!canAccess) {
       Alert.alert(
         'Permission Denied',
-        'Your device would now allow your current location to be used. Go to app settings and allow location to be used',
+        'Your device would not allow your current location to be used. Go to app settings and allow location to be used',
         [
           {
             text: 'OK',
@@ -123,29 +128,23 @@ export const LocationProvider = ({
   };
 
   const getSelectedLongLat = async (): Promise<LongLat> => {
-    if (selectedLocation.mode === SelectedLocationMode.Current) {
-      return await getCurrentLongLat();
+    if (selectedLocation.livePointWithRadius) {
+      return await getLiveLongLat();
     }
-    if (
-      selectedLocation.custom?.longitude &&
-      selectedLocation.custom?.longitude
-    ) {
-      return {
-        longitude: selectedLocation.custom?.longitude,
-        latitude: selectedLocation.custom?.latitude,
-      };
+    if (selectedLocation.customPointWithRadius) {
+      return selectedLocation.customPointWithRadius.longLat;
     }
     return defaultLongLat;
   };
 
-  const setSelectedToCurrentLocation = async () => {
+  const setSelectedToLiveLocation = async () => {
     let { status } =
       await Location.requestForegroundPermissionsAsync();
-    console.log(status);
     if (status === 'granted') {
       setSelectedLocation({
-        mode: SelectedLocationMode.Current,
-        distance: 100000,
+        livePointWithRadius: {
+          distance: 100000,
+        },
       });
       return;
     }
@@ -164,10 +163,10 @@ export const LocationProvider = ({
   return (
     <LocationContext.Provider
       value={{
-        canAccessCurrentLocation,
-        getCurrentLongLat,
+        canAccessLiveLocation,
+        getLiveLongLat,
         getSelectedLongLat,
-        setSelectedToCurrentLocation,
+        setSelectedToLiveLocation,
         set,
         selectedLocation,
       }}

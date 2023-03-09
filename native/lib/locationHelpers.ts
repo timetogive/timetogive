@@ -5,18 +5,31 @@ import {
 } from '../providers/selectedLocation';
 
 const getMainText = (selectedLocation: SelectedLocation) => {
-  if (selectedLocation.mode === SelectedLocationMode.Current) {
+  if (selectedLocation.livePointWithRadius) {
     return `Live Location`;
   }
-  if (!selectedLocation.custom) {
-    return 'Location Unknown';
+  if (selectedLocation.customPointWithRadius) {
+    if (selectedLocation.customPointWithRadius.name) {
+      return selectedLocation.customPointWithRadius.name;
+    }
+    return `${selectedLocation.customPointWithRadius.longLat.longitude.toFixed(
+      2
+    )} : ${selectedLocation.customPointWithRadius.longLat.latitude.toFixed(
+      2
+    )}`;
   }
-  if (selectedLocation.custom.name) {
-    return selectedLocation.custom.name;
+  return 'Location Unknown';
+};
+
+export const getDistance = (selectedLocation: SelectedLocation) => {
+  if (selectedLocation.livePointWithRadius) {
+    return selectedLocation.livePointWithRadius.distance;
   }
-  return `${selectedLocation.custom.longitude.toFixed(
-    2
-  )} : ${selectedLocation.custom.latitude.toFixed(2)}`;
+  if (selectedLocation.customPointWithRadius) {
+    return selectedLocation.customPointWithRadius.distance;
+  }
+
+  return 0;
 };
 
 export const locationText = () => {
@@ -25,7 +38,7 @@ export const locationText = () => {
   const mainText = getMainText(location.selectedLocation);
 
   const distanceText = `${(
-    location.selectedLocation.distance / 1000
+    getDistance(location.selectedLocation) / 1000
   ).toFixed(0)} km`;
 
   return {
