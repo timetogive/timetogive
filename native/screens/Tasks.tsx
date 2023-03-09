@@ -148,7 +148,6 @@ export const Tasks = ({ navigation }: Props) => {
         <TasksMap
           tasks={tasks}
           longLat={longLat}
-          distance={location.selectedLocation.distance}
           onTaskPressed={(taskId) =>
             navigation.navigate('Task', { taskId })
           }

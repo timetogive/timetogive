@@ -66,6 +66,7 @@ interface TasksMapProps {
   tasks: SearchTasksResult;
   longLat: LongLat;
   onTaskPressed: (taskId: string) => void;
+  onSearchThisAreaPressed: () => void;
 }
 
 export const TasksMap = ({
@@ -101,6 +102,11 @@ export const TasksMap = ({
     })();
   }, [longLat]);
 
+  const searchThisAreaPressed = async () => {
+    const boundaries = await mapRef.current?.getMapBoundaries();
+    console.log(boundaries);
+  };
+
   return (
     <Box style={{ flex: 1 }}>
       <MapView
@@ -123,11 +129,11 @@ export const TasksMap = ({
       </MapView>
       {mapMoved && (
         <VStack items="center" position="absolute" top={120} w="100%">
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => searchThisAreaPressed()}>
             <Stack
               ph={15}
               radius={50}
-              style={{ backgroundColor: colors.pink[700] }}
+              style={{ backgroundColor: defaultColor[700] }}
               justify="center"
               spacing={10}
               h={30}
