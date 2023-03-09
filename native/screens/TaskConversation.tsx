@@ -222,6 +222,10 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     setMessage(undefined);
   };
 
+  if (messagesQuery.isLoading || messagesQuery.isIdle) {
+    return null;
+  }
+
   return (
     <Stack style={{ flex: 1 }}>
       <BackBar navigation={navigation}>

@@ -4,7 +4,7 @@ import { Button } from '@rneui/themed';
 import { VStack, HStack, Stack } from 'react-native-flex-layout';
 import { SvgUri } from 'react-native-svg';
 import colors from '../styles/colors';
-import { GetTaskOffersResult } from '../types';
+import { GetTaskOffersResult, TaskOfferStatus } from '../types';
 import { Text } from '../components/Text';
 import { AcceptDeclineButtons } from './AcceptDeclineButtons';
 import { faChevronRight } from '@fortawesome/sharp-solid-svg-icons';
@@ -15,6 +15,7 @@ interface Props {
   offers?: GetTaskOffersResult | null;
   onOfferPressed: (
     offerId: string,
+    offerStatus: TaskOfferStatus,
     userId: string,
     fullName: string
   ) => void;
@@ -41,10 +42,14 @@ export const TaskOffers = ({ offers, onOfferPressed }: Props) => {
             {offers.map((o) => (
               <TouchableOpacity
                 onPress={() =>
-                  onOfferPressed(o.id, o.user_id, o.full_name)
+                  onOfferPressed(
+                    o.id,
+                    o.status,
+                    o.user_id,
+                    o.full_name
+                  )
                 }
                 key={`${o.id}`}
-                disabled={o.status === 'Declined'}
               >
                 <HStack
                   justify="between"

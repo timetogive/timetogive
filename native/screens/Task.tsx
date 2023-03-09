@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
-import { AcceptDeclineMenuBottomSheetModal } from '../components/AcceptDeclineMenu';
+import { TaskOfferActionMenuBottomSheetModal } from '../components/TaskOfferActionMenu';
 import { BackBar } from '../components/BackBar';
 import { InfoBar } from '../components/InfoBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
@@ -35,10 +35,16 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 export const Task = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
-  const [acceptDeclineModalOpen, setAcceptDeclineModalOpen] =
+  const [taskOfferActionModalOpen, setTaskOfferActionModalOpen] =
     useState<boolean>(false);
   const [selectedOffer, setSelectedOffer] = useState<
-    { offerId: string; userId: string; fullName: string } | undefined
+    | {
+        offerId: string;
+        offerStatus: TaskOfferStatus;
+        userId: string;
+        fullName: string;
+      }
+    | undefined
   >(undefined);
 
   const { taskId } = route.params;
@@ -83,8 +89,6 @@ export const Task = ({ route, navigation }: Props) => {
 
   const offers = taskOffersQuery.data;
 
-  const pendingOffers = offers?.filter((o) => o.status === 'Pending');
-
   const [volunteerCallBusy, setVolunteerCallBusy] =
     useState<boolean>(false);
 
@@ -99,11 +103,12 @@ export const Task = ({ route, navigation }: Props) => {
 
   const offerPressed = (
     offerId: string,
+    offerStatus: TaskOfferStatus,
     userId: string,
     fullName: string
   ) => {
-    setSelectedOffer({ offerId, userId, fullName });
-    setAcceptDeclineModalOpen(true);
+    setSelectedOffer({ offerId, offerStatus, userId, fullName });
+    setTaskOfferActionModalOpen(true);
   };
 
   const actionTaskOffer = async (
@@ -118,7 +123,7 @@ export const Task = ({ route, navigation }: Props) => {
       console.log('Error');
       console.log(error);
     }
-    setAcceptDeclineModalOpen(false);
+    setTaskOfferActionModalOpen(false);
     await reload();
   };
 
@@ -346,26 +351,29 @@ export const Task = ({ route, navigation }: Props) => {
           </VStack>
         )}
       </VStack>
-      <AcceptDeclineMenuBottomSheetModal
-        isOpen={acceptDeclineModalOpen}
-        onClose={() => setAcceptDeclineModalOpen(false)}
-        fullName={selectedOffer?.fullName}
-        onAccept={() =>
-          selectedOffer &&
-          actionTaskOffer(selectedOffer.offerId, 'Accepted')
-        }
-        onDecline={() =>
-          selectedOffer &&
-          actionTaskOffer(selectedOffer.offerId, 'Declined')
-        }
-        onMessage={() =>
-          selectedOffer &&
-          navigation.navigate('TaskConversation', {
-            taskId,
-            userId: selectedOffer?.userId,
-          })
-        }
-      />
+      {selectedOffer?.fullName && selectedOffer.offerStatus && (
+        <TaskOfferActionMenuBottomSheetModal
+          isOpen={taskOfferActionModalOpen}
+          onClose={() => setTaskOfferActionModalOpen(false)}
+          offerStatus={selectedOffer.offerStatus}
+          fullName={selectedOffer.fullName}
+          onAccept={() =>
+            selectedOffer &&
+            actionTaskOffer(selectedOffer.offerId, 'Accepted')
+          }
+          onDecline={() =>
+            selectedOffer &&
+            actionTaskOffer(selectedOffer.offerId, 'Declined')
+          }
+          onMessage={() =>
+            selectedOffer &&
+            navigation.navigate('TaskConversation', {
+              taskId,
+              userId: selectedOffer?.userId,
+            })
+          }
+        />
+      )}
     </>
   );
 };

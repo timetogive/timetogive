@@ -18,46 +18,53 @@ import {
   faCircleCheck,
   faComment,
 } from '@fortawesome/pro-regular-svg-icons';
+import { TaskOfferStatus, TaskStatus } from '../types';
 
-interface AcceptDeclineMenuProps {
-  fullName?: string;
+interface TaskOfferActionMenuProps {
+  fullName: string;
+  offerStatus: TaskOfferStatus;
   onAccept?: () => void;
   onDecline?: () => void;
   onMessage?: () => void;
 }
 
-export const AcceptDeclineMenu = ({
+export const TaskOfferActionMenu = ({
   fullName,
+  offerStatus,
   onAccept,
   onDecline,
   onMessage,
-}: AcceptDeclineMenuProps) => {
+}: TaskOfferActionMenuProps) => {
   return (
     <VStack spacing={10}>
-      <Button onPress={() => onAccept && onAccept()} size="md">
-        <HStack items="center" spacing={10} shouldWrapChildren>
-          <Text size="xs" color={colors.white}>
-            Accept offer
-          </Text>
-          <FontAwesomeIcon
-            icon={faCircleCheck}
-            color={colors.white}
-            size={17}
-          />
-        </HStack>
-      </Button>
-      <Button onPress={() => onDecline && onDecline()} size="md">
-        <HStack items="center" spacing={10} shouldWrapChildren>
-          <Text size="xs" color={colors.white}>
-            Decline offer
-          </Text>
-          <FontAwesomeIcon
-            icon={faCircleXmark}
-            color={colors.white}
-            size={17}
-          />
-        </HStack>
-      </Button>
+      {offerStatus === 'Pending' && (
+        <>
+          <Button onPress={() => onAccept && onAccept()} size="md">
+            <HStack items="center" spacing={10} shouldWrapChildren>
+              <Text size="xs" color={colors.white}>
+                Accept offer
+              </Text>
+              <FontAwesomeIcon
+                icon={faCircleCheck}
+                color={colors.white}
+                size={17}
+              />
+            </HStack>
+          </Button>
+          <Button onPress={() => onDecline && onDecline()} size="md">
+            <HStack items="center" spacing={10} shouldWrapChildren>
+              <Text size="xs" color={colors.white}>
+                Decline offer
+              </Text>
+              <FontAwesomeIcon
+                icon={faCircleXmark}
+                color={colors.white}
+                size={17}
+              />
+            </HStack>
+          </Button>
+        </>
+      )}
       <Button onPress={() => onMessage && onMessage()} size="md">
         <HStack items="center" spacing={10} shouldWrapChildren>
           <Text size="xs" color={colors.white}>
@@ -74,23 +81,25 @@ export const AcceptDeclineMenu = ({
   );
 };
 
-interface AcceptDeclineMenuBottomSheetModalProps {
+interface TaskOfferActionMenuBottomSheetModalProps {
   isOpen: boolean;
   onClose: () => void;
-  fullName?: string;
+  offerStatus: TaskOfferStatus;
+  fullName: string;
   onAccept?: () => void;
   onDecline?: () => void;
   onMessage?: () => void;
 }
 
-export const AcceptDeclineMenuBottomSheetModal = ({
+export const TaskOfferActionMenuBottomSheetModal = ({
   isOpen,
   onClose,
+  offerStatus,
   fullName,
   onAccept,
   onDecline,
   onMessage,
-}: AcceptDeclineMenuBottomSheetModalProps) => {
+}: TaskOfferActionMenuBottomSheetModalProps) => {
   // Bottom sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const showModal = useCallback(() => {
@@ -128,8 +137,9 @@ export const AcceptDeclineMenuBottomSheetModal = ({
         onDismiss={onClose}
       >
         <Box p={20}>
-          <AcceptDeclineMenu
+          <TaskOfferActionMenu
             fullName={fullName}
+            offerStatus={offerStatus}
             onAccept={onAccept}
             onDecline={onDecline}
             onMessage={onMessage}
