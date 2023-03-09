@@ -31,6 +31,7 @@ export interface TaskCardProps {
   reason: string;
   timing: string;
   duration: string;
+  shadowColor?: string;
   onPress?: () => void;
 }
 

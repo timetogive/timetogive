@@ -122,12 +122,7 @@ export const TasksMap = ({
         ))}
       </MapView>
       {mapMoved && (
-        <VStack
-          items="center"
-          position="absolute"
-          bottom={20}
-          w="100%"
-        >
+        <VStack items="center" position="absolute" top={120} w="100%">
           <TouchableOpacity>
             <Stack
               ph={15}
@@ -149,7 +144,7 @@ export const TasksMap = ({
       {selectedTask && (
         <Box
           position="absolute"
-          bottom={50}
+          bottom={30}
           right={0}
           left={0}
           mh={50}
@@ -168,6 +163,7 @@ export const TasksMap = ({
               selectedTask.effort_hours,
               selectedTask.effort_minutes
             )}
+            shadowColor={colors.gray[700]}
             onPress={() => onTaskPressed(selectedTask.id)}
           />
         </Box>

@@ -23,14 +23,18 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TaskCardProps } from './TaskCardWithDistanceBar';
 import { TaskInformation } from './TaskInformation';
 
-export const TaskCard = ({ onPress, ...rest }: TaskCardProps) => {
+export const TaskCard = ({
+  onPress,
+  shadowColor,
+  ...rest
+}: TaskCardProps) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Stack
         radius={5}
         p={25}
         style={{
-          shadowColor: colors.gray[200],
+          shadowColor: shadowColor ? shadowColor : colors.gray[200],
           shadowOffset: { width: -4, height: 6 },
           shadowOpacity: 0.7,
           shadowRadius: 20,
