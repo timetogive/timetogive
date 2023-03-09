@@ -8,6 +8,7 @@ export type TaskOfferStatus =
   Database['public']['Enums']['task_offer_status'];
 export type SearchTasksResult =
   Database['public']['Functions']['search_tasks']['Returns'];
+export type SearchTasksResultItem = SearchTasksResult[number];
 export type GetTaskOffersResult =
   Database['public']['Functions']['get_task_offers']['Returns'];
 export type GetTaskConversationsResult =

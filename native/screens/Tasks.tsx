@@ -13,7 +13,6 @@ import {
 } from '../providers/selectedLocation';
 import { MapListMode } from '../types';
 import { FlatList } from 'react-native-gesture-handler';
-import { TaskCard } from '../components/TaskCard';
 import { RefreshControl } from 'react-native';
 import colors, { defaultColor } from '../styles/colors';
 import { CompositeScreenProps } from '@react-navigation/native';
@@ -22,6 +21,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { MainTabParamList } from './Main';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { effortText } from '../lib/tasksHelpers';
+import { TaskCardWithDistanceBar } from '../components/TaskCardWithDistanceBar';
 
 const RESULTS_PER_PAGE = 500;
 
@@ -57,7 +57,7 @@ type Props = CompositeScreenProps<
 
 export const Tasks = ({ navigation }: Props) => {
   const [mode, setMapListMode] = useState<MapListMode>(
-    MapListMode.List
+    MapListMode.Map
   );
   const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
   const location = useLocation();
@@ -108,7 +108,7 @@ export const Tasks = ({ navigation }: Props) => {
         <FlatList
           data={tasks}
           renderItem={(task) => (
-            <TaskCard
+            <TaskCardWithDistanceBar
               key={task.item.id}
               taskId={task.item.id}
               taskUserId={task.item.user_id}

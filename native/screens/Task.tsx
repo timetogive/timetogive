@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
 import { useState } from 'react';
 import { Alert } from 'react-native';
-import { HStack, Stack, VStack } from 'react-native-flex-layout';
+import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
   ScrollView,
   RefreshControl,
@@ -15,7 +15,7 @@ import { TaskOfferActionMenuBottomSheetModal } from '../components/TaskOfferActi
 import { BackBar } from '../components/BackBar';
 import { InfoBar } from '../components/InfoBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
-import { TaskCard } from '../components/TaskCard';
+import { TaskInformation } from '../components/TaskInformation';
 import { TaskConversations } from '../components/TaskConversations';
 import { TaskOffers } from '../components/TaskOffers';
 import { Text } from '../components/Text';
@@ -184,21 +184,22 @@ export const Task = ({ route, navigation }: Props) => {
             />
           }
         >
-          <TaskCard
-            taskId={task.id}
-            taskUserId={task.user_id}
-            taskUserFullName={task.user_full_name}
-            taskUserAvatarUrl={task.user_avatar_url}
-            title={task.title}
-            reason={task.reason}
-            timing={task.timing}
-            duration={effortText(
-              task.effort_days,
-              task.effort_hours,
-              task.effort_minutes
-            )}
-            showDistanceBar={false}
-          />
+          <Box style={{ flex: 1 }} bg={colors.white} p={20}>
+            <TaskInformation
+              taskId={task.id}
+              taskUserId={task.user_id}
+              taskUserFullName={task.user_full_name}
+              taskUserAvatarUrl={task.user_avatar_url}
+              title={task.title}
+              reason={task.reason}
+              timing={task.timing}
+              duration={effortText(
+                task.effort_days,
+                task.effort_hours,
+                task.effort_minutes
+              )}
+            />
+          </Box>
           <TaskConversations
             conversations={conversations}
             onClickConversation={(userId: string) =>
