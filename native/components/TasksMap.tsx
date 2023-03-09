@@ -17,8 +17,9 @@ import { Box, VStack } from 'react-native-flex-layout';
 import { faLocationPin } from '@fortawesome/sharp-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import colors from '../styles/colors';
-import { getTtgIcon } from '../lib/tasksHelpers';
+import { effortText, getTtgIcon } from '../lib/tasksHelpers';
 import { Text } from '../components/Text';
+import { TaskCard } from './TaskCard';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -60,12 +61,14 @@ interface TasksMapProps {
   tasks: SearchTasksResult;
   longLat: LongLat;
   distance: number;
+  onTaskPressed: (taskId: string) => void;
 }
 
 export const TasksMap = ({
   tasks,
   longLat,
   distance,
+  onTaskPressed,
 }: TasksMapProps) => {
   // Map state
   const [mapRegion, setMapRegion] = useState<Region>({
@@ -115,7 +118,22 @@ export const TasksMap = ({
           left={0}
           mh={50}
         >
-          <Text>{selectedTask.title}</Text>
+          <TaskCard
+            key={selectedTask.id}
+            taskId={selectedTask.id}
+            taskUserId={selectedTask.user_id}
+            taskUserFullName={selectedTask.full_name}
+            taskUserAvatarUrl={selectedTask.avatar_url}
+            title={selectedTask.title}
+            reason={selectedTask.reason}
+            timing={selectedTask.timing}
+            duration={effortText(
+              selectedTask.effort_days,
+              selectedTask.effort_hours,
+              selectedTask.effort_minutes
+            )}
+            onPress={() => onTaskPressed(selectedTask.id)}
+          />
         </Box>
       )}
     </Box>
