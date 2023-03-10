@@ -21,7 +21,7 @@ import pluralize from 'pluralize';
 import { min } from 'react-native-reanimated';
 import { IntegerPickerSheetModal } from '../components/IntegerPicker';
 import { SetLocationSheetModal } from '../components/SetLocation';
-import { LongLat } from '../providers/selectedLocation';
+import { LongLat } from '../providers/searchLocation';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';

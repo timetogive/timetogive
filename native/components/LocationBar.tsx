@@ -15,9 +15,10 @@ import {
 
 import colors, { defaultColor } from '../styles/colors';
 import { ButtonGroup } from '@rneui/themed';
-import { locationText } from '../lib';
+import { getLocationText } from '../lib';
 import { MapListMode } from '../types';
 import { faLocationArrow } from '@fortawesome/sharp-solid-svg-icons';
+import { useSearchLocation } from '../providers/searchLocation';
 
 interface Props {
   mode: MapListMode;
@@ -56,7 +57,8 @@ const ModeToggleButton = ({ mode, onChangeMode }: Props) => {
 };
 export const LocationBar = ({ mode, onChangeMode }: Props) => {
   const insets = useSafeAreaInsets();
-  const locText = locationText();
+  const searchLocation = useSearchLocation();
+  const locText = getLocationText(searchLocation.searchLocation);
 
   return (
     <>

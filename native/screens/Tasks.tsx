@@ -7,10 +7,10 @@ import { useInfiniteQuery } from 'react-query';
 import { Text } from '../components/Text';
 
 import {
-  defaultLongLat,
-  LongLat,
-  useLocation,
-} from '../providers/selectedLocation';
+  LocationMode,
+  SearchLocationDef,
+  useSearchLocation,
+} from '../providers/searchLocation';
 import { MapListMode } from '../types';
 import { FlatList } from 'react-native-gesture-handler';
 import { RefreshControl } from 'react-native';
@@ -22,29 +22,52 @@ import { MainTabParamList } from './Main';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { effortText } from '../lib/tasksHelpers';
 import { TaskCardWithDistanceBar } from '../components/TaskCardWithDistanceBar';
-import { getDistance } from '../lib';
 
 const RESULTS_PER_PAGE = 500;
 
+const supabaseParams = (searchLocation: SearchLocationDef) => {
+  if (
+    (searchLocation.locationMode ===
+      LocationMode.CustomPointWithRadius ||
+      searchLocation.locationMode ===
+        LocationMode.LivePointWithRadius) &&
+    searchLocation.point
+  ) {
+    return {
+      p_point_longitude: searchLocation.point.coordinates[0],
+      p_point_latitude: searchLocation.point.coordinates[1],
+      p_point_distance: searchLocation.distance,
+    };
+  }
+  if (
+    searchLocation.locationMode === LocationMode.CustomBox &&
+    searchLocation.points
+  ) {
+    return {
+      p_bbox_north_east_longitude:
+        searchLocation.points[0].coordinates[0],
+      p_bbox_north_east_latitude:
+        searchLocation.points[0].coordinates[1],
+      p_bbox_south_west_longitude:
+        searchLocation.points[1].coordinates[0],
+      p_bbox_south_west_latitude:
+        searchLocation.points[1].coordinates[1],
+    };
+  }
+  return {};
+};
+
 const supabaseCall = (
   pageParam: number,
-  longitude: number,
-  latitude: number,
-  distance: number // distance in m
+  searchLocation: SearchLocationDef
 ) => {
   const startRange = pageParam * RESULTS_PER_PAGE;
   const endRange = startRange + (RESULTS_PER_PAGE - 1);
 
   const query = supabase
-    .rpc(
-      'search_tasks',
-      {
-        p_longitude: longitude,
-        p_latitude: latitude,
-        p_distance: distance,
-      },
-      { count: 'exact' }
-    )
+    .rpc('search_tasks', supabaseParams(searchLocation), {
+      count: 'exact',
+    })
     .select('*')
     .range(startRange, endRange);
 
@@ -60,21 +83,22 @@ export const Tasks = ({ navigation }: Props) => {
   const [mode, setMapListMode] = useState<MapListMode>(
     MapListMode.Map
   );
-  const [longLat, setLongLat] = useState<LongLat>(defaultLongLat);
-  const location = useLocation();
+
+  const searchLocation = useSearchLocation();
 
   const searchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
     async ({ pageParam = 0 }) => {
-      const ll = await location.getSelectedLongLat();
-      setLongLat(ll);
+      console.log('Calling the search again');
       const query = supabaseCall(
         pageParam,
-        ll.longitude,
-        ll.latitude,
-        getDistance(location.selectedLocation)
+        searchLocation.searchLocation
       );
-      const { data, count } = await query;
+      const { data, error, count } = await query;
+
+      if (error) {
+        console.log('error', error);
+      }
 
       return {
         data: data || [],
@@ -90,10 +114,11 @@ export const Tasks = ({ navigation }: Props) => {
     }
   );
 
+  // If the search location has changed then rerun the search
   useEffect(() => {
     console.log('In Tasks, selected location has changed');
     searchTasksQuery.refetch();
-  }, [location.selectedLocation]);
+  }, [searchLocation.searchLocation]);
 
   const tasks =
     searchTasksQuery.data?.pages.flatMap(({ data }) => data) || [];
@@ -147,7 +172,6 @@ export const Tasks = ({ navigation }: Props) => {
       ) : (
         <TasksMap
           tasks={tasks}
-          longLat={longLat}
           onTaskPressed={(taskId) =>
             navigation.navigate('Task', { taskId })
           }

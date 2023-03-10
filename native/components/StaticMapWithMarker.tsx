@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useEffect, useState } from 'react';
 import { Stack, Box } from 'react-native-flex-layout';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import { LongLat } from '../providers/selectedLocation';
+import { LongLat } from '../providers/searchLocation';
 import colors from '../styles/colors';
 
 interface Props {

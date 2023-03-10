@@ -1,11 +1,14 @@
 -- Search for tasks via a location and radius
-
 drop function public.search_tasks;
 
 create or replace function public.search_tasks(
-    p_longitude double precision,
-    p_latitude double precision,
-    p_distance double precision
+    p_point_longitude double precision default null,
+    p_point_latitude double precision default null,
+    p_point_distance double precision default null,
+    p_bbox_north_east_longitude double precision default null,
+    p_bbox_north_east_latitude double precision default null,
+    p_bbox_south_west_longitude double precision default null,
+    p_bbox_south_west_latitude double precision default null
 ) returns table (
     id public.tasks.id%type,
     user_id public.tasks.user_id%type,
@@ -28,13 +31,30 @@ create or replace function public.search_tasks(
 language plpgsql
 as $$
 declare
+
     select_clause text;
     from_clause text;
     where_clause text;
     order_by_clause text;
 	final_sql text;
 
+    l_point_search boolean := false;
+    l_bbox_search boolean := false;
+
 begin
+
+    -- You need to pass in point or bbox params
+    if p_point_longitude is null and p_bbox_north_east_longitude is null then
+        raise exception 'You need to pass in point or bbox params';
+    end if;
+
+    -- You can't pass in both point and bbox params, so we run a point based
+    -- search if both are passed in
+    if (p_point_longitude is not null) then
+        l_point_search := true;
+    else 
+        l_bbox_search := true;
+    end if;
 
     -- We need to build a dynamic sql string, because we don't know what
     -- params are going to be passed
@@ -66,8 +86,24 @@ begin
     
     where_clause := '
         where t.user_id = p.id
-        and ST_DWithin(t.geo_location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, $3)
     ';
+
+    if (l_point_search = true) then
+        where_clause := where_clause||'
+            and ST_DWithin(t.geo_location, ST_SetSRID(ST_Point($1, $2), 4326)::geography, $3)
+        ';
+    end if;
+
+    if (l_bbox_search = true) then
+        where_clause := where_clause||'
+            and ST_Intersects(
+                t.geo_location,
+                ST_MakeEnvelope(
+                    $4, $5, $6, $7, 4326
+                )::geography
+            )
+        ';
+    end if;
 
     order_by_clause := '
         order by t.created_datetime desc
@@ -75,7 +111,15 @@ begin
 
     final_sql := select_clause||from_clause||where_clause||order_by_clause;
 
-    return query execute final_sql using p_longitude, p_latitude, p_distance;
+    return query
+    execute final_sql 
+    using p_point_longitude
+    ,     p_point_latitude
+    ,     p_point_distance
+    ,     p_bbox_north_east_longitude
+    ,     p_bbox_north_east_latitude
+    ,     p_bbox_south_west_longitude
+    ,     p_bbox_south_west_latitude;
 
 end;
 $$;

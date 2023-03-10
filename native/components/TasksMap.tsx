@@ -11,12 +11,17 @@ import MapView, {
   LatLng,
 } from 'react-native-maps';
 import { memo, useEffect, useRef, useState } from 'react';
-import { LongLat } from '../providers/selectedLocation';
+import {
+  LocationMode,
+  useSearchLocation,
+} from '../providers/searchLocation';
 import React from 'react';
 import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
   faLocationArrow,
+  faLocationCrosshairs,
   faLocationPin,
+  faSquareDashed,
 } from '@fortawesome/sharp-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import colors, { defaultColor } from '../styles/colors';
@@ -25,62 +30,60 @@ import { Text } from '../components/Text';
 import { TaskCard } from './TaskCard';
 import { Button } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import center from '@turf/center';
+import { points } from '@turf/helpers';
+import { getCenterPoint } from '../lib/locationHelpers';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
-  latitude: number;
-  longitude: number;
   onPress?: () => void;
 }
 
 // Pure component important for performance
-const MapMarker = memo(
-  ({ task, latitude, longitude, onPress }: TasksMapMarkerProps) => {
-    const googleLatLng: LatLng = {
-      latitude,
-      longitude,
-    };
-    return (
-      <Marker coordinate={googleLatLng} onPress={onPress}>
-        <VStack position="relative" h={40} w={40} center>
+const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
+  const googleLatLng: LatLng = {
+    latitude: task.latitude,
+    longitude: task.longitude,
+  };
+  return (
+    <Marker coordinate={googleLatLng} onPress={onPress}>
+      <VStack position="relative" h={40} w={40} center>
+        <FontAwesomeIcon
+          icon={faLocationPin}
+          color={colors.pink[400]}
+          size={40}
+          style={{ opacity: 0.9 }}
+        />
+        <VStack position="absolute" top={8}>
           <FontAwesomeIcon
-            icon={faLocationPin}
-            color={colors.pink[400]}
-            size={40}
-            style={{ opacity: 0.9 }}
+            icon={getTtgIcon(task.reason)}
+            color={colors.white}
+            size={15}
           />
-          <VStack position="absolute" top={8}>
-            <FontAwesomeIcon
-              icon={getTtgIcon(task.reason)}
-              color={colors.white}
-              size={15}
-            />
-          </VStack>
         </VStack>
-      </Marker>
-    );
-  }
-);
+      </VStack>
+    </Marker>
+  );
+});
 
 interface TasksMapProps {
   tasks: SearchTasksResult;
-  longLat: LongLat;
   onTaskPressed: (taskId: string) => void;
-  onSearchThisAreaPressed: () => void;
 }
 
-export const TasksMap = ({
-  tasks,
-  longLat,
-  onTaskPressed,
-}: TasksMapProps) => {
-  // Map state
-  const [mapRegion, setMapRegion] = useState<Region>({
-    latitude: longLat.latitude,
-    longitude: longLat.longitude,
+export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
+  const searchLocation = useSearchLocation();
+  console.log('TasksMap');
+  console.log(searchLocation.searchLocation);
+
+  const centerPoint = getCenterPoint(searchLocation.searchLocation);
+
+  const initialMapRegion: Region = {
+    longitude: centerPoint.coordinates[0],
+    latitude: centerPoint.coordinates[1],
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
-  });
+  };
 
   const mapRef = useRef<MapView>(null);
   const [selectedTask, setSelectedTask] = useState<
@@ -89,22 +92,51 @@ export const TasksMap = ({
 
   const [mapMoved, setMapMoved] = useState<boolean>(false);
 
-  // The location might get changed from up
-  // the component tree, so we need to update
-  useEffect(() => {
-    (async () => {
-      setMapRegion({
-        latitude: longLat.latitude,
-        longitude: longLat.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      });
-    })();
-  }, [longLat]);
-
   const searchThisAreaPressed = async () => {
     const boundaries = await mapRef.current?.getMapBoundaries();
+    console.log('Search this area pressed');
     console.log(boundaries);
+    // Set the search location
+    if (boundaries) {
+      searchLocation.set({
+        locationMode: LocationMode.CustomBox,
+        name: 'Custom Area',
+        points: [
+          {
+            type: 'Point',
+            coordinates: [
+              boundaries.northEast.longitude,
+              boundaries.northEast.latitude,
+            ],
+          },
+          {
+            type: 'Point',
+            coordinates: [
+              boundaries.southWest.longitude,
+              boundaries.southWest.latitude,
+            ],
+          },
+        ],
+      });
+    }
+  };
+
+  // When the tasks change, animate the map to bound the
+  // results
+
+  useEffect(() => {
+    // Tranform the tasks into google long lat coords
+    const googleCoords: LatLng[] = tasks.map((task) => ({
+      latitude: task.latitude,
+      longitude: task.longitude,
+    }));
+    mapRef.current?.fitToCoordinates(googleCoords, {
+      edgePadding: { top: 100, right: 20, bottom: 100, left: 20 },
+    });
+  }, [tasks]);
+
+  const searchNearMePressed = async () => {
+    console.log('Search near me pressed');
   };
 
   return (
@@ -113,40 +145,73 @@ export const TasksMap = ({
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
-        region={mapRegion}
-        onTouchEnd={() => setMapMoved(true)}
+        initialRegion={initialMapRegion}
+        onTouchEnd={() => {
+          console.log('map moved');
+          setMapMoved(true);
+        }}
         showsUserLocation
       >
         {tasks.map((task: any) => (
           <MapMarker
             key={task.id}
             task={task}
-            longitude={task.longitude}
-            latitude={task.latitude}
             onPress={() => setSelectedTask(task)}
           />
         ))}
       </MapView>
-      {mapMoved && (
-        <VStack items="center" position="absolute" top={120} w="100%">
+      <HStack
+        position="absolute"
+        top={120}
+        justify="between"
+        shouldWrapChildren
+        w="100%"
+        ph={20}
+      >
+        {mapMoved && (
           <TouchableOpacity onPress={() => searchThisAreaPressed()}>
             <Stack
               ph={15}
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}
-              justify="center"
               spacing={10}
               h={30}
+              center
             >
-              <Stack>
+              <HStack shouldWrapChildren spacing={10} items="center">
                 <Text size="xs" color={colors.white}>
                   Search This Area
                 </Text>
-              </Stack>
+              </HStack>
             </Stack>
           </TouchableOpacity>
-        </VStack>
-      )}
+        )}
+        {mapMoved &&
+          searchLocation.searchLocation.locationMode !==
+            LocationMode.LivePointWithRadius && (
+            <TouchableOpacity onPress={() => searchThisAreaPressed()}>
+              <Stack
+                ph={15}
+                radius={50}
+                style={{ backgroundColor: defaultColor[700] }}
+                spacing={10}
+                h={30}
+                center
+              >
+                <HStack
+                  shouldWrapChildren
+                  spacing={10}
+                  items="center"
+                >
+                  <Text size="xs" color={colors.white}>
+                    Search Near Me
+                  </Text>
+                </HStack>
+              </Stack>
+            </TouchableOpacity>
+          )}
+      </HStack>
+
       {selectedTask && (
         <Box
           position="absolute"

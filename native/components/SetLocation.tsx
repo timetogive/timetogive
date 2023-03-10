@@ -19,7 +19,7 @@ import {
   defaultLongLat,
   LongLat,
   useLocation,
-} from '../providers/selectedLocation';
+} from '../providers/searchLocation';
 import colors from '../styles/colors';
 import { Text, translateFontSize } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

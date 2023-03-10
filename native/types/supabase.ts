@@ -253,13 +253,17 @@ export interface Database {
           p_task_id: string
           p_user_id: string
         }
-        Returns: string
+        Returns: boolean
       }
       search_tasks: {
         Args: {
-          p_longitude: number
-          p_latitude: number
-          p_distance: number
+          p_point_longitude?: number
+          p_point_latitude?: number
+          p_point_distance?: number
+          p_bbox_north_east_longitude?: number
+          p_bbox_north_east_latitude?: number
+          p_bbox_south_east_longitude?: number
+          p_bbox_south_east_latitude?: number
         }
         Returns: {
           id: string
