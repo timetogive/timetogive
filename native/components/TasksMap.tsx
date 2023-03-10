@@ -142,13 +142,13 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   }, [tasks]);
 
   return (
-    <Box style={{ flex: 1 }}>
+    <Box style={{ flex: 1 }} pointerEvents="box-none">
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialMapRegion}
-        onTouchEnd={() => {
+        onTouchStart={() => {
           console.log('map moved');
           setMapMoved(true);
         }}
@@ -162,15 +162,14 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
           />
         ))}
       </MapView>
-      <HStack
-        position="absolute"
-        top={120}
-        justify="between"
-        shouldWrapChildren
-        w="100%"
-        ph={20}
-      >
-        {mapMoved && (
+      {mapMoved && (
+        <Stack
+          position="absolute"
+          top={120}
+          left={20}
+          justify="between"
+          shouldWrapChildren
+        >
           <TouchableOpacity onPress={() => searchThisAreaPressed()}>
             <Stack
               ph={15}
@@ -187,10 +186,18 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
               </HStack>
             </Stack>
           </TouchableOpacity>
-        )}
-        {(mapMoved ||
-          searchLocation.searchLocation.locationMode !==
-            LocationMode.LivePointWithRadius) && (
+        </Stack>
+      )}
+      {(mapMoved ||
+        searchLocation.searchLocation.locationMode !==
+          LocationMode.LivePointWithRadius) && (
+        <Stack
+          position="absolute"
+          top={120}
+          right={20}
+          justify="between"
+          shouldWrapChildren
+        >
           <TouchableOpacity onPress={() => searchNearMePressed()}>
             <Stack
               ph={15}
@@ -207,8 +214,8 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
               </HStack>
             </Stack>
           </TouchableOpacity>
-        )}
-      </HStack>
+        </Stack>
+      )}
       {selectedTask && (
         <Box
           position="absolute"

@@ -90,7 +90,15 @@ export const SearchLocationProvider = ({
 
   // Set search location to the live location
   const setToLiveLocation = async () => {
+    console.log(
+      'canAccessLiveLocationOnDevice',
+      new Date().toISOString()
+    );
     const canAccess = await canAccessLiveLocationOnDevice();
+    console.log(
+      'canAccessLiveLocationOnDevice',
+      new Date().toISOString()
+    );
     if (!canAccess) {
       Alert.alert(
         'Permission Denied',
@@ -104,7 +112,12 @@ export const SearchLocationProvider = ({
       );
       return;
     }
-    const liveLocation = await Location.getCurrentPositionAsync({});
+    console.log('getCurrentPositionAsync', new Date().toISOString());
+    const lastKnownPosition =
+      await Location.getLastKnownPositionAsync();
+    const liveLocation =
+      lastKnownPosition || (await Location.getCurrentPositionAsync());
+    console.log('getCurrentPositionAsync', new Date().toISOString());
     const livePoint: Point = {
       type: 'Point',
       coordinates: [
