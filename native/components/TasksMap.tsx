@@ -119,11 +119,17 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         ],
       });
     }
+    setMapMoved(false);
   };
 
-  // When the tasks change, animate the map to bound the
-  // results
+  const searchNearMePressed = async () => {
+    console.log('Search near me pressed');
+    await searchLocation.setToLiveLocation();
+    setMapMoved(false);
+  };
 
+  // When the tasks change, animate to fit all the new
+  // tasks nicely on the map
   useEffect(() => {
     // Tranform the tasks into google long lat coords
     const googleCoords: LatLng[] = tasks.map((task) => ({
@@ -134,10 +140,6 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
       edgePadding: { top: 100, right: 20, bottom: 100, left: 20 },
     });
   }, [tasks]);
-
-  const searchNearMePressed = async () => {
-    console.log('Search near me pressed');
-  };
 
   return (
     <Box style={{ flex: 1 }}>
@@ -186,32 +188,27 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
             </Stack>
           </TouchableOpacity>
         )}
-        {mapMoved &&
+        {(mapMoved ||
           searchLocation.searchLocation.locationMode !==
-            LocationMode.LivePointWithRadius && (
-            <TouchableOpacity onPress={() => searchThisAreaPressed()}>
-              <Stack
-                ph={15}
-                radius={50}
-                style={{ backgroundColor: defaultColor[700] }}
-                spacing={10}
-                h={30}
-                center
-              >
-                <HStack
-                  shouldWrapChildren
-                  spacing={10}
-                  items="center"
-                >
-                  <Text size="xs" color={colors.white}>
-                    Search Near Me
-                  </Text>
-                </HStack>
-              </Stack>
-            </TouchableOpacity>
-          )}
+            LocationMode.LivePointWithRadius) && (
+          <TouchableOpacity onPress={() => searchNearMePressed()}>
+            <Stack
+              ph={15}
+              radius={50}
+              style={{ backgroundColor: defaultColor[700] }}
+              spacing={10}
+              h={30}
+              center
+            >
+              <HStack shouldWrapChildren spacing={10} items="center">
+                <Text size="xs" color={colors.white}>
+                  Search Near Me
+                </Text>
+              </HStack>
+            </Stack>
+          </TouchableOpacity>
+        )}
       </HStack>
-
       {selectedTask && (
         <Box
           position="absolute"

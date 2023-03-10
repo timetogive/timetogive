@@ -102,7 +102,6 @@ export const SearchLocationProvider = ({
           { text: 'Settings', onPress: () => Linking.openSettings() },
         ]
       );
-      setSearchLocation(defaultSearchLocation);
       return;
     }
     const liveLocation = await Location.getCurrentPositionAsync({});
