@@ -12,10 +12,7 @@ export const getCenterPoint = (
 ): Point => {
   console.log('getCenterPoint', searchLocation);
   if (
-    (searchLocation.locationMode ===
-      LocationMode.CustomPointWithRadius ||
-      searchLocation.locationMode ===
-        LocationMode.LivePointWithRadius) &&
+    searchLocation.locationMode === LocationMode.PointWithRadius &&
     searchLocation.point
   ) {
     return searchLocation.point;
@@ -37,30 +34,7 @@ export const getCenterPoint = (
 export const getMainText = (
   searchLocation: SearchLocationDef
 ): string => {
-  if (
-    searchLocation.locationMode === LocationMode.LivePointWithRadius
-  ) {
-    return `Live Location`;
-  }
-  if (
-    searchLocation.locationMode ===
-      LocationMode.CustomPointWithRadius &&
-    searchLocation.point
-  ) {
-    if (searchLocation.name) {
-      return searchLocation.name;
-    }
-    return `${searchLocation.point.coordinates[0].toFixed(
-      2
-    )} : ${searchLocation.point.coordinates[1].toFixed(2)}`;
-  }
-  if (searchLocation.locationMode === LocationMode.CustomBox) {
-    if (searchLocation.name) {
-      return searchLocation.name;
-    }
-    return `Custom Area`;
-  }
-  return 'Location Unknown';
+  return searchLocation.name || '';
 };
 
 export const getDistanceText = (

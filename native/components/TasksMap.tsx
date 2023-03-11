@@ -18,6 +18,7 @@ import {
 import React from 'react';
 import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
+  faHome,
   faLocationArrow,
   faLocationCrosshairs,
   faLocationPin,
@@ -33,6 +34,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import center from '@turf/center';
 import { points } from '@turf/helpers';
 import { getCenterPoint } from '../lib/locationHelpers';
+import { useCurrentLocation } from '../providers/currentLocation';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -50,7 +52,7 @@ const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
       <VStack position="relative" h={40} w={40} center>
         <FontAwesomeIcon
           icon={faLocationPin}
-          color={colors.pink[400]}
+          color={defaultColor[400]}
           size={40}
           style={{ opacity: 0.9 }}
         />
@@ -73,6 +75,8 @@ interface TasksMapProps {
 
 export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   const searchLocation = useSearchLocation();
+  const currentLocation = useCurrentLocation();
+
   console.log('TasksMap');
   console.log(searchLocation.searchLocation);
 
@@ -128,6 +132,23 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     setMapMoved(false);
   };
 
+  const focusOnMe = () => {
+    if (currentLocation.currentLocation) {
+      mapRef.current?.animateToRegion({
+        longitude: currentLocation.currentLocation.coordinates[0],
+        latitude: currentLocation.currentLocation.coordinates[1],
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+      return;
+    }
+    currentLocation.forceRefresh();
+  };
+
+  const home = () => {
+    console.log('Home pressed');
+  };
+
   // When the tasks change, animate to fit all the new
   // tasks nicely on the map
   useEffect(() => {
@@ -162,42 +183,16 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
           />
         ))}
       </MapView>
-      {mapMoved && (
-        <Stack
-          position="absolute"
-          top={120}
-          left={20}
-          justify="between"
-          shouldWrapChildren
-        >
-          <TouchableOpacity onPress={() => searchThisAreaPressed()}>
-            <Stack
-              ph={15}
-              radius={50}
-              style={{ backgroundColor: defaultColor[700] }}
-              spacing={10}
-              h={30}
-              center
-            >
-              <HStack shouldWrapChildren spacing={10} items="center">
-                <Text size="xs" color={colors.white}>
-                  Search This Area
-                </Text>
-              </HStack>
-            </Stack>
-          </TouchableOpacity>
-        </Stack>
-      )}
-      {(mapMoved ||
-        searchLocation.searchLocation.locationMode !==
-          LocationMode.LivePointWithRadius) && (
-        <Stack
-          position="absolute"
-          top={120}
-          right={20}
-          justify="between"
-          shouldWrapChildren
-        >
+
+      <HStack
+        position="absolute"
+        top={120}
+        justify="between"
+        w="100%"
+        shouldWrapChildren
+        ph={20}
+      >
+        <HStack spacing={5}>
           <TouchableOpacity onPress={() => searchNearMePressed()}>
             <Stack
               ph={15}
@@ -207,15 +202,69 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
               h={30}
               center
             >
-              <HStack shouldWrapChildren spacing={10} items="center">
-                <Text size="xs" color={colors.white}>
-                  Search Near Me
-                </Text>
-              </HStack>
+              <Text size="xs" color={colors.white}>
+                Search Near Me
+              </Text>
             </Stack>
           </TouchableOpacity>
-        </Stack>
-      )}
+          {mapMoved && (
+            <TouchableOpacity onPress={() => searchThisAreaPressed()}>
+              <Stack
+                ph={15}
+                radius={50}
+                style={{ backgroundColor: defaultColor[700] }}
+                spacing={10}
+                h={30}
+                center
+              >
+                <HStack
+                  shouldWrapChildren
+                  spacing={10}
+                  items="center"
+                >
+                  <Text size="xs" color={colors.white}>
+                    Search This Area
+                  </Text>
+                </HStack>
+              </Stack>
+            </TouchableOpacity>
+          )}
+        </HStack>
+        <HStack spacing={5}>
+          <TouchableOpacity onPress={() => focusOnMe()}>
+            <Stack
+              radius={50}
+              style={{ backgroundColor: defaultColor[700] }}
+              spacing={10}
+              h={30}
+              w={30}
+              center
+            >
+              <FontAwesomeIcon
+                icon={faLocationCrosshairs}
+                color={colors.white}
+                size={15}
+              />
+            </Stack>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => home()}>
+            <Stack
+              radius={50}
+              style={{ backgroundColor: defaultColor[700] }}
+              spacing={10}
+              h={30}
+              w={30}
+              center
+            >
+              <FontAwesomeIcon
+                icon={faHome}
+                color={colors.white}
+                size={15}
+              />
+            </Stack>
+          </TouchableOpacity>
+        </HStack>
+      </HStack>
       {selectedTask && (
         <Box
           position="absolute"

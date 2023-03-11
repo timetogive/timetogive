@@ -27,6 +27,7 @@ import { TaskConversation } from './screens/TaskConversation';
 import { MissingProfile } from './screens/MissingProfile';
 import { Task } from './screens/Task';
 import { queryClient } from './lib/queryClient';
+import { CurrentLocationProvider } from './providers/currentLocation';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -46,76 +47,78 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <SafeAreaProvider>
-            <SearchLocationProvider>
-              <SessionProvider>
-                <NavigationContainer>
-                  <SignedIn>
-                    <ProfileIsComplete>
+            <CurrentLocationProvider>
+              <SearchLocationProvider>
+                <SessionProvider>
+                  <NavigationContainer>
+                    <SignedIn>
+                      <ProfileIsComplete>
+                        <NavStack.Navigator>
+                          <NavStack.Screen
+                            name="Main"
+                            component={Main}
+                            options={{
+                              title: 'Main',
+                              headerShown: false,
+                            }}
+                          />
+                          <NavStack.Screen
+                            name="Task"
+                            options={{
+                              title: 'Task',
+                              headerShown: false,
+                            }}
+                            component={Task}
+                          />
+                          <NavStack.Screen
+                            name="CreateTask"
+                            options={{
+                              title: 'CreateTask',
+                              headerShown: false,
+                            }}
+                            component={CreateTask}
+                          />
+                          <NavStack.Screen
+                            name="TaskConversation"
+                            options={{
+                              title: 'TaskConversation',
+                              headerShown: false,
+                            }}
+                            component={TaskConversation}
+                          />
+                        </NavStack.Navigator>
+                      </ProfileIsComplete>
+                      <ProfileNotComplete>
+                        <NavStack.Navigator>
+                          <NavStack.Screen
+                            name="MissingProfile"
+                            component={MissingProfile}
+                            options={{
+                              title: 'MissingProfile',
+                              headerShown: false,
+                            }}
+                          />
+                        </NavStack.Navigator>
+                      </ProfileNotComplete>
+                    </SignedIn>
+                    <SignedOut>
                       <NavStack.Navigator>
                         <NavStack.Screen
-                          name="Main"
-                          component={Main}
-                          options={{
-                            title: 'Main',
-                            headerShown: false,
-                          }}
+                          name="SignIn"
+                          options={{ headerShown: false }}
+                          component={SignIn}
                         />
                         <NavStack.Screen
-                          name="Task"
-                          options={{
-                            title: 'Task',
-                            headerShown: false,
-                          }}
-                          component={Task}
-                        />
-                        <NavStack.Screen
-                          name="CreateTask"
-                          options={{
-                            title: 'CreateTask',
-                            headerShown: false,
-                          }}
-                          component={CreateTask}
-                        />
-                        <NavStack.Screen
-                          name="TaskConversation"
-                          options={{
-                            title: 'TaskConversation',
-                            headerShown: false,
-                          }}
-                          component={TaskConversation}
+                          name="SignUp"
+                          options={{ headerShown: false }}
+                          component={SignUp}
                         />
                       </NavStack.Navigator>
-                    </ProfileIsComplete>
-                    <ProfileNotComplete>
-                      <NavStack.Navigator>
-                        <NavStack.Screen
-                          name="MissingProfile"
-                          component={MissingProfile}
-                          options={{
-                            title: 'MissingProfile',
-                            headerShown: false,
-                          }}
-                        />
-                      </NavStack.Navigator>
-                    </ProfileNotComplete>
-                  </SignedIn>
-                  <SignedOut>
-                    <NavStack.Navigator>
-                      <NavStack.Screen
-                        name="SignIn"
-                        options={{ headerShown: false }}
-                        component={SignIn}
-                      />
-                      <NavStack.Screen
-                        name="SignUp"
-                        options={{ headerShown: false }}
-                        component={SignUp}
-                      />
-                    </NavStack.Navigator>
-                  </SignedOut>
-                </NavigationContainer>
-              </SessionProvider>
-            </SearchLocationProvider>
+                    </SignedOut>
+                  </NavigationContainer>
+                </SessionProvider>
+              </SearchLocationProvider>
+            </CurrentLocationProvider>
           </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>

@@ -27,10 +27,7 @@ const RESULTS_PER_PAGE = 500;
 
 const supabaseParams = (searchLocation: SearchLocationDef) => {
   if (
-    (searchLocation.locationMode ===
-      LocationMode.CustomPointWithRadius ||
-      searchLocation.locationMode ===
-        LocationMode.LivePointWithRadius) &&
+    searchLocation.locationMode === LocationMode.PointWithRadius &&
     searchLocation.point
   ) {
     return {

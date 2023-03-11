@@ -10,23 +10,13 @@ import React from 'react';
 import { View, StyleSheet, Button, Alert } from 'react-native';
 import { Linking } from 'react-native';
 import { Point, Polygon } from 'geojson';
+import { useCurrentLocation } from './currentLocation';
 
 export enum LocationMode {
-  LivePointWithRadius = 'LivePointWithRadius',
-  CustomPointWithRadius = 'CustomPointWithRadius',
+  PointWithRadius = 'PointWithRadius',
   CustomBox = 'CustomBox',
   DrawnArea = 'DrawnArea',
 }
-
-// export interface BBox {
-//   northEast: LongLat;
-//   southWest: LongLat;
-// }
-
-// export interface LongLat {
-//   longitude: number;
-//   latitude: number;
-// }
 
 // This context provider sets the selected location
 export interface SearchLocationDef {
@@ -43,7 +33,7 @@ export const defaultSearchPoint: Point = {
 
 // Set a default when the user hasn't set a location
 const defaultSearchLocation: SearchLocationDef = {
-  locationMode: LocationMode.CustomPointWithRadius,
+  locationMode: LocationMode.PointWithRadius,
   name: 'Chesham',
   point: defaultSearchPoint,
   distance: 100000,
@@ -52,16 +42,13 @@ const defaultSearchLocation: SearchLocationDef = {
 interface Context {
   set: (searchLocation: SearchLocationDef) => void;
   searchLocation: SearchLocationDef;
-  // Can we access the current location on the device
-  canAccessLiveLocationOnDevice: () => Promise<boolean>;
-  // Refresh the live location (if being used)
-  setToLiveLocation: () => Promise<void>;
+  // Convenience method to set to live location
+  setToLiveLocation: () => void;
 }
 
 const SearchLocationContext = createContext<Context>({
   set: () => undefined,
   searchLocation: defaultSearchLocation,
-  canAccessLiveLocationOnDevice: async () => false,
   setToLiveLocation: async () => undefined,
 });
 
@@ -72,65 +59,45 @@ interface Props {
 export const SearchLocationProvider = ({
   children,
 }: Props): JSX.Element => {
+  const currentLocation = useCurrentLocation();
+
+  const initialSearchLocation = currentLocation.currentLocation
+    ? {
+        name: 'Current Location',
+        locationMode: LocationMode.PointWithRadius,
+        point: currentLocation.currentLocation,
+        distance: 100000,
+      }
+    : defaultSearchLocation;
+
   const [searchLocation, setSearchLocation] =
-    useState<SearchLocationDef>(defaultSearchLocation);
+    useState<SearchLocationDef>(initialSearchLocation);
 
   const set = (searchLocation: SearchLocationDef) => {
     setSearchLocation(searchLocation);
   };
 
-  // Convenience method for understand if user has the app permissions
-  const canAccessLiveLocationOnDevice =
-    async (): Promise<boolean> => {
-      const { status } =
-        await Location.requestForegroundPermissionsAsync();
-
-      return status === 'granted';
-    };
-
-  // Set search location to the live location
-  const setToLiveLocation = async () => {
-    console.log(
-      'canAccessLiveLocationOnDevice',
-      new Date().toISOString()
-    );
-    const canAccess = await canAccessLiveLocationOnDevice();
-    console.log(
-      'canAccessLiveLocationOnDevice',
-      new Date().toISOString()
-    );
-    if (!canAccess) {
-      Alert.alert(
-        'Permission Denied',
-        'Your device would not allow your current location to be used. Go to app settings and allow location to be used',
-        [
-          {
-            text: 'OK',
-          },
-          { text: 'Settings', onPress: () => Linking.openSettings() },
-        ]
-      );
+  // Set search location to the live location - this is
+  // a user triggered action - therefore it's OK to
+  // force a refresh and request permission if necessary
+  const setToLiveLocation = () => {
+    if (currentLocation.currentLocation) {
+      const loc: SearchLocationDef = {
+        name: 'Current Location',
+        locationMode: LocationMode.PointWithRadius,
+        point: currentLocation.currentLocation,
+        distance: 100000,
+      };
+      setSearchLocation(loc);
       return;
     }
-    console.log('getCurrentPositionAsync', new Date().toISOString());
-    const lastKnownPosition =
-      await Location.getLastKnownPositionAsync();
-    const liveLocation =
-      lastKnownPosition || (await Location.getCurrentPositionAsync());
-    console.log('getCurrentPositionAsync', new Date().toISOString());
-    const livePoint: Point = {
-      type: 'Point',
-      coordinates: [
-        liveLocation.coords.longitude,
-        liveLocation.coords.latitude,
-      ],
-    };
-    const liveLocationDef: SearchLocationDef = {
-      locationMode: LocationMode.LivePointWithRadius,
-      point: livePoint,
-      distance: 100000,
-    };
-    setSearchLocation(liveLocationDef);
+    if (
+      !currentLocation.canAccessOnDevice ||
+      !currentLocation.currentLocation
+    ) {
+      currentLocation.forceRefresh();
+      return;
+    }
   };
 
   return (
@@ -138,7 +105,6 @@ export const SearchLocationProvider = ({
       value={{
         set,
         searchLocation,
-        canAccessLiveLocationOnDevice,
         setToLiveLocation,
       }}
     >
