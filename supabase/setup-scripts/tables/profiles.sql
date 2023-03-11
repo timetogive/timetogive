@@ -5,7 +5,7 @@
 -- auth to profiles setup (copied from standard supabase setup)
 -- Create a table for public profiles
 
-create table profiles (
+create table public.profiles (
   id uuid references auth.users on delete cascade not null primary key,
   updated_at timestamp with time zone,
   full_name text,
@@ -13,7 +13,11 @@ create table profiles (
   avatar_url text,
   public_link1 text,
   public_link2 text,
-  public_link3 text
+  public_link3 text,
+  has_home boolean default false, -- does the user have a home point for covenience
+  home_point geography(Point), -- home point can be a point or a polygon 
+  home_point_distance numeric, -- home point radius in meters
+  home_point_polygon geography(Polygon) -- home point can be a point or a polygon
 );
 
 -- Set up Row Level Security (RLS)
@@ -29,4 +33,3 @@ create policy "Users can insert their own profile." on profiles
 
 create policy "Users can update own profile." on profiles
   for update using (auth.uid() = id);
-
