@@ -18,6 +18,8 @@ drop function if exists public.create_task_message;
 drop table if exists public.task_messages cascade;
 drop table if exists public.tasks cascade;
 drop table if exists public.profiles cascade;
+drop table if exists public.feed cascade;
+
 
 \echo '---------------------------'
 \echo 'Dropping types'

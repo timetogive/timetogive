@@ -5,3 +5,5 @@
 -- \ir triggers/index.sql
 -- \ir data/index.sql
 -- \ir storage/index.sql
+-- \ir realtime/index.sql
+
