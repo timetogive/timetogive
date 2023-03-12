@@ -94,9 +94,13 @@ export const Task = ({ route, navigation }: Props) => {
 
   const volunteerForTask = async () => {
     setVolunteerCallBusy(true);
-    await supabase.rpc('create_task_offer', {
+    const { error } = await supabase.rpc('create_task_offer', {
       p_task_id: taskId,
     });
+    if (error) {
+      console.log('Error volunteering for task');
+      console.log(error);
+    }
     await reload();
     setVolunteerCallBusy(false);
   };

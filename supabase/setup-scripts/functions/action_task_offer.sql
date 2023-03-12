@@ -125,12 +125,12 @@ begin
     -- Build the jsonb payload
     l_jsonb := json_build_object(
         'id', p_task_offer_id,
-        'userId', l_task_id,
         'taskId', l_task_id,
-        'taskOwnerId', l_task_id,
         'taskTitle', l_task_title,
+        'userId', l_user_id,
         'userFullName', l_auth_user_full_name,
         'userAvatarUrl', l_auth_user_avatar_url,
+        'taskOwnerId', l_task_owner_id,
         'taskOwnerFullName', l_task_owner_full_name,
         'taskOwnerAvatarUrl', l_task_owner_avatar_url
     );
@@ -155,7 +155,7 @@ begin
         type,
         payload
     ) values (
-        l_task_offer_user_id,
+        l_task_owner_id,
         false,
         l_feed_type,
         l_jsonb
