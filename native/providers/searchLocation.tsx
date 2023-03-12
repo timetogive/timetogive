@@ -11,6 +11,7 @@ import { View, StyleSheet, Button, Alert } from 'react-native';
 import { Linking } from 'react-native';
 import { Point, Polygon } from 'geojson';
 import { useCurrentLocation } from './currentLocation';
+import { supabase } from '../lib/supabase';
 
 export enum LocationMode {
   PointWithRadius = 'PointWithRadius',
@@ -72,8 +73,29 @@ export const SearchLocationProvider = ({
   const [searchLocation, setSearchLocation] =
     useState<SearchLocationDef>(initialSearchLocation);
 
+  const setSearchLocationOnServer = async (
+    searchLocation: SearchLocationDef
+  ) => {
+    console.log(
+      'Saving search location to the server',
+      searchLocation
+    );
+    const { error } = await supabase.rpc(
+      'save_last_search_location',
+      {
+        p_search_location: searchLocation as any,
+      }
+    );
+    if (error) {
+      console.log('Error saving search location to server', error);
+    }
+  };
+
   const set = (searchLocation: SearchLocationDef) => {
+    // Set the context
     setSearchLocation(searchLocation);
+    // Save to the server
+    setSearchLocationOnServer(searchLocation);
   };
 
   // Set search location to the live location - this is
@@ -87,7 +109,7 @@ export const SearchLocationProvider = ({
         point: currentLocation.currentLocation,
         distance: 100000,
       };
-      setSearchLocation(loc);
+      set(loc);
       return;
     }
     if (

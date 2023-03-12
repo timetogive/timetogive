@@ -47,11 +47,12 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <SafeAreaProvider>
-            <CurrentLocationProvider>
-              <SearchLocationProvider>
-                <SessionProvider>
-                  <NavigationContainer>
-                    <SignedIn>
+            <SessionProvider>
+              <NavigationContainer>
+                <SignedIn>
+                  {/* location providers are only needed once signed in */}
+                  <CurrentLocationProvider>
+                    <SearchLocationProvider>
                       <ProfileIsComplete>
                         <NavStack.Navigator>
                           <NavStack.Screen
@@ -100,25 +101,25 @@ export default function App() {
                           />
                         </NavStack.Navigator>
                       </ProfileNotComplete>
-                    </SignedIn>
-                    <SignedOut>
-                      <NavStack.Navigator>
-                        <NavStack.Screen
-                          name="SignIn"
-                          options={{ headerShown: false }}
-                          component={SignIn}
-                        />
-                        <NavStack.Screen
-                          name="SignUp"
-                          options={{ headerShown: false }}
-                          component={SignUp}
-                        />
-                      </NavStack.Navigator>
-                    </SignedOut>
-                  </NavigationContainer>
-                </SessionProvider>
-              </SearchLocationProvider>
-            </CurrentLocationProvider>
+                    </SearchLocationProvider>
+                  </CurrentLocationProvider>
+                </SignedIn>
+                <SignedOut>
+                  <NavStack.Navigator>
+                    <NavStack.Screen
+                      name="SignIn"
+                      options={{ headerShown: false }}
+                      component={SignIn}
+                    />
+                    <NavStack.Screen
+                      name="SignUp"
+                      options={{ headerShown: false }}
+                      component={SignUp}
+                    />
+                  </NavStack.Navigator>
+                </SignedOut>
+              </NavigationContainer>
+            </SessionProvider>
           </SafeAreaProvider>
         </ThemeProvider>
       </QueryClientProvider>

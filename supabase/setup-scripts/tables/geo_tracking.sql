@@ -2,7 +2,9 @@
 \echo 'Setting up geo_tracking'
 \echo '---------------------------'
 
--- Create a table for geo_tracking
+-- Create a table for geo_tracking - note this is used for querying in a performant
+-- way the tasks that the user should be alerted on. This is not a table for
+-- storing user preferences.
 
 create table public.geo_tracking (
   id uuid references auth.users on delete cascade not null primary key,
@@ -23,9 +25,6 @@ alter table geo_tracking
 
 create policy "Geo tracking is private" on geo_tracking
   for select using (auth.uid() = id);
-
-create policy "Users can insert their own geo_tracking." on geo_tracking
-  for insert with check (auth.uid() = id);
 
 create policy "Users can update own geo_tracking." on geo_tracking
   for update using (auth.uid() = id);

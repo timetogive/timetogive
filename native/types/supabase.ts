@@ -70,6 +70,23 @@ export interface Database {
           last_search_point_polygon?: unknown | null
         }
       }
+      prefs: {
+        Row: {
+          home_search_location: Json | null
+          id: string
+          last_search_location: Json | null
+        }
+        Insert: {
+          home_search_location?: Json | null
+          id: string
+          last_search_location?: Json | null
+        }
+        Update: {
+          home_search_location?: Json | null
+          id?: string
+          last_search_location?: Json | null
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -315,6 +332,18 @@ export interface Database {
           p_user_id: string
         }
         Returns: boolean
+      }
+      save_home_search_location: {
+        Args: {
+          p_search_location: Json
+        }
+        Returns: string
+      }
+      save_last_search_location: {
+        Args: {
+          p_search_location: Json
+        }
+        Returns: string
       }
       search_tasks: {
         Args: {
