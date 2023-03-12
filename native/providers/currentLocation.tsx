@@ -42,10 +42,6 @@ export const CurrentLocationProvider = ({
 
   const subscription = useRef<LocationSubscription>();
 
-  const set = (point: Point) => {
-    setCurrentLocation(point);
-  };
-
   const watch = async () => {
     // if already watching then stop
     if (subscription.current) {
