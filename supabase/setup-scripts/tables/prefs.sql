@@ -22,9 +22,3 @@ create policy "Prefs is private" on prefs
 
 create policy "Users can update own prefs." on prefs
   for update using (auth.uid() = id);
-
-
-
-drop policy "Users can update own prefs.";
-
-drop  policy "Prefs is private" on geo_tracking
