@@ -22,33 +22,38 @@ import { MainTabParamList } from './Main';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { effortText } from '../lib/tasksHelpers';
 import { TaskCardWithDistanceBar } from '../components/TaskCardWithDistanceBar';
+import { useCurrentLocation } from '../providers/currentLocation';
+import { Point } from 'geojson';
 
 const RESULTS_PER_PAGE = 500;
 
-const supabaseParams = (searchLocation: SearchLocationDef) => {
+const supabaseParams = (
+  searchLocation: SearchLocationDef,
+  currentLocation?: Point
+) => {
   if (
     searchLocation.locationMode === LocationMode.PointWithRadius &&
     searchLocation.point
   ) {
     return {
-      p_point_longitude: searchLocation.point.coordinates[0],
-      p_point_latitude: searchLocation.point.coordinates[1],
+      ...(currentLocation && {
+        p_current_point: JSON.parse(JSON.stringify(currentLocation)),
+      }),
+      p_point_json: JSON.parse(JSON.stringify(searchLocation.point)),
       p_point_distance: searchLocation.distance,
     };
   }
   if (
-    searchLocation.locationMode === LocationMode.CustomBox &&
-    searchLocation.points
+    searchLocation.locationMode === LocationMode.CustomArea &&
+    searchLocation.polygon
   ) {
     return {
-      p_bbox_north_east_longitude:
-        searchLocation.points[0].coordinates[0],
-      p_bbox_north_east_latitude:
-        searchLocation.points[0].coordinates[1],
-      p_bbox_south_west_longitude:
-        searchLocation.points[1].coordinates[0],
-      p_bbox_south_west_latitude:
-        searchLocation.points[1].coordinates[1],
+      ...(currentLocation && {
+        p_current_point: JSON.parse(JSON.stringify(currentLocation)),
+      }),
+      p_polygon_json: JSON.parse(
+        JSON.stringify(searchLocation.polygon)
+      ),
     };
   }
   return {};
@@ -56,13 +61,17 @@ const supabaseParams = (searchLocation: SearchLocationDef) => {
 
 const supabaseCall = (
   pageParam: number,
-  searchLocation: SearchLocationDef
+  searchLocation: SearchLocationDef,
+  currentLocation?: Point
 ) => {
   const startRange = pageParam * RESULTS_PER_PAGE;
   const endRange = startRange + (RESULTS_PER_PAGE - 1);
 
+  const params = supabaseParams(searchLocation, currentLocation);
+  console.log('PARAMS');
+  console.log(params);
   const query = supabase
-    .rpc('search_tasks', supabaseParams(searchLocation), {
+    .rpc('search_tasks', params, {
       count: 'exact',
     })
     .select('*')
@@ -82,6 +91,7 @@ export const Tasks = ({ navigation }: Props) => {
   );
 
   const searchLocation = useSearchLocation();
+  const currentLocation = useCurrentLocation();
 
   const searchTasksQuery = useInfiniteQuery(
     ['SearchTasks'],
@@ -89,7 +99,8 @@ export const Tasks = ({ navigation }: Props) => {
       console.log('Calling the search again');
       const query = supabaseCall(
         pageParam,
-        searchLocation.searchLocation
+        searchLocation.searchLocation,
+        currentLocation.currentLocation
       );
       const { data, error, count } = await query;
 

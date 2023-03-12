@@ -14,8 +14,7 @@ import { useCurrentLocation } from './currentLocation';
 
 export enum LocationMode {
   PointWithRadius = 'PointWithRadius',
-  CustomBox = 'CustomBox',
-  DrawnArea = 'DrawnArea',
+  CustomArea = 'CustomArea',
 }
 
 // This context provider sets the selected location
@@ -24,7 +23,7 @@ export interface SearchLocationDef {
   name?: string;
   point?: Point;
   distance?: number;
-  points?: Point[];
+  polygon?: Polygon;
 }
 export const defaultSearchPoint: Point = {
   type: 'Point',

@@ -32,9 +32,12 @@ import { TaskCard } from './TaskCard';
 import { Button } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import center from '@turf/center';
-import { points } from '@turf/helpers';
+import { lineString } from '@turf/helpers';
 import { getCenterPoint } from '../lib/locationHelpers';
 import { useCurrentLocation } from '../providers/currentLocation';
+import bbox from '@turf/bbox';
+import bboxPolygon from '@turf/bbox-polygon';
+import { Polygon } from 'react-native-svg';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -102,25 +105,23 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     console.log(boundaries);
     // Set the search location
     if (boundaries) {
-      searchLocation.set({
-        locationMode: LocationMode.CustomBox,
-        name: 'Custom Area',
-        points: [
-          {
-            type: 'Point',
-            coordinates: [
-              boundaries.northEast.longitude,
-              boundaries.northEast.latitude,
-            ],
-          },
-          {
-            type: 'Point',
-            coordinates: [
-              boundaries.southWest.longitude,
-              boundaries.southWest.latitude,
-            ],
-          },
+      const line = lineString([
+        [
+          boundaries.northEast.longitude,
+          boundaries.northEast.latitude,
         ],
+        [
+          boundaries.southWest.longitude,
+          boundaries.southWest.latitude,
+        ],
+      ]);
+      const box = bbox(line);
+      const polygon = bboxPolygon(box).geometry;
+
+      searchLocation.set({
+        locationMode: LocationMode.CustomArea,
+        name: 'Custom Area',
+        polygon,
       });
     }
     setMapMoved(false);

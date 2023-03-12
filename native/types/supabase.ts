@@ -9,6 +9,67 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      feed: {
+        Row: {
+          created_datetime: string
+          id: string
+          payload: Json
+          type: Database["public"]["Enums"]["feed_item_type"]
+          user_id: string
+          you_actioned: boolean
+        }
+        Insert: {
+          created_datetime?: string
+          id?: string
+          payload: Json
+          type: Database["public"]["Enums"]["feed_item_type"]
+          user_id: string
+          you_actioned?: boolean
+        }
+        Update: {
+          created_datetime?: string
+          id?: string
+          payload?: Json
+          type?: Database["public"]["Enums"]["feed_item_type"]
+          user_id?: string
+          you_actioned?: boolean
+        }
+      }
+      geo_tracking: {
+        Row: {
+          has_home: boolean | null
+          has_last_search: boolean | null
+          home_point: unknown | null
+          home_point_distance: number | null
+          home_point_polygon: unknown | null
+          id: string
+          last_search_point: unknown | null
+          last_search_point_distance: number | null
+          last_search_point_polygon: unknown | null
+        }
+        Insert: {
+          has_home?: boolean | null
+          has_last_search?: boolean | null
+          home_point?: unknown | null
+          home_point_distance?: number | null
+          home_point_polygon?: unknown | null
+          id: string
+          last_search_point?: unknown | null
+          last_search_point_distance?: number | null
+          last_search_point_polygon?: unknown | null
+        }
+        Update: {
+          has_home?: boolean | null
+          has_last_search?: boolean | null
+          home_point?: unknown | null
+          home_point_distance?: number | null
+          home_point_polygon?: unknown | null
+          id?: string
+          last_search_point?: unknown | null
+          last_search_point_distance?: number | null
+          last_search_point_polygon?: unknown | null
+        }
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -257,13 +318,10 @@ export interface Database {
       }
       search_tasks: {
         Args: {
-          p_point_longitude?: number
-          p_point_latitude?: number
+          p_current_point?: Json
+          p_point_json?: Json
           p_point_distance?: number
-          p_bbox_north_east_longitude?: number
-          p_bbox_north_east_latitude?: number
-          p_bbox_south_east_longitude?: number
-          p_bbox_south_east_latitude?: number
+          p_polygon_json?: Json
         }
         Returns: {
           id: string
@@ -287,6 +345,13 @@ export interface Database {
       }
     }
     Enums: {
+      feed_item_type:
+        | "Task"
+        | "TaskOffer"
+        | "TaskOfferAccepted"
+        | "TaskOfferDeclined"
+        | "TaskOfferCancelled"
+        | "TaskMessage"
       task_offer_status: "Pending" | "Accepted" | "Declined" | "Cancelled"
       task_reason:
         | "Charity"
