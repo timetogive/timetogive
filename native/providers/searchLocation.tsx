@@ -12,6 +12,8 @@ import { Linking } from 'react-native';
 import { Point, Polygon } from 'geojson';
 import { useCurrentLocation } from './currentLocation';
 import { supabase } from '../lib/supabase';
+import { useSession } from './session';
+import { setStatusBarStyle } from 'expo-status-bar';
 
 export enum LocationMode {
   PointWithRadius = 'PointWithRadius',
@@ -60,6 +62,8 @@ export const SearchLocationProvider = ({
   children,
 }: Props): JSX.Element => {
   const currentLocation = useCurrentLocation();
+  const session = useSession();
+  const [ready, setReady] = useState(false);
 
   const initialSearchLocation = currentLocation.currentLocation
     ? {
@@ -121,6 +125,33 @@ export const SearchLocationProvider = ({
     }
   };
 
+  useEffect(() => {
+    const getLastSearchLocationFromServer = async () => {
+      console.log('getLastSearchLocationFromServer');
+      if (!session.user) {
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('prefs')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      console.log('session.user.id', session.user.id);
+
+      console.log('prefs data', data);
+      console.log('error ', error);
+      if (data && data.last_search_location) {
+        const searchLocation =
+          data.last_search_location as any as SearchLocationDef;
+        setSearchLocation(searchLocation);
+      }
+      setReady(true);
+    };
+    getLastSearchLocationFromServer();
+  }, []);
+
   return (
     <SearchLocationContext.Provider
       value={{
@@ -129,7 +160,7 @@ export const SearchLocationProvider = ({
         setToLiveLocation,
       }}
     >
-      {children}
+      {ready ? children : <></>}
     </SearchLocationContext.Provider>
   );
 };

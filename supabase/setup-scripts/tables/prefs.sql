@@ -17,9 +17,14 @@ create table public.prefs (
 alter table prefs
   enable row level security;
 
-create policy "Prefs is private" on geo_tracking
+create policy "Prefs is private" on prefs
   for select using (auth.uid() = id);
 
-create policy "Users can update own prefs." on geo_tracking
+create policy "Users can update own prefs." on prefs
   for update using (auth.uid() = id);
 
+
+
+drop policy "Users can update own prefs.";
+
+drop  policy "Prefs is private" on geo_tracking
