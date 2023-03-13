@@ -15,6 +15,15 @@ export const getTaskSupabaseCall = (
   return query;
 };
 
+export const getFeedSupabaseCall = () => {
+  const query = supabase
+    .from('feed')
+    .select('*')
+    .eq('you_actioned', false);
+
+  return query;
+};
+
 export const getConversationsSupabaseCall = (taskId: string) => {
   const query = supabase.rpc('get_task_conversations', {
     p_id: taskId,

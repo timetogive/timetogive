@@ -258,7 +258,7 @@ export const Task = ({ route, navigation }: Props) => {
                   >
                     Your offer to volunteer has very kindly been
                     declined. You can offer to volunteer again, or
-                    message ${task.user_full_name} if you are still
+                    message {task.user_full_name} if you are still
                     keen.
                   </Text>
                 )}

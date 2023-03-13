@@ -15,12 +15,12 @@ declare
     l_task_effort_people public.tasks.effort_people%type;
     l_task_offer_status public.task_offers.status%type;
     l_task_offer_user_id public.task_offers.id%type;
+    l_task_offer_user_full_name public.profiles.full_name%type;
+    l_task_offer_user_avatar_url public.profiles.avatar_url%type;
     l_task_id public.task_offers.task_id%type;
     l_task_owner_id public.profiles.id%type;
     l_accepted_count bigint;
     l_feed_type public.feed.type%type;
-    l_auth_user_full_name public.profiles.full_name%type;
-    l_auth_user_avatar_url public.profiles.avatar_url%type;
     l_task_owner_full_name public.profiles.full_name%type;
     l_task_owner_avatar_url public.profiles.avatar_url%type;
     l_jsonb jsonb;
@@ -30,35 +30,38 @@ begin
     -- from user is the authenticated user
     l_user_id := auth.uid();
 
-    -- get the task offer information
-    select user_id
-    ,      task_id
-    ,      status
+    -- get all the information needed in one hit
+    select t.user_id
+    ,      p.full_name
+    ,      p.avatar_url
+    ,      t.status
+    ,      t.task_id
+    ,      ta.user_id
+    ,      ta.title
+    ,      ta.status
+    ,      ta.effort_people
+    ,      po.full_name
+    ,      po.avatar_url
     into   l_task_offer_user_id
-    ,      l_task_id
+    ,      l_task_offer_user_full_name 
+    ,      l_task_offer_user_avatar_url 
     ,      l_task_offer_status
-    from   public.task_offers
-    where  id = p_task_offer_id;
-    
-    -- get the task information
-    select user_id
-    ,      title
-    ,      status
-    ,      effort_people
-    into   l_task_owner_id
+    ,      l_task_id
+    ,      l_task_owner_id
     ,      l_task_title
     ,      l_task_status
     ,      l_task_effort_people
-    from   public.tasks
-    where  id = l_task_id;
-
-    -- see how many task offers have already been accepted
-    select count(*)
-    into   l_accepted_count
-    from   public.task_offers
-    where  task_id = l_task_id
-    and    status = 'Accepted';
-
+    ,      l_task_owner_full_name
+    ,      l_task_owner_avatar_url
+    from   public.task_offers t
+    ,      public.profiles p
+    ,      public.tasks ta
+    ,      public.profiles po
+    where  t.id = p_task_offer_id
+    and    t.user_id = p.id
+    and    t.task_id = ta.id
+    and    ta.user_id = po.id;
+    
     -- enforce business rules
     if (l_task_offer_status <> 'Pending') then
         raise exception 'Only pending tasks can be actioned';
@@ -68,13 +71,20 @@ begin
         raise exception 'Only the user who created the task offer can cancel it';
     end if;
 
-    if (p_status = 'Accepted' and l_user_id <> l_task_owner_id) then
+    if ((p_status = 'Accepted' or p_status = 'Declined') and l_user_id <> l_task_owner_id) then
         raise exception 'Only the owner of the task can accept the task offer';
     end if;
 
     if (p_status = 'Accepted' and (l_task_status = 'Assigned' or l_task_status = 'Completed' or l_task_status = 'Closed')) then
         raise exception 'Only accept task offers where task isn''t assigned, completed or closed';
     end if;
+
+    -- see how many task offers have already been accepted
+    select count(*)
+    into   l_accepted_count
+    from   public.task_offers
+    where  task_id = l_task_id
+    and    status = 'Accepted';
     
     -- Update the task offer
     update public.task_offers
@@ -97,69 +107,71 @@ begin
 
     -- Finally let's add this to the feed
     -- (one for the user who created the task offer and one for the task owner)
-    if (p_status === 'Accepted') then
+    if (p_status = 'Accepted') then
         l_feed_type := 'TaskOfferAccepted';
-    elsif (p_status === 'Declined') then
+    elsif (p_status = 'Declined') then
         l_feed_type := 'TaskOfferDeclined';
-    elsif (p_status === 'Cancelled') then
+    elsif (p_status = 'Cancelled') then
         l_feed_type := 'TaskOfferCancelled';
     end if;
-
-    -- Get the auth user information
-    select full_name
-    ,      avatar_url
-    into   l_auth_user_full_name
-    ,      l_auth_user_avatar_url
-    from   public.profiles
-    where  id = l_user_id;
-
-    -- Get the task user information
-    select full_name
-    ,      avatar_url
-    into   l_task_owner_full_name
-    ,      l_task_owner_avatar_url
-    from   public.profiles
-    where  id = l_task_owner_id;
 
 
     -- Build the jsonb payload
     l_jsonb := json_build_object(
-        'id', p_task_offer_id,
         'taskId', l_task_id,
         'taskTitle', l_task_title,
-        'userId', l_user_id,
-        'userFullName', l_auth_user_full_name,
-        'userAvatarUrl', l_auth_user_avatar_url,
+        'taskOfferId', p_task_offer_id,
+        'taskOfferUserId', l_task_offer_user_id,
+        'taskOfferUserFullName', l_task_offer_user_full_name,
+        'taskOfferUserAvatarUrl', l_task_offer_user_avatar_url,
         'taskOwnerId', l_task_owner_id,
         'taskOwnerFullName', l_task_owner_full_name,
         'taskOwnerAvatarUrl', l_task_owner_avatar_url
     );
 
-    -- You
-    insert into public.feed(
-        user_id,
-        you_actioned,
-        type,
-        payload
-    ) values (
-        l_task_offer_user_id,
-        true,
-        l_feed_type,
-        l_jsonb
-    );
+    -- Record in the feed who did it
+    -- insert into public.feed(
+    --     user_id,
+    --     you_actioned,
+    --     type,
+    --     payload
+    -- ) values (
+    --     l_user_id,
+    --     true,
+    --     l_feed_type,
+    --     l_jsonb
+    -- );
 
-    -- Them
-    insert into public.feed(
-        user_id,
-        you_actioned,
-        type,
-        payload
-    ) values (
-        l_task_owner_id,
-        false,
-        l_feed_type,
-        l_jsonb
-    );
+    -- If accepted or declined then let person who made
+    -- the task offer know
+    if (p_status = 'Accepted' or p_status = 'Declined') then
+        insert into public.feed(
+            user_id,
+            you_actioned,
+            type,
+            payload
+        ) values (
+            l_task_offer_user_id,
+            false,
+            l_feed_type,
+            l_jsonb
+        );
+    end if;
+
+    -- If cancelled then let the task owner know
+    if (p_status = 'Accepted' or p_status = 'Declined') then
+        insert into public.feed(
+            user_id,
+            you_actioned,
+            type,
+            payload
+        ) values (
+            l_task_owner_id,
+            false,
+            l_feed_type,
+            l_jsonb
+        );
+    end if;
 
     -- We're returning the id of the message
     return return_id;

@@ -80,17 +80,17 @@ begin
     );
 
     -- You
-    insert into public.feed(
-        user_id,
-        you_actioned,
-        type,
-        payload
-    ) values (
-        l_user_id,
-        true,
-        l_feed_type,
-        l_jsonb
-    );
+    -- insert into public.feed(
+    --     user_id,
+    --     you_actioned,
+    --     type,
+    --     payload
+    -- ) values (
+    --     l_user_id,
+    --     true,
+    --     l_feed_type,
+    --     l_jsonb
+    -- );
 
     -- Them
     insert into public.feed(
