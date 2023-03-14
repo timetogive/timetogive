@@ -10,6 +10,7 @@ import {
 import { supabase } from '../lib';
 import { queryClient } from '../lib/queryClient';
 import { FeedItem } from '../types';
+import Toast from 'react-native-toast-message';
 
 interface Context {
   count: number;
@@ -34,6 +35,7 @@ export const NotificationsProvider = ({ children }: Props) => {
   const [notificationCount, setNotificationCount] =
     useState<number>(0);
   const refNotificationCount = useRef(0);
+
   // Run once on load, listens for items going into the feed
   // on the server, it's pretty simple, it adds to a count
   // that can be cleared using a hook elsewhere in the app
@@ -83,15 +85,16 @@ export const NotificationsProvider = ({ children }: Props) => {
               break;
           }
 
-          console.log(
-            'Incrementing notification count',
-            refNotificationCount.current + 1
-          );
-
           refNotificationCount.current =
             refNotificationCount.current + 1;
 
           setNotificationCount(refNotificationCount.current);
+
+          Toast.show({
+            type: 'success',
+            text1: 'New notification',
+            text2: 'This is some something 👋',
+          });
         }
       )
       .subscribe();
