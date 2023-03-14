@@ -12,7 +12,7 @@ declare
     l_task_owner_id public.profiles.id%type;
 
     l_task_title public.tasks.title%type;
-    l_feed_type public.feed.type%type;
+    l_notifications_type public.notifications.type%type;
     l_auth_user_full_name public.profiles.full_name%type;
     l_auth_user_avatar_url public.profiles.avatar_url%type;
     l_task_owner_full_name public.profiles.full_name%type;
@@ -45,9 +45,9 @@ begin
     ) returning id into return_id;
 
 
-    -- Finally let's add this to the feed
+    -- Finally let's add this to the notifications
     -- (one for the user who created the task offer and one for the task owner)
-    l_feed_type := 'TaskOffer';
+    l_notifications_type := 'TaskOffer';
     
     -- Get the auth user information
     select full_name
@@ -80,20 +80,20 @@ begin
     );
 
     -- You
-    insert into public.feed(
-        user_id,
-        you_actioned,
-        type,
-        payload
-    ) values (
-        l_user_id,
-        true,
-        l_feed_type,
-        l_jsonb
-    );
+    -- insert into public.notifications(
+    --     user_id,
+    --     you_actioned,
+    --     type,
+    --     payload
+    -- ) values (
+    --     l_user_id,
+    --     true,
+    --     l_notifications_type,
+    --     l_jsonb
+    -- );
 
     -- Them
-    insert into public.feed(
+    insert into public.notifications(
         user_id,
         you_actioned,
         type,
@@ -101,7 +101,7 @@ begin
     ) values (
         l_task_owner_id,
         false,
-        l_feed_type,
+        l_notifications_type,
         l_jsonb
     );
    

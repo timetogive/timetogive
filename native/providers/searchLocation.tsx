@@ -63,7 +63,7 @@ export const SearchLocationProvider = ({
 }: Props): JSX.Element => {
   const currentLocation = useCurrentLocation();
   const session = useSession();
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState<boolean>(false);
 
   const initialSearchLocation = currentLocation.currentLocation
     ? {
@@ -152,6 +152,10 @@ export const SearchLocationProvider = ({
     getLastSearchLocationFromServer();
   }, []);
 
+  if (!ready) {
+    return <></>;
+  }
+
   return (
     <SearchLocationContext.Provider
       value={{
@@ -160,7 +164,7 @@ export const SearchLocationProvider = ({
         setToLiveLocation,
       }}
     >
-      {ready ? children : <></>}
+      {children}
     </SearchLocationContext.Provider>
   );
 };
