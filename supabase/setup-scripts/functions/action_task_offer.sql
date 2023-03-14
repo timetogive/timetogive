@@ -20,7 +20,7 @@ declare
     l_task_id public.task_offers.task_id%type;
     l_task_owner_id public.profiles.id%type;
     l_accepted_count bigint;
-    l_feed_type public.feed.type%type;
+    l_notifications_type public.notifications.type%type;
     l_task_owner_full_name public.profiles.full_name%type;
     l_task_owner_avatar_url public.profiles.avatar_url%type;
     l_jsonb jsonb;
@@ -105,14 +105,14 @@ begin
         where id = l_task_id;
     end if;
 
-    -- Finally let's add this to the feed
+    -- Finally let's add this to the notifications
     -- (one for the user who created the task offer and one for the task owner)
     if (p_status = 'Accepted') then
-        l_feed_type := 'TaskOfferAccepted';
+        l_notifications_type := 'TaskOfferAccepted';
     elsif (p_status = 'Declined') then
-        l_feed_type := 'TaskOfferDeclined';
+        l_notifications_type := 'TaskOfferDeclined';
     elsif (p_status = 'Cancelled') then
-        l_feed_type := 'TaskOfferCancelled';
+        l_notifications_type := 'TaskOfferCancelled';
     end if;
 
 
@@ -129,8 +129,8 @@ begin
         'taskOwnerAvatarUrl', l_task_owner_avatar_url
     );
 
-    -- Record in the feed who did it
-    -- insert into public.feed(
+    -- Record in the notifications who did it
+    -- insert into public.notifications(
     --     user_id,
     --     you_actioned,
     --     type,
@@ -138,14 +138,14 @@ begin
     -- ) values (
     --     l_user_id,
     --     true,
-    --     l_feed_type,
+    --     l_notifications_type,
     --     l_jsonb
     -- );
 
     -- If accepted or declined then let person who made
     -- the task offer know
     if (p_status = 'Accepted' or p_status = 'Declined') then
-        insert into public.feed(
+        insert into public.notifications(
             user_id,
             you_actioned,
             type,
@@ -153,14 +153,14 @@ begin
         ) values (
             l_task_offer_user_id,
             false,
-            l_feed_type,
+            l_notifications_type,
             l_jsonb
         );
     end if;
 
     -- If cancelled then let the task owner know
     if (p_status = 'Accepted' or p_status = 'Declined') then
-        insert into public.feed(
+        insert into public.notifications(
             user_id,
             you_actioned,
             type,
@@ -168,7 +168,7 @@ begin
         ) values (
             l_task_owner_id,
             false,
-            l_feed_type,
+            l_notifications_type,
             l_jsonb
         );
     end if;

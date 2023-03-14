@@ -10,10 +10,10 @@ import { BackBar } from '../components/BackBar';
 import { NotificationCard } from '../components/NotificationCard';
 import { Text } from '../components/Text';
 import {
-  getFeedSupabaseCall,
+  getNotificationsSupabaseCall,
   getTaskSupabaseCall,
 } from '../lib/supabaseCalls';
-import { FeedItem } from '../types';
+import { NotificationsItem } from '../types';
 import { MainTabParamList } from './Main';
 
 type Props = CompositeScreenProps<
@@ -22,42 +22,47 @@ type Props = CompositeScreenProps<
 >;
 
 export const Notifications = ({ route, navigation }: Props) => {
-  const feedQuery = useQuery(['GetFeed'], async () => {
-    const query = getFeedSupabaseCall();
-    const { data, error } = await query;
-    return data as FeedItem[];
-  });
+  const notificationsQuery = useQuery(
+    ['GetNotifications'],
+    async () => {
+      const query = getNotificationsSupabaseCall();
+      const { data, error } = await query;
+      return data as NotificationsItem[];
+    }
+  );
 
-  const feedItems = feedQuery.data;
+  const notificationsItems = notificationsQuery.data;
 
-  const navigateToFeedItem = (feedItem: FeedItem) => {
-    const { type } = feedItem;
+  const navigateToNotificationsItem = (
+    notificationsItem: NotificationsItem
+  ) => {
+    const { type } = notificationsItem;
     switch (type) {
       case 'Task':
       case 'TaskOffer':
         navigation.navigate('Task', {
-          taskId: (feedItem.payload as any).taskId,
+          taskId: (notificationsItem.payload as any).taskId,
         });
         return;
       default:
         console.log(
-          `Unknown feed item type, don't know where to navigate`
+          `Unknown notifications item type, don't know where to navigate`
         );
     }
   };
 
-  if (!feedItems) {
+  if (!notificationsItems) {
     return <></>;
   }
 
   return (
     <>
       <VStack shouldWrapChildren spacing={5} radius={20} pt={100}>
-        {feedItems.map((item) => (
+        {notificationsItems.map((item) => (
           <NotificationCard
             key={item.id}
-            feedItemType={item.type}
-            onPress={() => navigateToFeedItem(item)}
+            notificationsItemType={item.type}
+            onPress={() => navigateToNotificationsItem(item)}
           />
         ))}
       </VStack>

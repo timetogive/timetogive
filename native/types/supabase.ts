@@ -9,32 +9,6 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      feed: {
-        Row: {
-          created_datetime: string
-          id: string
-          payload: Json
-          type: Database["public"]["Enums"]["feed_item_type"]
-          user_id: string
-          you_actioned: boolean
-        }
-        Insert: {
-          created_datetime?: string
-          id?: string
-          payload: Json
-          type: Database["public"]["Enums"]["feed_item_type"]
-          user_id: string
-          you_actioned?: boolean
-        }
-        Update: {
-          created_datetime?: string
-          id?: string
-          payload?: Json
-          type?: Database["public"]["Enums"]["feed_item_type"]
-          user_id?: string
-          you_actioned?: boolean
-        }
-      }
       geo_tracking: {
         Row: {
           has_home: boolean | null
@@ -68,6 +42,32 @@ export interface Database {
           last_search_point?: unknown | null
           last_search_point_distance?: number | null
           last_search_point_polygon?: unknown | null
+        }
+      }
+      notifications: {
+        Row: {
+          created_datetime: string
+          id: string
+          payload: Json
+          type: Database["public"]["Enums"]["notifications_item_type"]
+          user_id: string
+          you_actioned: boolean
+        }
+        Insert: {
+          created_datetime?: string
+          id?: string
+          payload: Json
+          type: Database["public"]["Enums"]["notifications_item_type"]
+          user_id: string
+          you_actioned?: boolean
+        }
+        Update: {
+          created_datetime?: string
+          id?: string
+          payload?: Json
+          type?: Database["public"]["Enums"]["notifications_item_type"]
+          user_id?: string
+          you_actioned?: boolean
         }
       }
       prefs: {
@@ -375,6 +375,13 @@ export interface Database {
     }
     Enums: {
       feed_item_type:
+        | "Task"
+        | "TaskOffer"
+        | "TaskOfferAccepted"
+        | "TaskOfferDeclined"
+        | "TaskOfferCancelled"
+        | "TaskMessage"
+      notifications_item_type:
         | "Task"
         | "TaskOffer"
         | "TaskOfferAccepted"

@@ -15,9 +15,9 @@ export const getTaskSupabaseCall = (
   return query;
 };
 
-export const getFeedSupabaseCall = () => {
+export const getNotificationsSupabaseCall = () => {
   const query = supabase
-    .from('feed')
+    .from('notifications')
     .select('*')
     .eq('you_actioned', false);
 

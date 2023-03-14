@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { supabase } from '../lib';
 import { queryClient } from '../lib/queryClient';
-import { FeedItem } from '../types';
+import { NotificationsItem } from '../types';
 import Toast from 'react-native-toast-message';
 
 interface Context {
@@ -26,7 +26,7 @@ interface Props {
   children: ReactNode;
 }
 
-// This provider listens for notifications on the feed
+// This provider listens for notifications on the notifications
 // and takes appropriate actions - it also runs a count
 // of new notifications that can be displayed and cleared
 export const NotificationsProvider = ({ children }: Props) => {
@@ -36,12 +36,12 @@ export const NotificationsProvider = ({ children }: Props) => {
     useState<number>(0);
   const refNotificationCount = useRef(0);
 
-  // Run once on load, listens for items going into the feed
+  // Run once on load, listens for items going into the notifications
   // on the server, it's pretty simple, it adds to a count
   // that can be cleared using a hook elsewhere in the app
   useEffect(() => {
     console.log('How many times am i called');
-    // subscribe to inserts in the feed table
+    // subscribe to inserts in the notifications table
     const channel = supabase
       .channel('table-db-changes')
       .on(
@@ -49,13 +49,13 @@ export const NotificationsProvider = ({ children }: Props) => {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'feed',
+          table: 'notifications',
         },
         (row) => {
-          const feedItem = row.new as FeedItem;
+          const notificationsItem = row.new as NotificationsItem;
           // This function acts as a central coordinator
           // for refreshing the various react query caches
-          const { type, payload } = feedItem;
+          const { type, payload } = notificationsItem;
           if (!payload) {
             return;
           }
@@ -81,7 +81,7 @@ export const NotificationsProvider = ({ children }: Props) => {
               });
               break;
             default:
-              console.log('Unknown feed item type', type);
+              console.log('Unknown notifications item type', type);
               break;
           }
 

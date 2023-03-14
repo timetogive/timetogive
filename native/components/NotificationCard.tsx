@@ -3,16 +3,18 @@
 import { Stack } from 'react-native-flex-layout';
 import colors from '../styles/colors';
 import { Text } from '../components/Text';
-import { FeedItemType } from '../types';
+import { NotificationsItemType } from '../types';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface Props {
-  feedItemType: FeedItemType;
+  notificationsItemType: NotificationsItemType;
   onPress: () => void;
 }
 
-const feedItemText = (feedItemType: FeedItemType) => {
-  switch (feedItemType) {
+const notificationsItemText = (
+  notificationsItemType: NotificationsItemType
+) => {
+  switch (notificationsItemType) {
     case 'Task':
       return 'New task you might interested in';
     case 'TaskOffer':
@@ -32,13 +34,13 @@ const feedItemText = (feedItemType: FeedItemType) => {
 
 export const NotificationCard = ({
   onPress,
-  feedItemType,
+  notificationsItemType,
 }: Props) => {
   return (
     <TouchableOpacity onPress={() => onPress()}>
       <Stack p={20} bg={colors.white}>
         <Text size="md" weight="bold">
-          {feedItemText(feedItemType)}
+          {notificationsItemText(notificationsItemType)}
         </Text>
       </Stack>
     </TouchableOpacity>

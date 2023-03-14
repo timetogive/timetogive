@@ -13,6 +13,7 @@ export type GetTaskOffersResult =
   Database['public']['Functions']['get_task_offers']['Returns'];
 export type GetTaskConversationsResult =
   Database['public']['Functions']['get_task_conversations']['Returns'];
-export type FeedItem = Database['public']['Tables']['feed']['Row'];
-export type FeedItemType =
-  Database['public']['Enums']['feed_item_type'];
+export type NotificationsItem =
+  Database['public']['Tables']['notifications']['Row'];
+export type NotificationsItemType =
+  Database['public']['Enums']['notifications_item_type'];
