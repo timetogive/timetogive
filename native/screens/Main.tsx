@@ -16,7 +16,7 @@ import { faBars } from '@fortawesome/pro-light-svg-icons/faBars';
 import { faBars as faBarsSolid } from '@fortawesome/pro-solid-svg-icons/faBars';
 import { faBell } from '@fortawesome/pro-light-svg-icons/faBell';
 import { faBell as faBellSolid } from '@fortawesome/pro-solid-svg-icons/faBell';
-import { VStack, HStack, Box } from 'react-native-flex-layout';
+import { VStack, HStack, Box, Stack } from 'react-native-flex-layout';
 import { Text } from '../components/Text';
 import colors, { defaultColor } from '../styles/colors';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -34,6 +34,7 @@ import {
 import { Advice } from './Advice';
 import { Notifications } from './Notifications';
 import { Menu } from './Menu';
+import { useNotifications } from '../providers/notifications';
 
 export type MainTabParamList = {
   Tasks: undefined;
@@ -49,17 +50,39 @@ export const TabWithIcon = ({
   iconDefinition,
   focussedIconDefinition,
   title,
+  redAlert,
 }: {
   focused: boolean;
   iconDefinition: IconDefinition;
   focussedIconDefinition: IconDefinition;
   title: string;
+  redAlert?: number;
 }) => {
   const color = focused ? defaultColor[500] : colors.blackAlpha[500];
   const icon = focused ? focussedIconDefinition : iconDefinition;
+  const redAlertText =
+    redAlert && redAlert > 0 ? redAlert : undefined;
   return (
     <VStack spacing={3} center w={70}>
-      <FontAwesomeIcon icon={icon} size={25} color={color} />
+      <Box w={25} h={25} position="relative">
+        <FontAwesomeIcon icon={icon} size={25} color={color} />
+        {redAlertText && (
+          <Stack
+            center
+            bg={colors.red[500]}
+            radius={20}
+            w={20}
+            h={20}
+            position="absolute"
+            right={-10}
+            top={-5}
+          >
+            <Text size="xxs" color={colors.white}>
+              {redAlertText}
+            </Text>
+          </Stack>
+        )}
+      </Box>
       <Text size="xxs" textAlign="center" color={color}>
         {title}
       </Text>
@@ -75,6 +98,11 @@ const TabBar = ({
   // Bottom tab navigation
   const insets = useSafeAreaInsets();
   const { routes, index } = state;
+
+  const { count } = useNotifications();
+
+  console.log('notifications count');
+  console.log(count);
 
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
 
@@ -141,6 +169,7 @@ const TabBar = ({
             focussedIconDefinition={faBellSolid}
             title="Notifications"
             focused={routes[index].name === 'Notifications'}
+            redAlert={count}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onNavPress('Menu')}>

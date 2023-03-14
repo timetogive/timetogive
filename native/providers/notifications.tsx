@@ -1,8 +1,10 @@
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { supabase } from '../lib';
@@ -27,12 +29,16 @@ interface Props {
 // and takes appropriate actions - it also runs a count
 // of new notifications that can be displayed and cleared
 export const NotificationsProvider = ({ children }: Props) => {
+  // We use state with ref to avoid stale callback from
+  // the on event handler in supabase channel
   const [notificationCount, setNotificationCount] =
     useState<number>(0);
+  const refNotificationCount = useRef(0);
   // Run once on load, listens for items going into the feed
   // on the server, it's pretty simple, it adds to a count
   // that can be cleared using a hook elsewhere in the app
   useEffect(() => {
+    console.log('How many times am i called');
     // subscribe to inserts in the feed table
     const channel = supabase
       .channel('table-db-changes')
@@ -71,22 +77,31 @@ export const NotificationsProvider = ({ children }: Props) => {
               queryClient.refetchQueries(['GetTaskOffers', taskId], {
                 active: true,
               });
+              break;
             default:
               console.log('Unknown feed item type', type);
+              break;
           }
 
-          // Finally increment the count
-          setNotificationCount(notificationCount + 1);
+          console.log(
+            'Incrementing notification count',
+            refNotificationCount.current + 1
+          );
+
+          refNotificationCount.current =
+            refNotificationCount.current + 1;
+
+          setNotificationCount(refNotificationCount.current);
         }
       )
       .subscribe();
     // Unsubscribe when the component unmounts
     return () => {
+      console.log('Unsubscribing from notifications');
       channel.unsubscribe();
       supabase.removeChannel(channel);
     };
   }, []);
-
   return (
     <NotificationsContext.Provider
       value={{

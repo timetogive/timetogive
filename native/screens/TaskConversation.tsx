@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Input } from '@rneui/themed';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -46,6 +46,8 @@ type Props = NativeStackScreenProps<
 export const TaskConversation = ({ route, navigation }: Props) => {
   const insets = useSafeAreaInsets();
   const session = useSession();
+  // We use state with ref to avoid stale callback from
+  // the on event handler in supabase channel
   const [messages, setMessages] = useState<
     {
       from_user_id: string;
@@ -53,11 +55,39 @@ export const TaskConversation = ({ route, navigation }: Props) => {
       message_text: string;
     }[]
   >([]);
+
+  const refMessages = useRef<
+    {
+      from_user_id: string;
+      to_user_id: string;
+      message_text: string;
+    }[]
+  >([]);
+
+  const setRefAndStateMessages = (
+    messages: {
+      from_user_id: string;
+      to_user_id: string;
+      message_text: string;
+    }[]
+  ) => {
+    refMessages.current = messages;
+    setMessages(messages);
+  };
+
   const [message, setMessage] = useState<string | undefined>(
     undefined
   );
 
   const { userId, taskId } = route.params;
+
+  const myChannel = useRef(
+    supabase.channel(`${taskId}-${session.user?.id}`)
+  );
+
+  const theirChannel = useRef(
+    supabase.channel(`${taskId}-${userId}`)
+  );
 
   const profileQuery = useQuery(
     ['GetProfile', userId],
@@ -117,7 +147,7 @@ export const TaskConversation = ({ route, navigation }: Props) => {
 
   useEffect(() => {
     if (messagesQuery.data) {
-      setMessages(messagesQuery.data);
+      setRefAndStateMessages(messagesQuery.data);
     }
   }, [messagesQuery.data]);
 
@@ -139,13 +169,10 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     markRead();
   }, [messages]);
 
-  const myChannel = supabase.channel(`${taskId}-${session.user?.id}`);
-  const theirChannel = supabase.channel(`${taskId}-${userId}`);
-
   // Setup realtime channels
   useEffect(() => {
     console.log('Calling useEffect');
-    myChannel
+    myChannel.current
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.log('Subscribed to my channel');
@@ -153,24 +180,20 @@ export const TaskConversation = ({ route, navigation }: Props) => {
       })
       .on('broadcast', { event: 'message' }, ({ payload }: any) => {
         console.log('Realtime update received');
-        const newMessages = messages.concat(payload);
-        setMessages(newMessages);
+        setRefAndStateMessages(refMessages.current.concat(payload));
       });
-    theirChannel.subscribe((status) => {
+    theirChannel.current.subscribe((status) => {
       if (status === 'SUBSCRIBED') {
         console.log('Subscribed to their channel');
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages]);
-
-  useEffect(() => {
     return () => {
-      myChannel.unsubscribe();
-      theirChannel.unsubscribe();
-      supabase.removeChannel(myChannel);
-      supabase.removeChannel(theirChannel);
+      myChannel.current.unsubscribe();
+      theirChannel.current.unsubscribe();
+      supabase.removeChannel(myChannel.current);
+      supabase.removeChannel(theirChannel.current);
     };
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -190,28 +213,22 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     );
 
     // Pop a message into messages to avoid refetching
-    setMessages(
-      messages.concat({
+    setRefAndStateMessages(
+      refMessages.current.concat({
         to_user_id: userId,
         from_user_id: session.user?.id || '',
         message_text: message,
       })
     );
 
-    // Also broadcast the message via the realtime
-    // channel so that the other user gets it (if online)
-    theirChannel.subscribe((status) => {
-      if (status === 'SUBSCRIBED') {
-        theirChannel.send({
-          type: 'broadcast',
-          event: 'message',
-          payload: {
-            to_user_id: userId,
-            from_user_id: session.user?.id || '',
-            message_text: message,
-          },
-        });
-      }
+    theirChannel.current.send({
+      type: 'broadcast',
+      event: 'message',
+      payload: {
+        to_user_id: userId,
+        from_user_id: session.user?.id || '',
+        message_text: message,
+      },
     });
 
     if (error) {
