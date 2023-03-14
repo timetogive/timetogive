@@ -16,9 +16,12 @@ module.exports = {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      bundleIdentifier: 'com.timetogiveapp.timetogive',
       supportsTablet: true,
     },
     android: {
+      package: 'com.timetogiveapp.timetogive',
+      versionCode: 1,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#FFFFFF',
@@ -42,6 +45,9 @@ module.exports = {
       supabaseProjectId: process.env.SUPABASE_PROJECT_ID,
       multiAvatarApiUrl: process.env.MULTIAVATAR_API_URL,
       multiAvatarApiKey: process.env.MULTIAVATAR_API_KEY,
+      eas: {
+        projectId: '18442e1f-ce66-4b53-86df-d77aea5c3d8f',
+      },
     },
   },
 };
