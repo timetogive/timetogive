@@ -1,7 +1,7 @@
 module.exports = {
   expo: {
-    name: 'native',
-    slug: 'native',
+    name: 'timetogive',
+    slug: 'timetogive',
     version: '1.0.0',
     orientation: 'portrait',
     icon: './assets/icon.png',
