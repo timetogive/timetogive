@@ -1,0 +1,15 @@
+Action menu for dealing with task offers
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch ja-initial-website
+# Your branch is ahead of 'origin/ja-initial-website' by 2 commits.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	renamed:    components/AcceptDeclineMenu.tsx -> components/TaskOfferActionMenu.tsx
+#	modified:   components/TaskOffers.tsx
+#	modified:   screens/Task.tsx
+#	modified:   screens/TaskConversation.tsx
+#
