@@ -6,7 +6,7 @@ import {
 } from '@fortawesome/sharp-solid-svg-icons';
 import { Button } from '@rneui/themed';
 import { HStack, VStack } from 'react-native-flex-layout';
-import colors from '../styles/colors';
+import colors, { defaultColor } from '../styles/colors';
 import { Text } from './Text';
 
 interface Props {
@@ -18,7 +18,7 @@ export const CancelConversationBar = ({ onCancel }: Props) => {
     <HStack
       pv={10}
       ph={20}
-      bg={colors.gray[500]}
+      bg={defaultColor[600]}
       justify="between"
       items="center"
     >
