@@ -119,6 +119,38 @@ export interface Database {
           updated_at?: string | null
         }
       }
+      reviews: {
+        Row: {
+          created_datetime: string
+          from_user_id: string | null
+          id: string
+          message: string | null
+          score: number
+          task_id: string | null
+          to_role: Database["public"]["Enums"]["reviewee"]
+          to_user_id: string | null
+        }
+        Insert: {
+          created_datetime?: string
+          from_user_id?: string | null
+          id: string
+          message?: string | null
+          score?: number
+          task_id?: string | null
+          to_role?: Database["public"]["Enums"]["reviewee"]
+          to_user_id?: string | null
+        }
+        Update: {
+          created_datetime?: string
+          from_user_id?: string | null
+          id?: string
+          message?: string | null
+          score?: number
+          task_id?: string | null
+          to_role?: Database["public"]["Enums"]["reviewee"]
+          to_user_id?: string | null
+        }
+      }
       task_messages: {
         Row: {
           created_datetime: string
@@ -388,6 +420,7 @@ export interface Database {
         | "TaskOfferDeclined"
         | "TaskOfferCancelled"
         | "TaskMessage"
+      reviewee: "Task Lister" | "Volunteer"
       task_offer_status: "Pending" | "Accepted" | "Declined" | "Cancelled"
       task_reason:
         | "Charity"
