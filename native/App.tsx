@@ -4,8 +4,12 @@ import { Button, ThemeProvider } from '@rneui/themed';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import * as Linking from 'expo-linking';
-import { NavigationContainer } from '@react-navigation/native';
-import { useMemo } from 'react';
+import {
+  NavigationContainer,
+  NavigationState,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import { useMemo, useRef, useState } from 'react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -43,6 +47,9 @@ export type RootStackParamList = {
 const NavStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const navigationRef = useNavigationContainerRef();
+  const routeNameRef = useRef<string | undefined>();
+
   return (
     <>
       <SplashPreLoadProvider>
@@ -50,10 +57,27 @@ export default function App() {
           <ThemeProvider>
             <SafeAreaProvider>
               <SessionProvider>
-                <NavigationContainer>
+                <NavigationContainer
+                  ref={navigationRef}
+                  onReady={() => {
+                    routeNameRef.current =
+                      navigationRef.getCurrentRoute()?.name;
+                  }}
+                  onStateChange={async () => {
+                    const previousRouteName = routeNameRef.current;
+                    const currentRouteName =
+                      navigationRef.getCurrentRoute()?.name;
+                    if (previousRouteName !== currentRouteName) {
+                      // Save the current route name for later comparison
+                      routeNameRef.current = currentRouteName;
+                    }
+                  }}
+                >
                   <SignedIn>
                     {/* location and notifications providers are only needed once signed in */}
-                    <NotificationsProvider>
+                    <NotificationsProvider
+                      currentRouteName={routeNameRef.current || ''}
+                    >
                       <CurrentLocationProvider>
                         <SearchLocationProvider>
                           <ProfileIsComplete>
