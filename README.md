@@ -6,7 +6,7 @@ This is a monorepo representing the entire codebase of TimeToGive.
 
 # What is TimeToGive?
 
-TimeToGive is a micro-volunteering app and platform. It connects people with even a very small amount of spare time, with tasks that need doing in their local community, in real-time.
+TimeToGive is a micro volunteering app and platform. It connects people with even a very small amount of spare time, with tasks that need doing in their local community, in real-time.
 
 Tasks can be traditional volunteering opportunities (like helping hospices, community groups, or charities), or directly for individuals in need in the community (like the elderly, vulnerable, or those going through a tough time). Leveraging technology, doing this at scale on a global level, and doing this for free through a compelling mobile app is in itself a differentiator.
 
