@@ -68,6 +68,10 @@ export default function App() {
                     const currentRouteName =
                       navigationRef.getCurrentRoute()?.name;
                     if (previousRouteName !== currentRouteName) {
+                      console.log(
+                        'Route name changed: ',
+                        currentRouteName
+                      );
                       // Save the current route name for later comparison
                       routeNameRef.current = currentRouteName;
                     }
@@ -75,9 +79,7 @@ export default function App() {
                 >
                   <SignedIn>
                     {/* location and notifications providers are only needed once signed in */}
-                    <NotificationsProvider
-                      currentRouteName={routeNameRef.current || ''}
-                    >
+                    <NotificationsProvider>
                       <CurrentLocationProvider>
                         <SearchLocationProvider>
                           <ProfileIsComplete>

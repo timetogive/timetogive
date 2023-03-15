@@ -22,19 +22,13 @@ const NotificationsContext = createContext<Context>({
 });
 
 interface Props {
-  currentRouteName: string;
   children: ReactNode;
 }
-
-const toastScreenExclusions = ['TaskConversation'];
 
 // This provider listens for notifications on the notifications
 // and takes appropriate actions - it also runs a count
 // of new notifications that can be displayed and cleared
-export const NotificationsProvider = ({
-  currentRouteName,
-  children,
-}: Props) => {
+export const NotificationsProvider = ({ children }: Props) => {
   // We need to use navigation to avoid showing toast on certain screens
   // Note we can't use the useRoute hook like this:
   // const route = useRoute();
@@ -64,9 +58,7 @@ export const NotificationsProvider = ({
   };
 
   const toast = (toastParams: ToastShowParams) => {
-    if (!toastScreenExclusions.includes(currentRouteName)) {
-      Toast.show(toastParams);
-    }
+    Toast.show(toastParams);
   };
 
   // Run once on load, listens for items going into the notifications
@@ -84,7 +76,6 @@ export const NotificationsProvider = ({
           table: 'notifications',
         },
         (row) => {
-          console.log('ROUTE NAME', currentRouteName);
           const notificationsItem = row.new as NotificationsItem;
           // This function acts as a central coordinator
           // for refreshing the various react query caches
@@ -92,60 +83,86 @@ export const NotificationsProvider = ({
           if (!payload) {
             return;
           }
+          console.log(payload);
           incrementNotificationCount();
           if (type === 'TaskOffer') {
-            const { taskId, userFullName, taskTitle } =
+            const { taskId, taskOfferUserFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
             toast({
-              type: 'success',
+              type: 'info',
               text1: 'A new volunteer!',
-              text2: `${userFullName} has offered to help with "${taskTitle}"`,
+              text2: `${taskOfferUserFullName} has offered to help with "${taskTitle}"`,
             });
             return;
           }
           if (type === 'TaskOfferAccepted') {
-            const { taskId, userFullName, taskTitle } =
-              payload as any;
+            const {
+              taskId,
+              taskOfferUserFullName,
+              taskTitle,
+              taskOwnerId,
+            } = payload as any;
             refreshTaskQueries(taskId);
+            queryClient.refetchQueries(
+              ['GetPendingOffer', taskId, taskOwnerId],
+              {
+                active: true,
+              }
+            );
             toast({
-              type: 'success',
+              type: 'info',
               text1: 'Your offer to help has been accepted!',
-              text2: `${userFullName} has accepted your offer to help with "${taskTitle}"`,
+              text2: `${taskOfferUserFullName} has accepted your offer to help with "${taskTitle}"`,
             });
             return;
           }
           if (type === 'TaskOfferDeclined') {
-            const { taskId, userFullName, taskTitle } =
-              payload as any;
+            const {
+              taskId,
+              taskOfferUserFullName,
+              taskTitle,
+              taskOwnerId,
+            } = payload as any;
             refreshTaskQueries(taskId);
+            queryClient.refetchQueries(
+              ['GetPendingOffer', taskId, taskOwnerId],
+              {
+                active: true,
+              }
+            );
             toast({
-              type: 'warning',
+              type: 'info',
               text1: 'Your offer to help has been declined',
-              text2: `${userFullName} has sadly declined your offer to help with "${taskTitle}"`,
+              text2: `${taskOfferUserFullName} has sadly declined your offer to help with "${taskTitle}"`,
             });
             return;
           }
           if (type === 'TaskOfferCancelled') {
-            const { taskId, userFullName, taskTitle } =
-              payload as any;
+            const {
+              taskId,
+              taskOfferUserFullName,
+              taskTitle,
+              taskOfferUserId,
+            } = payload as any;
             refreshTaskQueries(taskId);
+            queryClient.refetchQueries(
+              ['GetPendingOffer', taskId, taskOfferUserId],
+              {
+                active: true,
+              }
+            );
             toast({
-              type: 'warning',
+              type: 'info',
               text1: 'An offer to help has been withdrawn',
-              text2: `${userFullName} has withdrawn the offer to help with "${taskTitle}"`,
+              text2: `${taskOfferUserFullName} has withdrawn the offer to help with "${taskTitle}"`,
             });
             return;
           }
           if (type === 'TaskMessage') {
-            const { taskId, userFullName, taskTitle } =
+            const { taskId, taskOfferUserFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            toast({
-              type: 'success',
-              text1: 'You have a new message!',
-              text2: `${userFullName} has messaged you regarding "${taskTitle}"`,
-            });
             return;
           }
         }
