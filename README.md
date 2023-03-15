@@ -55,11 +55,15 @@ yarn install
 
 Running the app locally relies on environment variables for holding secrets and connection details. This is not held in the repo.
 
-Ask @hoochani for the local development `.env`. Save this in the root directory of the repo.
+Ask @hoochani for the local development `.env`. Save this in in the `native` subfolder.
 
-Expo does not automatically pull in the variables from a `dotenv` so we must manually set the env vars.
+However, Expo does not automatically pull in the variables from a `dotenv` so we must manually set the env vars.
 
-For convenience there is a script that does this. 
+For convenience, you can run
+
+```
+source envs.sh 
+```
 
 Run the local expo service
 
@@ -68,4 +72,62 @@ yarn start
 ```
 
 You can then photo the QR code to run on your own phone device, or trigger the simulator by following the expo menu options.
+
+## Running the supabase backend
+
+For the local dev, the supabase environment is already running in the cloud. You "can" run supabase locally but can't see the point for what we're trying to do.
+
+For the MVP we're relying quite heavily on Postgres SQL (psql) functions which are then exposed as RPC web service functions to the frontend.
+
+In order to apply code + schema changes to the dev supabase environment. You can use the scripts in the database directory.
+
+```
+cd supabase/setup-scripts
+```
+
+Again connection strings are controlled via environment variables. 
+
+Ask @hoochani for the local development `.env`. Save this in in the `supabase/setup-scripts` subfolder.
+
+To deploy code and schema changes run
+
+```
+./index.sh
+```
+
+Note we need to get a lot more sophisticated with how we manage, build, and deploy db code changes. This will come.
+
+## Running the marketing website
+
+Simples!
+
+```
+cd website
+```
+
+Install dependencies
+
+```
+yarn install
+```
+
+Run it
+
+```
+yarn dev
+```
+
+View it in your browser
+
+
+
+
+
+
+
+
+
+
+
+
 
