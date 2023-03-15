@@ -9,7 +9,7 @@ import {
 import { supabase } from '../lib';
 import { queryClient } from '../lib/queryClient';
 import { NotificationsItem } from '../types';
-import Toast from 'react-native-toast-message';
+import Toast, { ToastShowParams } from 'react-native-toast-message';
 
 interface Context {
   count: number;
@@ -63,6 +63,12 @@ export const NotificationsProvider = ({
     setNotificationCount(refNotificationCount.current);
   };
 
+  const toast = (toastParams: ToastShowParams) => {
+    if (!toastScreenExclusions.includes(currentRouteName)) {
+      Toast.show(toastParams);
+    }
+  };
+
   // Run once on load, listens for items going into the notifications
   // on the server, it's pretty simple, it adds to a count
   // that can be cleared using a hook elsewhere in the app
@@ -86,66 +92,60 @@ export const NotificationsProvider = ({
           if (!payload) {
             return;
           }
+          incrementNotificationCount();
           if (type === 'TaskOffer') {
             const { taskId, userFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            if (!toastScreenExclusions.includes(currentRouteName)) {
-              Toast.show({
-                type: 'success',
-                text1: 'A new volunteer!',
-                text2: `${userFullName} has offered to help with "${taskTitle}"`,
-              });
-            }
-            incrementNotificationCount();
+            toast({
+              type: 'success',
+              text1: 'A new volunteer!',
+              text2: `${userFullName} has offered to help with "${taskTitle}"`,
+            });
             return;
           }
           if (type === 'TaskOfferAccepted') {
             const { taskId, userFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            Toast.show({
+            toast({
               type: 'success',
               text1: 'Your offer to help has been accepted!',
               text2: `${userFullName} has accepted your offer to help with "${taskTitle}"`,
             });
-            incrementNotificationCount();
             return;
           }
           if (type === 'TaskOfferDeclined') {
             const { taskId, userFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            Toast.show({
+            toast({
               type: 'warning',
               text1: 'Your offer to help has been declined',
               text2: `${userFullName} has sadly declined your offer to help with "${taskTitle}"`,
             });
-            incrementNotificationCount();
             return;
           }
           if (type === 'TaskOfferCancelled') {
             const { taskId, userFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            Toast.show({
+            toast({
               type: 'warning',
               text1: 'An offer to help has been withdrawn',
               text2: `${userFullName} has withdrawn the offer to help with "${taskTitle}"`,
             });
-            incrementNotificationCount();
             return;
           }
           if (type === 'TaskMessage') {
             const { taskId, userFullName, taskTitle } =
               payload as any;
             refreshTaskQueries(taskId);
-            Toast.show({
+            toast({
               type: 'success',
               text1: 'You have a new message!',
               text2: `${userFullName} has messaged you regarding "${taskTitle}"`,
             });
-            incrementNotificationCount();
             return;
           }
         }
