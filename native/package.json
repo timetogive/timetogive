@@ -48,7 +48,6 @@
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-native": "0.70.5",
-    "react-native-drawer-layout": "^3.2.0",
     "react-native-dropdown-picker": "^5.4.4",
     "react-native-flex-layout": "^0.1.5",
     "react-native-gesture-handler": "~2.8.0",

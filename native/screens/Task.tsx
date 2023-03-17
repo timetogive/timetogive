@@ -325,9 +325,9 @@ export const Task = ({ route, navigation }: Props) => {
                 overflow="hidden"
               >
                 <StaticMapWithMarker
-                  longLat={{
-                    longitude: task.longitude,
-                    latitude: task.latitude,
+                  point={{
+                    type: 'Point',
+                    coordinates: [task.longitude, task.latitude],
                   }}
                 />
               </Stack>

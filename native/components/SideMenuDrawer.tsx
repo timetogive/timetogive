@@ -10,6 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { useSession } from '../providers/session';
 import { supabase } from '../lib/supabase';
 import { Button } from '@rneui/themed';
+import Animated, {
+  SlideInRight,
+  SlideOutRight,
+} from 'react-native-reanimated';
 
 export const SideMenuDrawer = () => {
   const { open, setOpen } = useSideMenu();
@@ -22,7 +26,7 @@ export const SideMenuDrawer = () => {
   return (
     <>
       {open && (
-        <View
+        <Animated.View
           style={{
             flex: 1,
             position: 'absolute',
@@ -33,6 +37,8 @@ export const SideMenuDrawer = () => {
             backgroundColor: 'white',
             zIndex: 100,
           }}
+          entering={SlideInRight}
+          exiting={SlideOutRight}
         >
           <SafeWrapper>
             <Box style={{ flex: 1 }} position="relative">
@@ -61,7 +67,7 @@ export const SideMenuDrawer = () => {
               </Box>
             </Box>
           </SafeWrapper>
-        </View>
+        </Animated.View>
       )}
     </>
   );

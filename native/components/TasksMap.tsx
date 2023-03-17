@@ -53,7 +53,21 @@ const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
   };
   return (
     <Marker coordinate={googleLatLng} onPress={onPress}>
-      <TaskPin reason={task.reason} />
+      <VStack position="relative" h={40} w={40} center>
+        <FontAwesomeIcon
+          icon={faLocationPin}
+          color={defaultColor[400]}
+          size={40}
+          style={{ opacity: 0.9 }}
+        />
+        <VStack position="absolute" top={8}>
+          <FontAwesomeIcon
+            icon={getTtgIcon(task.reason)}
+            color={colors.white}
+            size={15}
+          />
+        </VStack>
+      </VStack>
     </Marker>
   );
 });
