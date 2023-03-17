@@ -18,7 +18,6 @@ import { Text, translateFontSize } from '../components/Text';
 import { effortText, reasonToTitle } from '../lib/tasksHelpers';
 import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
-import { min } from 'react-native-reanimated';
 import { IntegerPickerSheetModal } from '../components/IntegerPicker';
 import { SetLocationSheetModal } from '../components/SetLocation';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
