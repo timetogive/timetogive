@@ -38,6 +38,7 @@ import { useCurrentLocation } from '../providers/currentLocation';
 import bbox from '@turf/bbox';
 import bboxPolygon from '@turf/bbox-polygon';
 import { Polygon } from 'react-native-svg';
+import { TaskPin } from './TaskPin';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -52,21 +53,7 @@ const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
   };
   return (
     <Marker coordinate={googleLatLng} onPress={onPress}>
-      <VStack position="relative" h={40} w={40} center>
-        <FontAwesomeIcon
-          icon={faLocationPin}
-          color={defaultColor[400]}
-          size={40}
-          style={{ opacity: 0.9 }}
-        />
-        <VStack position="absolute" top={8}>
-          <FontAwesomeIcon
-            icon={getTtgIcon(task.reason)}
-            color={colors.white}
-            size={15}
-          />
-        </VStack>
-      </VStack>
+      <TaskPin reason={task.reason} />
     </Marker>
   );
 });

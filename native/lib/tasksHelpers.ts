@@ -7,7 +7,7 @@ import { faMessagesQuestion } from '@fortawesome/pro-solid-svg-icons/faMessagesQ
 import { TaskReason } from '../types';
 import pluralize from 'pluralize';
 
-export const getTtgIcon = (reason: string) => {
+export const getTtgIcon = (reason: TaskReason) => {
   switch (reason) {
     case 'Charity':
       return faHouseHeart;
@@ -19,8 +19,6 @@ export const getTtgIcon = (reason: string) => {
       return faHandshake;
     case 'Return For Pledge':
       return faHandHoldingDollar;
-    case 'Advice':
-      return faMessagesQuestion;
     default:
       return faHandWave;
   }
