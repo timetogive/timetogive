@@ -102,7 +102,7 @@ export const SetLocation = ({
     <Box style={{ flex: 1 }} pointerEvents="box-none">
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
+        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialMapRegion}
         onRegionChangeComplete={onRegionChange}

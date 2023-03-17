@@ -38,7 +38,7 @@ export const StaticMapWithMarker = ({ reason, point }: Props) => {
   return (
     <>
       <MapView
-        provider={PROVIDER_GOOGLE}
+        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialMapRegion}
         region={mapRegion}
