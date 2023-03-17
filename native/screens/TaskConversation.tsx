@@ -8,7 +8,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Input } from '@rneui/themed';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -36,7 +42,8 @@ import {
 } from '../lib/supabaseCalls';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
-import { MapListMode } from '../types';
+import { MapListMode, TaskOfferStatus } from '../types';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -168,6 +175,33 @@ export const TaskConversation = ({ route, navigation }: Props) => {
     };
     markRead();
   }, [messages]);
+
+  // Action the task offer, accept, decline, cancel
+  const actionTaskOffer = async (status: TaskOfferStatus) => {
+    if (pendingOffer) {
+      const { data, error } = await supabase.rpc(
+        'action_task_offer',
+        {
+          p_task_offer_id: pendingOffer.id,
+          p_status: status,
+        }
+      );
+      if (error) {
+        console.log('Error');
+        console.log(error);
+      }
+      pendingOfferQuery.refetch();
+    }
+  };
+
+  // When the screen is reloaded (in react navigation terms when it is focused)
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Calling useFocusEffect');
+      pendingOfferQuery.refetch();
+      messagesQuery.refetch();
+    }, [])
+  );
 
   // Setup realtime channels
   useEffect(() => {
@@ -317,13 +351,13 @@ export const TaskConversation = ({ route, navigation }: Props) => {
           {isMyTask && pendingOffer && user?.full_name && (
             <AcceptDeclineConversationBar
               offererName={user.full_name}
-              onAccept={() => console.log('Accepted')}
-              onDecline={() => console.log('Declined')}
+              onAccept={() => actionTaskOffer('Accepted')}
+              onDecline={() => actionTaskOffer('Declined')}
             />
           )}
           {!isMyTask && pendingOffer && (
             <CancelConversationBar
-              onCancel={() => console.log('Cancelled')}
+              onCancel={() => actionTaskOffer('Cancelled')}
             />
           )}
           <HStack

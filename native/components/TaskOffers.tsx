@@ -121,6 +121,14 @@ export const TaskOffers = ({ offers, onOfferPressed }: Props) => {
                         Declined
                       </Chip>
                     )}
+                    {o.status === 'Cancelled' && (
+                      <Chip
+                        textSize="xxs"
+                        backgroundColor={colors.gray[500]}
+                      >
+                        Cancelled
+                      </Chip>
+                    )}
                     <FontAwesomeIcon
                       icon={faChevronRight}
                       size={15}

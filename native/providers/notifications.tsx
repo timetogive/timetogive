@@ -83,12 +83,23 @@ export const NotificationsProvider = ({ children }: Props) => {
           if (!payload) {
             return;
           }
+          console.log('New notification...');
           console.log(payload);
           incrementNotificationCount();
           if (type === 'TaskOffer') {
-            const { taskId, taskOfferUserFullName, taskTitle } =
-              payload as any;
+            const {
+              taskId,
+              taskOfferUserFullName,
+              taskTitle,
+              taskOfferUserId,
+            } = payload as any;
             refreshTaskQueries(taskId);
+            queryClient.refetchQueries(
+              ['GetPendingOffer', taskId, taskOfferUserId],
+              {
+                active: true,
+              }
+            );
             toast({
               type: 'info',
               text1: 'A new volunteer!',

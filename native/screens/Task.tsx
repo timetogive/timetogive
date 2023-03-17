@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
@@ -29,6 +29,7 @@ import { effortText } from '../lib/tasksHelpers';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { Profile, TaskOfferStatus, TaskStatus } from '../types';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 
@@ -78,7 +79,7 @@ export const Task = ({ route, navigation }: Props) => {
     async () => {
       const query = getOffersSupabaseCall(taskId);
       const { data, error } = await query;
-      console.log(data);
+      console.log('GetTaskOffers', data);
       if (error) {
         Alert.alert('Error', error.message);
       }
@@ -153,6 +154,14 @@ export const Task = ({ route, navigation }: Props) => {
       myOffer?.status === 'Cancelled' ||
       myOffer?.status === 'Declined') &&
     taskIsOpen;
+
+  // When the screen is reloaded (in react navigation terms when it is focused)
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Calling useFocusEffect');
+      reload();
+    }, [])
+  );
 
   if (!task) {
     return <Text>Loading...</Text>;
