@@ -118,7 +118,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
   return (
     <>
       {/* Top box with back button */}
-      <BackBar navigation={navigation} />
+      <BackBar onBackPress={() => navigation.goBack()} />
       {/* Create task form */}
       <ScrollView>
         <Box ph={15} pb={insets.bottom + 15} bg={colors.white}>

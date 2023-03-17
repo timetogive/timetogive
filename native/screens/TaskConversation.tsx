@@ -279,7 +279,7 @@ export const TaskConversation = ({ route, navigation }: Props) => {
 
   return (
     <Stack style={{ flex: 1 }}>
-      <BackBar navigation={navigation}>
+      <BackBar onBackPress={() => navigation.goBack()}>
         {user && (
           <HStack spacing={10}>
             <Stack

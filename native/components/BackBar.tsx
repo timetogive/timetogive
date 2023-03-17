@@ -14,11 +14,11 @@ import { Text } from '../components/Text';
 import colors, { defaultColor } from '../styles/colors';
 
 interface Props {
-  navigation: NativeStackNavigationProp<ParamListBase>;
   children?: React.ReactNode;
+  onBackPress?: () => void;
 }
 
-export const BackBar = ({ navigation, children }: Props) => {
+export const BackBar = ({ onBackPress, children }: Props) => {
   const insets = useSafeAreaInsets();
   return (
     <HStack
@@ -30,7 +30,9 @@ export const BackBar = ({ navigation, children }: Props) => {
       items="center"
     >
       <HStack spacing={10} items="center">
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          onPress={() => onBackPress && onBackPress()}
+        >
           <FontAwesomeIcon
             icon={faChevronLeft}
             color={colors.white}

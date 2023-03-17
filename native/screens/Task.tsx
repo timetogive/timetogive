@@ -170,7 +170,7 @@ export const Task = ({ route, navigation }: Props) => {
   return (
     <>
       <VStack style={{ flex: 1 }}>
-        <BackBar navigation={navigation}></BackBar>
+        <BackBar onBackPress={() => navigation.goBack()} />
         {isMyTask && <InfoBar message="You created this task" />}
         {task.status === 'Assigned' && (
           <InfoBar message="This task has been assigned" />
