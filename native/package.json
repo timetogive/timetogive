@@ -7,6 +7,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "start:clear": "expo start -c",
+    "android:clear": "expo start --android -c",
+    "ios:clear": "expo start --ios -c",
+    "web:clear": "expo start --web -c",
     "update-supabase-types": "env-cmd npx supabase gen types typescript --project-id '$SUPABASE_PROJECT_ID' --schema public > ./types/supabase.ts"
   },
   "dependencies": {
