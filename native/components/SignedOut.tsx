@@ -5,14 +5,12 @@ interface Props {
   children: ReactNode;
 }
 
-export const SignedOut = ({
-  children,
-}: Props): JSX.Element | null => {
+export const SignedOut = ({ children }: Props) => {
   const session = useSession();
 
   if (session.isReady && !session.user) {
     return <>{children}</>;
   }
 
-  return null;
+  return <></>;
 };

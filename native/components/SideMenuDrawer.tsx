@@ -6,16 +6,23 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Text } from './Text';
-import { useEffect } from 'react';
-import { Button, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { useSideMenu } from '../providers/sideMenu';
 import { SafeWrapper } from './SafeWrapper';
 import { faClose } from '@fortawesome/sharp-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { MapListMode } from '../types';
+import { useSession } from '../providers/session';
+import { supabase } from '../lib/supabase';
+import { Button } from '@rneui/themed';
 
 export const SideMenuDrawer = () => {
   const { open, setOpen } = useSideMenu();
+
+  const signOut = () => {
+    setOpen(false);
+    supabase.auth.signOut();
+  };
+
   return (
     <>
       {open && (
@@ -36,9 +43,7 @@ export const SideMenuDrawer = () => {
           <SafeWrapper>
             <Box style={{ flex: 1 }} position="relative">
               <VStack style={{ flex: 1 }} center>
-                <Text color={colors.red[500]} textAlign="center">
-                  Hello
-                </Text>
+                <Button title="Sign Out" onPress={() => signOut()} />
               </VStack>
               <Box position="absolute" top={0} right={20}>
                 <TouchableOpacity onPress={() => setOpen(false)}>

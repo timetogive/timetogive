@@ -7,9 +7,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { VStack, Stack } from 'react-native-flex-layout';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'SignIn'>;
+export type SignInScreenProps = NativeStackScreenProps<
+  RootStackParamList,
+  'SignIn'
+>;
 
-export const SignIn = ({ navigation }: Props) => {
+export const SignIn = ({ navigation }: SignInScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

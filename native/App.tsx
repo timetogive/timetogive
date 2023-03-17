@@ -59,33 +59,33 @@ export default function App() {
           <ThemeProvider>
             <SafeAreaProvider>
               <SessionProvider>
-                <NavigationContainer
-                  ref={navigationRef}
-                  onReady={() => {
-                    routeNameRef.current =
-                      navigationRef.getCurrentRoute()?.name;
-                  }}
-                  onStateChange={async () => {
-                    const previousRouteName = routeNameRef.current;
-                    const currentRouteName =
-                      navigationRef.getCurrentRoute()?.name;
-                    if (previousRouteName !== currentRouteName) {
-                      console.log(
-                        'Route name changed: ',
-                        currentRouteName
-                      );
-                      // Save the current route name for later comparison
-                      routeNameRef.current = currentRouteName;
-                    }
-                  }}
-                >
-                  <SignedIn>
-                    {/* location and notifications providers are only needed once signed in */}
-                    <NotificationsProvider>
-                      <CurrentLocationProvider>
-                        <SearchLocationProvider>
-                          <ProfileIsComplete>
-                            <SideMenuProvider>
+                <SideMenuProvider>
+                  <NavigationContainer
+                    ref={navigationRef}
+                    onReady={() => {
+                      routeNameRef.current =
+                        navigationRef.getCurrentRoute()?.name;
+                    }}
+                    onStateChange={async () => {
+                      const previousRouteName = routeNameRef.current;
+                      const currentRouteName =
+                        navigationRef.getCurrentRoute()?.name;
+                      if (previousRouteName !== currentRouteName) {
+                        console.log(
+                          'Route name changed: ',
+                          currentRouteName
+                        );
+                        // Save the current route name for later comparison
+                        routeNameRef.current = currentRouteName;
+                      }
+                    }}
+                  >
+                    <SignedIn>
+                      {/* location and notifications providers are only needed once signed in */}
+                      <NotificationsProvider>
+                        <CurrentLocationProvider>
+                          <SearchLocationProvider>
+                            <ProfileIsComplete>
                               <NavStack.Navigator>
                                 <NavStack.Screen
                                   name="Main"
@@ -120,40 +120,40 @@ export default function App() {
                                   component={TaskConversation}
                                 />
                               </NavStack.Navigator>
-                              <SideMenuDrawer />
-                            </SideMenuProvider>
-                          </ProfileIsComplete>
-                          <ProfileNotComplete>
-                            <NavStack.Navigator>
-                              <NavStack.Screen
-                                name="MissingProfile"
-                                component={MissingProfile}
-                                options={{
-                                  title: 'MissingProfile',
-                                  headerShown: false,
-                                }}
-                              />
-                            </NavStack.Navigator>
-                          </ProfileNotComplete>
-                        </SearchLocationProvider>
-                      </CurrentLocationProvider>
-                    </NotificationsProvider>
-                  </SignedIn>
-                  <SignedOut>
-                    <NavStack.Navigator>
-                      <NavStack.Screen
-                        name="SignIn"
-                        options={{ headerShown: false }}
-                        component={SignIn}
-                      />
-                      <NavStack.Screen
-                        name="SignUp"
-                        options={{ headerShown: false }}
-                        component={SignUp}
-                      />
-                    </NavStack.Navigator>
-                  </SignedOut>
-                </NavigationContainer>
+                            </ProfileIsComplete>
+                            <ProfileNotComplete>
+                              <NavStack.Navigator>
+                                <NavStack.Screen
+                                  name="MissingProfile"
+                                  component={MissingProfile}
+                                  options={{
+                                    title: 'MissingProfile',
+                                    headerShown: false,
+                                  }}
+                                />
+                              </NavStack.Navigator>
+                            </ProfileNotComplete>
+                          </SearchLocationProvider>
+                        </CurrentLocationProvider>
+                      </NotificationsProvider>
+                    </SignedIn>
+                    <SignedOut>
+                      <NavStack.Navigator>
+                        <NavStack.Screen
+                          name="SignIn"
+                          options={{ headerShown: false }}
+                          component={SignIn}
+                        />
+                        <NavStack.Screen
+                          name="SignUp"
+                          options={{ headerShown: false }}
+                          component={SignUp}
+                        />
+                      </NavStack.Navigator>
+                    </SignedOut>
+                  </NavigationContainer>
+                  <SideMenuDrawer />
+                </SideMenuProvider>
               </SessionProvider>
             </SafeAreaProvider>
           </ThemeProvider>
