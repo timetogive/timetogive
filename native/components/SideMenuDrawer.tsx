@@ -1,12 +1,8 @@
 import { Box, Stack, VStack } from 'react-native-flex-layout';
 import colors, { defaultColor } from '../styles/colors';
-import Animated, {
-  SlideInRight,
-  SlideOutRight,
-} from 'react-native-reanimated';
 
 import { Text } from './Text';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { useSideMenu } from '../providers/sideMenu';
 import { SafeWrapper } from './SafeWrapper';
 import { faClose } from '@fortawesome/sharp-solid-svg-icons';
@@ -26,7 +22,7 @@ export const SideMenuDrawer = () => {
   return (
     <>
       {open && (
-        <Animated.View
+        <View
           style={{
             flex: 1,
             position: 'absolute',
@@ -37,8 +33,6 @@ export const SideMenuDrawer = () => {
             backgroundColor: 'white',
             zIndex: 100,
           }}
-          entering={SlideInRight}
-          exiting={SlideOutRight}
         >
           <SafeWrapper>
             <Box style={{ flex: 1 }} position="relative">
@@ -67,7 +61,7 @@ export const SideMenuDrawer = () => {
               </Box>
             </Box>
           </SafeWrapper>
-        </Animated.View>
+        </View>
       )}
     </>
   );

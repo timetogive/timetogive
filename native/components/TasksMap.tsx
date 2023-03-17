@@ -163,7 +163,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         }}
         showsUserLocation
       >
-        {tasks.map((task: any) => (
+        {tasks.map((task) => (
           <MapMarker
             key={task.id}
             task={task}
