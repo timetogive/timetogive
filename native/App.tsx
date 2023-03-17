@@ -9,7 +9,7 @@ import {
   NavigationState,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -33,6 +33,8 @@ import { Task } from './screens/Task';
 import { queryClient } from './lib/queryClient';
 import { CurrentLocationProvider } from './providers/currentLocation';
 import { NotificationsProvider } from './providers/notifications';
+import { SideMenuDrawer } from './components/SideMenuDrawer';
+import { SideMenuProvider } from './providers/sideMenu';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -83,40 +85,43 @@ export default function App() {
                       <CurrentLocationProvider>
                         <SearchLocationProvider>
                           <ProfileIsComplete>
-                            <NavStack.Navigator>
-                              <NavStack.Screen
-                                name="Main"
-                                component={Main}
-                                options={{
-                                  title: 'Main',
-                                  headerShown: false,
-                                }}
-                              />
-                              <NavStack.Screen
-                                name="Task"
-                                options={{
-                                  title: 'Task',
-                                  headerShown: false,
-                                }}
-                                component={Task}
-                              />
-                              <NavStack.Screen
-                                name="CreateTask"
-                                options={{
-                                  title: 'CreateTask',
-                                  headerShown: false,
-                                }}
-                                component={CreateTask}
-                              />
-                              <NavStack.Screen
-                                name="TaskConversation"
-                                options={{
-                                  title: 'TaskConversation',
-                                  headerShown: false,
-                                }}
-                                component={TaskConversation}
-                              />
-                            </NavStack.Navigator>
+                            <SideMenuProvider>
+                              <NavStack.Navigator>
+                                <NavStack.Screen
+                                  name="Main"
+                                  component={Main}
+                                  options={{
+                                    title: 'Main',
+                                    headerShown: false,
+                                  }}
+                                />
+                                <NavStack.Screen
+                                  name="Task"
+                                  options={{
+                                    title: 'Task',
+                                    headerShown: false,
+                                  }}
+                                  component={Task}
+                                />
+                                <NavStack.Screen
+                                  name="CreateTask"
+                                  options={{
+                                    title: 'CreateTask',
+                                    headerShown: false,
+                                  }}
+                                  component={CreateTask}
+                                />
+                                <NavStack.Screen
+                                  name="TaskConversation"
+                                  options={{
+                                    title: 'TaskConversation',
+                                    headerShown: false,
+                                  }}
+                                  component={TaskConversation}
+                                />
+                              </NavStack.Navigator>
+                              <SideMenuDrawer />
+                            </SideMenuProvider>
                           </ProfileIsComplete>
                           <ProfileNotComplete>
                             <NavStack.Navigator>

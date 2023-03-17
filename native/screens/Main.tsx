@@ -21,20 +21,12 @@ import { Text } from '../components/Text';
 import colors, { defaultColor } from '../styles/colors';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetModalProvider,
-} from '@gorhom/bottom-sheet';
-import { BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
-import {
-  CreateActionMenu,
-  CreateActionMenuBottomSheetModal,
-} from '../components/CreateActionMenu';
+import { CreateActionMenuBottomSheetModal } from '../components/CreateActionMenu';
 import { Advice } from './Advice';
 import { Notifications } from './Notifications';
 import { Menu } from './Menu';
 import { useNotifications } from '../providers/notifications';
+import { useSideMenu } from '../providers/sideMenu';
 
 export type MainTabParamList = {
   Tasks: undefined;
@@ -97,6 +89,10 @@ const TabBar = ({
 }: BottomTabBarProps) => {
   // Bottom tab navigation
   const insets = useSafeAreaInsets();
+
+  // Side menu navigation
+  const { open, setOpen } = useSideMenu();
+
   const { routes, index } = state;
 
   const { count } = useNotifications();
@@ -121,6 +117,10 @@ const TabBar = ({
 
   const onCreatePress = () => {
     setCreateModalOpen(true);
+  };
+
+  const onMenuPress = () => {
+    setOpen(true);
   };
 
   const onCreateMenuItemPress = (action: string) => {
@@ -172,7 +172,7 @@ const TabBar = ({
             redAlert={count}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onNavPress('Menu')}>
+        <TouchableOpacity onPress={() => onMenuPress()}>
           <TabWithIcon
             iconDefinition={faBars}
             focussedIconDefinition={faBarsSolid}
