@@ -1,12 +1,15 @@
 {
   "name": "native",
   "version": "1.0.0",
-  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
+    "start:clear": "expo start -c",
+    "android:clear": "expo start --android -c",
+    "ios:clear": "expo start --ios -c",
+    "web:clear": "expo start --web -c",
     "update-supabase-types": "env-cmd npx supabase gen types typescript --project-id '$SUPABASE_PROJECT_ID' --schema public > ./types/supabase.ts"
   },
   "dependencies": {
@@ -16,6 +19,7 @@
     "@fortawesome/pro-regular-svg-icons": "^6.3.0",
     "@fortawesome/pro-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@fortawesome/sharp-regular-svg-icons": "^6.3.0",
     "@fortawesome/sharp-solid-svg-icons": "^6.3.0",
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-async-storage/async-storage": "~1.17.3",

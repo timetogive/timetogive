@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<MainTabParamList, 'Advice'>;
 export const Advice = ({ navigation }: Props) => {
   return (
     <>
-      <BackBar navigation={navigation} />
+      <BackBar onBackPress={() => navigation.goBack()} />
       <Text>Advice</Text>
     </>
   );

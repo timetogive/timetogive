@@ -18,16 +18,15 @@ import { Text, translateFontSize } from '../components/Text';
 import { effortText, reasonToTitle } from '../lib/tasksHelpers';
 import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
-import { min } from 'react-native-reanimated';
 import { IntegerPickerSheetModal } from '../components/IntegerPicker';
 import { SetLocationSheetModal } from '../components/SetLocation';
-import { LongLat } from '../providers/searchLocation';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
 import axios from 'axios';
 import { supabase } from '../lib';
 import { BackBar } from '../components/BackBar';
+import { Point } from 'geojson';
 
 const integerText = (value: number, word: string) => {
   const text = `${value} ${pluralize(word, value)}`;
@@ -60,7 +59,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
   const [volunteerModalOpen, setVolunteerModalOpen] = useState(false);
   const [volunteers, setVolunteers] = useState(1);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
-  const [location, setLocation] = useState<LongLat | undefined>(
+  const [location, setLocation] = useState<Point | undefined>(
     undefined
   );
   const [remote, setRemote] = useState(false);
@@ -95,8 +94,8 @@ export const CreateTask = ({ route, navigation }: Props) => {
       effort_people: volunteers,
       timing,
       remote,
-      longitude: location?.longitude,
-      latitude: location?.latitude,
+      longitude: location?.coordinates[0],
+      latitude: location?.coordinates[1],
       lifespan_days: lifespanDays,
     };
     const { data, error } = await supabase.rpc(
@@ -118,7 +117,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
   return (
     <>
       {/* Top box with back button */}
-      <BackBar navigation={navigation} />
+      <BackBar onBackPress={() => navigation.goBack()} />
       {/* Create task form */}
       <ScrollView>
         <Box ph={15} pb={insets.bottom + 15} bg={colors.white}>
@@ -267,7 +266,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
               >
                 {location ? (
                   <Stack minH={240} pointerEvents="box-only">
-                    <StaticMapWithMarker longLat={location} />
+                    <StaticMapWithMarker point={location} />
                   </Stack>
                 ) : (
                   <HStack
@@ -351,9 +350,9 @@ export const CreateTask = ({ route, navigation }: Props) => {
       />
       <SetLocationSheetModal
         isOpen={locationModalOpen}
-        longLat={location}
         onClose={() => setLocationModalOpen(false)}
-        onLongLatChange={setLocation}
+        point={location}
+        onPointChange={setLocation}
       />
     </>
   );

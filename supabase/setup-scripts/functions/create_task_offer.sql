@@ -68,16 +68,17 @@ begin
 
     -- Build the jsonb payload
     l_jsonb := json_build_object(
-        'id', return_id,
         'taskId', p_task_id,
         'taskTitle', l_task_title,
-        'userId', l_user_id,
-        'userFullName', l_auth_user_full_name,
-        'userAvatarUrl', l_auth_user_avatar_url,
+        'taskOfferId', return_id,
+        'taskOfferUserId', l_user_id,
+        'taskOfferUserFullName', l_auth_user_full_name,
+        'taskOfferUserAvatarUrl', l_auth_user_avatar_url,
         'taskOwnerId', l_task_owner_id,
         'taskOwnerFullName', l_task_owner_full_name,
         'taskOwnerAvatarUrl', l_task_owner_avatar_url
     );
+
 
     -- You
     -- insert into public.notifications(

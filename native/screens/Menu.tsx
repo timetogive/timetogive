@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<MainTabParamList, 'Menu'>;
 export const Menu = ({ route, navigation }: Props) => {
   return (
     <>
-      <BackBar navigation={navigation} />
+      <BackBar onBackPress={() => navigation.goBack()} />
       <Text>Menu</Text>
     </>
   );

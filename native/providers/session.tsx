@@ -12,6 +12,14 @@ import {
 } from 'react-query';
 import { supabase } from '../lib/supabase';
 import { AuthChangeEvent } from '@supabase/supabase-js';
+import { queryClient } from '../lib/queryClient';
+import {
+  StackActions,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
+import { RootStackParamList } from '../App';
+import { SignInScreenProps } from '../screens/SignIn';
 
 type Query = UseQueryResult<Profile | null>;
 
@@ -33,8 +41,7 @@ interface Props {
 export const SessionProvider = ({
   children,
   initialUser = undefined,
-}: Props): JSX.Element => {
-  const queryClient = useQueryClient();
+}: Props) => {
   const userQuery = useQuery(
     'activeUser',
     async () => {
@@ -74,8 +81,8 @@ export const SessionProvider = ({
         }
 
         if (event === 'SIGNED_OUT') {
-          await queryClient.clear();
-          window.location.reload();
+          await userQuery.refetch();
+          queryClient.clear();
         }
       }
     );

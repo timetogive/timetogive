@@ -1449,6 +1449,13 @@
     humps "^2.0.1"
     prop-types "^15.7.2"
 
+"@fortawesome/sharp-regular-svg-icons@^6.3.0":
+  version "6.3.0"
+  resolved "https://npm.fontawesome.com/@fortawesome/sharp-regular-svg-icons/-/6.3.0/sharp-regular-svg-icons-6.3.0.tgz#6318d174731d5f1eceb62658736515bafe1f2a67"
+  integrity sha512-XLplEDO8BUtqoU8mFYzIhuEmvzBc1fifumVT8DorZZetxGAvICvIUOXwPFbidOlUGsTjUNqTU6mzOXYWVlaFIA==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "6.3.0"
+
 "@fortawesome/sharp-solid-svg-icons@^6.3.0":
   version "6.3.0"
   resolved "https://npm.fontawesome.com/@fortawesome/sharp-solid-svg-icons/-/6.3.0/sharp-solid-svg-icons-6.3.0.tgz#17304196df5aeaa8a257a2cb469f700f539f941d"

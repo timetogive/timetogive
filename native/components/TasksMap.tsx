@@ -38,6 +38,11 @@ import { useCurrentLocation } from '../providers/currentLocation';
 import bbox from '@turf/bbox';
 import bboxPolygon from '@turf/bbox-polygon';
 import { Polygon } from 'react-native-svg';
+import { TaskPin } from './TaskPin';
+import Animated, {
+  FadeInDown,
+  FadeOutUp,
+} from 'react-native-reanimated';
 
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
@@ -52,21 +57,7 @@ const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
   };
   return (
     <Marker coordinate={googleLatLng} onPress={onPress}>
-      <VStack position="relative" h={40} w={40} center>
-        <FontAwesomeIcon
-          icon={faLocationPin}
-          color={defaultColor[400]}
-          size={40}
-          style={{ opacity: 0.9 }}
-        />
-        <VStack position="absolute" top={8}>
-          <FontAwesomeIcon
-            icon={getTtgIcon(task.reason)}
-            color={colors.white}
-            size={15}
-          />
-        </VStack>
-      </VStack>
+      <TaskPin reason={task.reason} />
     </Marker>
   );
 });
@@ -167,16 +158,16 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     <Box style={{ flex: 1 }} pointerEvents="box-none">
       <MapView
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
+        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialMapRegion}
         onTouchStart={() => {
-          console.log('map moved');
+          setSelectedTask(undefined);
           setMapMoved(true);
         }}
         showsUserLocation
       >
-        {tasks.map((task: any) => (
+        {tasks.map((task) => (
           <MapMarker
             key={task.id}
             task={task}
@@ -267,12 +258,16 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         </HStack>
       </HStack>
       {selectedTask && (
-        <Box
-          position="absolute"
-          bottom={30}
-          right={0}
-          left={0}
-          mh={50}
+        <Animated.View
+          style={{
+            position: 'absolute',
+            bottom: 30,
+            right: 0,
+            left: 0,
+            marginHorizontal: 50,
+          }}
+          entering={FadeInDown}
+          exiting={FadeOutUp}
         >
           <TaskCard
             key={selectedTask.id}
@@ -291,7 +286,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
             shadowColor={colors.gray[700]}
             onPress={() => onTaskPressed(selectedTask.id)}
           />
-        </Box>
+        </Animated.View>
       )}
     </Box>
   );

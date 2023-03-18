@@ -6,9 +6,7 @@ interface Props {
   children: ReactNode;
 }
 
-export const ProfileIsComplete = ({
-  children,
-}: Props): JSX.Element | null => {
+export const ProfileIsComplete = ({ children }: Props) => {
   const session = useSession();
 
   if (
@@ -19,5 +17,5 @@ export const ProfileIsComplete = ({
     return <>{children}</>;
   }
 
-  return null;
+  return <></>;
 };

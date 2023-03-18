@@ -1,6 +1,7 @@
 import {
   faLocationPin,
   faCrosshairsSimple,
+  faLocationCrosshairs,
 } from '@fortawesome/sharp-solid-svg-icons';
 import { width } from '@fortawesome/pro-solid-svg-icons/faAngleDown';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -15,63 +16,56 @@ import { Button } from '@rneui/themed';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, Stack, Box } from 'react-native-flex-layout';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import {
-  defaultLongLat,
-  LongLat,
-  useLocation,
-} from '../providers/searchLocation';
-import colors from '../styles/colors';
+import colors, { defaultColor } from '../styles/colors';
 import { Text, translateFontSize } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ColorSpace } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
 import { useQueryClient, useQuery } from 'react-query';
-import { supabase } from '../lib';
+import { getCenterPoint, supabase } from '../lib';
+import { Point } from 'geojson';
+import { useCurrentLocation } from '../providers/currentLocation';
+import { useSearchLocation } from '../providers/searchLocation';
+import { TaskPin } from './TaskPin';
+import { TaskReason } from '../types';
 
 interface Props {
-  longLat?: LongLat;
-  onLongLatChange?: (longLat: LongLat) => void;
+  reason?: TaskReason;
+  point?: Point;
+  onPointChange?: (point: Point) => void;
 }
 
-export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
+export const SetLocation = ({
+  reason,
+  point,
+  onPointChange,
+}: Props) => {
+  const searchLocation = useSearchLocation();
+  const currentLocation = useCurrentLocation();
+  const centerPointOfSearchLocation = getCenterPoint(
+    searchLocation.searchLocation
+  );
+
+  const initialMapRegion: Region = point
+    ? {
+        longitude: point.coordinates[0],
+        latitude: point.coordinates[1],
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }
+    : {
+        longitude: centerPointOfSearchLocation.coordinates[0],
+        latitude: centerPointOfSearchLocation.coordinates[1],
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      };
+
   const mapRef = useRef<MapView>(null);
   const insets = useSafeAreaInsets();
-  const selectedLocation = useLocation();
-
-  const [ready, setReady] = useState(false);
-
-  const [mapRegion, setMapRegion] = useState<Region | undefined>(
-    undefined
-  );
 
   const mapRegionTracker = useRef<Region | undefined>();
 
-  const goCurrentLocation = async () => {
-    // Otherwise go and get the current location
-    const currentLongLat = await selectedLocation.getLiveLongLat();
-
-    const region = {
-      latitude: currentLongLat.latitude,
-      longitude: currentLongLat.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    };
-
-    mapRef.current?.animateToRegion(region);
-  };
-
   const onRegionChange = (region: Region) => {
-    mapRegionTracker.current = region;
-  };
-
-  const setRegionAndTracker = (longLat: LongLat) => {
-    const region = {
-      latitude: longLat.latitude,
-      longitude: longLat.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
-    };
-    setMapRegion(region);
     mapRegionTracker.current = region;
   };
 
@@ -80,65 +74,41 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
       mapRegionTracker.current?.longitude &&
       mapRegionTracker.current?.latitude
     ) {
-      onLongLatChange &&
-        onLongLatChange({
-          longitude: mapRegionTracker.current.longitude,
-          latitude: mapRegionTracker.current.latitude,
+      onPointChange &&
+        onPointChange({
+          type: 'Point',
+          coordinates: [
+            mapRegionTracker.current.longitude,
+            mapRegionTracker.current.latitude,
+          ],
         });
     }
   };
 
-  // After mounting, determine which location to set the map to
-  // based on a prioritisation of factors and inputs
-  useEffect(() => {
-    (async () => {
-      // If the long lat is passed in, use that
-      if (longLat) {
-        setRegionAndTracker({
-          latitude: longLat.latitude,
-          longitude: longLat.longitude,
-        });
-        setReady(true);
-        return;
-      }
-      // See if we can use the current location
-      const canAccessCurrentLocation =
-        await selectedLocation.canAccessLiveLocation();
-      // No access to the current location then use a default
-      if (!canAccessCurrentLocation) {
-        setRegionAndTracker({
-          latitude: defaultLongLat.latitude,
-          longitude: defaultLongLat.longitude,
-        });
-        setReady(true);
-        return;
-      }
-      // Otherwise go and get the current location
-      const currentLongLat = await selectedLocation.getLiveLongLat();
-      setRegionAndTracker({
-        latitude: currentLongLat.latitude,
-        longitude: currentLongLat.longitude,
+  const focusOnMe = () => {
+    if (currentLocation.currentLocation) {
+      mapRef.current?.animateToRegion({
+        longitude: currentLocation.currentLocation.coordinates[0],
+        latitude: currentLocation.currentLocation.coordinates[1],
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
       });
-      setReady(true);
-    })();
-  }, []);
-
-  if (!ready) {
-    return <Text>Loading map...</Text>;
-  }
+      return;
+    }
+    currentLocation.forceRefresh();
+  };
 
   return (
-    <>
-      {/* Map */}
+    <Box style={{ flex: 1 }} pointerEvents="box-none">
       <MapView
-        provider={PROVIDER_GOOGLE}
-        style={{ flex: 1 }}
-        region={mapRegion}
-        onRegionChangeComplete={onRegionChange}
         ref={mapRef}
-      />
-
-      {/* Fixed Marker */}
+        //provider={PROVIDER_GOOGLE}
+        style={{ flex: 1 }}
+        initialRegion={initialMapRegion}
+        onRegionChangeComplete={onRegionChange}
+        showsUserLocation
+      ></MapView>
+      {/* Fixed Pin overlay */}
       <Stack
         pointerEvents="none"
         position="absolute"
@@ -148,33 +118,29 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         bottom={0}
         center
       >
-        <Box mt={-20}>
-          <FontAwesomeIcon
-            icon={faLocationPin}
-            color={colors.pink[400]}
-            size={40}
-            style={{ opacity: 0.95 }}
-          />
-        </Box>
+        <TaskPin reason={reason} />
       </Stack>
 
-      {/* Use my location button */}
-      <Box position="absolute" top={25} left={15}>
-        <TouchableOpacity onPress={() => goCurrentLocation()}>
-          <HStack items="center" spacing={10}>
+      {/* My location button */}
+      <Box position="absolute" top={20} right={20}>
+        <TouchableOpacity onPress={() => focusOnMe()}>
+          <Stack
+            radius={50}
+            style={{ backgroundColor: defaultColor[700] }}
+            spacing={10}
+            h={30}
+            w={30}
+            center
+          >
             <FontAwesomeIcon
-              icon={faCrosshairsSimple}
-              color={colors.pink[500]}
-              size={20}
+              icon={faLocationCrosshairs}
+              color={colors.white}
+              size={15}
             />
-            <Text color={colors.pink[500]} size="xs">
-              Use current location
-            </Text>
-          </HStack>
+          </Stack>
         </TouchableOpacity>
       </Box>
-
-      {/* Set location button */}
+      {/* Confirm location button */}
       <Stack
         position="absolute"
         right={0}
@@ -183,7 +149,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
         mh={20}
       >
         <Button
-          color={colors.pink[500]}
+          color={defaultColor[500]}
           style={{ width: '100%' }}
           onPress={() => confirmPinLocation()}
         >
@@ -192,7 +158,7 @@ export const SetLocation = ({ longLat, onLongLatChange }: Props) => {
           </Text>
         </Button>
       </Stack>
-    </>
+    </Box>
   );
 };
 
@@ -204,8 +170,9 @@ interface SetLocationSheetModalProps extends Props {
 export const SetLocationSheetModal = ({
   isOpen,
   onClose,
-  longLat,
-  onLongLatChange,
+  reason,
+  point,
+  onPointChange,
 }: SetLocationSheetModalProps) => {
   // Bottom sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -235,9 +202,9 @@ export const SetLocationSheetModal = ({
     }
   }, [isOpen]);
 
-  const interceptOnLongLatChange = (longLat: LongLat) => {
+  const interceptOnPointChange = (point: Point) => {
     hideModal();
-    onLongLatChange && onLongLatChange(longLat);
+    onPointChange && onPointChange(point);
   };
 
   return (
@@ -250,8 +217,9 @@ export const SetLocationSheetModal = ({
       >
         <Box style={{ flex: 1 }} pt={10} overflow="hidden">
           <SetLocation
-            longLat={longLat}
-            onLongLatChange={interceptOnLongLatChange}
+            reason={reason}
+            point={point}
+            onPointChange={interceptOnPointChange}
           />
         </Box>
       </BottomSheetModal>

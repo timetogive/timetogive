@@ -159,7 +159,7 @@ begin
     end if;
 
     -- If cancelled then let the task owner know
-    if (p_status = 'Accepted' or p_status = 'Declined') then
+    if (p_status = 'Cancelled') then
         insert into public.notifications(
             user_id,
             you_actioned,

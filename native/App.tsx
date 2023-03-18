@@ -4,8 +4,12 @@ import { Button, ThemeProvider } from '@rneui/themed';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import * as Linking from 'expo-linking';
-import { NavigationContainer } from '@react-navigation/native';
-import { useMemo } from 'react';
+import {
+  NavigationContainer,
+  NavigationState,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import React, { useMemo, useRef, useState } from 'react';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -29,6 +33,8 @@ import { Task } from './screens/Task';
 import { queryClient } from './lib/queryClient';
 import { CurrentLocationProvider } from './providers/currentLocation';
 import { NotificationsProvider } from './providers/notifications';
+import { SideMenuDrawer } from './components/SideMenuDrawer';
+import { SideMenuProvider } from './providers/sideMenu';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -43,6 +49,9 @@ export type RootStackParamList = {
 const NavStack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
+  const navigationRef = useNavigationContainerRef();
+  const routeNameRef = useRef<string | undefined>();
+
   return (
     <>
       <SplashPreLoadProvider>
@@ -50,79 +59,101 @@ export default function App() {
           <ThemeProvider>
             <SafeAreaProvider>
               <SessionProvider>
-                <NavigationContainer>
-                  <SignedIn>
-                    {/* location and notifications providers are only needed once signed in */}
-                    <NotificationsProvider>
-                      <CurrentLocationProvider>
-                        <SearchLocationProvider>
-                          <ProfileIsComplete>
-                            <NavStack.Navigator>
-                              <NavStack.Screen
-                                name="Main"
-                                component={Main}
-                                options={{
-                                  title: 'Main',
-                                  headerShown: false,
-                                }}
-                              />
-                              <NavStack.Screen
-                                name="Task"
-                                options={{
-                                  title: 'Task',
-                                  headerShown: false,
-                                }}
-                                component={Task}
-                              />
-                              <NavStack.Screen
-                                name="CreateTask"
-                                options={{
-                                  title: 'CreateTask',
-                                  headerShown: false,
-                                }}
-                                component={CreateTask}
-                              />
-                              <NavStack.Screen
-                                name="TaskConversation"
-                                options={{
-                                  title: 'TaskConversation',
-                                  headerShown: false,
-                                }}
-                                component={TaskConversation}
-                              />
-                            </NavStack.Navigator>
-                          </ProfileIsComplete>
-                          <ProfileNotComplete>
-                            <NavStack.Navigator>
-                              <NavStack.Screen
-                                name="MissingProfile"
-                                component={MissingProfile}
-                                options={{
-                                  title: 'MissingProfile',
-                                  headerShown: false,
-                                }}
-                              />
-                            </NavStack.Navigator>
-                          </ProfileNotComplete>
-                        </SearchLocationProvider>
-                      </CurrentLocationProvider>
-                    </NotificationsProvider>
-                  </SignedIn>
-                  <SignedOut>
-                    <NavStack.Navigator>
-                      <NavStack.Screen
-                        name="SignIn"
-                        options={{ headerShown: false }}
-                        component={SignIn}
-                      />
-                      <NavStack.Screen
-                        name="SignUp"
-                        options={{ headerShown: false }}
-                        component={SignUp}
-                      />
-                    </NavStack.Navigator>
-                  </SignedOut>
-                </NavigationContainer>
+                <SideMenuProvider>
+                  <NavigationContainer
+                    ref={navigationRef}
+                    onReady={() => {
+                      routeNameRef.current =
+                        navigationRef.getCurrentRoute()?.name;
+                    }}
+                    onStateChange={async () => {
+                      const previousRouteName = routeNameRef.current;
+                      const currentRouteName =
+                        navigationRef.getCurrentRoute()?.name;
+                      if (previousRouteName !== currentRouteName) {
+                        console.log(
+                          'Route name changed: ',
+                          currentRouteName
+                        );
+                        // Save the current route name for later comparison
+                        routeNameRef.current = currentRouteName;
+                      }
+                    }}
+                  >
+                    <SignedIn>
+                      {/* location and notifications providers are only needed once signed in */}
+                      <NotificationsProvider>
+                        <CurrentLocationProvider>
+                          <SearchLocationProvider>
+                            <ProfileIsComplete>
+                              <NavStack.Navigator>
+                                <NavStack.Screen
+                                  name="Main"
+                                  component={Main}
+                                  options={{
+                                    title: 'Main',
+                                    headerShown: false,
+                                  }}
+                                />
+                                <NavStack.Screen
+                                  name="Task"
+                                  options={{
+                                    title: 'Task',
+                                    headerShown: false,
+                                  }}
+                                  component={Task}
+                                />
+                                <NavStack.Screen
+                                  name="CreateTask"
+                                  options={{
+                                    title: 'CreateTask',
+                                    headerShown: false,
+                                  }}
+                                  component={CreateTask}
+                                />
+                                <NavStack.Screen
+                                  name="TaskConversation"
+                                  options={{
+                                    title: 'TaskConversation',
+                                    headerShown: false,
+                                  }}
+                                  component={TaskConversation}
+                                />
+                              </NavStack.Navigator>
+                            </ProfileIsComplete>
+                            <ProfileNotComplete>
+                              <NavStack.Navigator>
+                                <NavStack.Screen
+                                  name="MissingProfile"
+                                  component={MissingProfile}
+                                  options={{
+                                    title: 'MissingProfile',
+                                    headerShown: false,
+                                  }}
+                                />
+                              </NavStack.Navigator>
+                            </ProfileNotComplete>
+                          </SearchLocationProvider>
+                        </CurrentLocationProvider>
+                      </NotificationsProvider>
+                    </SignedIn>
+                    <SignedOut>
+                      <NavStack.Navigator>
+                        <NavStack.Screen
+                          name="SignIn"
+                          options={{ headerShown: false }}
+                          component={SignIn}
+                        />
+                        <NavStack.Screen
+                          name="SignUp"
+                          options={{ headerShown: false }}
+                          component={SignUp}
+                        />
+                      </NavStack.Navigator>
+                    </SignedOut>
+                  </NavigationContainer>
+                  <SideMenuDrawer />
+                </SideMenuProvider>
               </SessionProvider>
             </SafeAreaProvider>
           </ThemeProvider>

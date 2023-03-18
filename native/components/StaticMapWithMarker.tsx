@@ -1,19 +1,22 @@
 import { faLocationPin } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Point } from 'geojson';
 import { useEffect, useState } from 'react';
 import { Stack, Box } from 'react-native-flex-layout';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
-import { LongLat } from '../providers/searchLocation';
 import colors from '../styles/colors';
+import { TaskReason } from '../types';
+import { TaskPin } from './TaskPin';
 
 interface Props {
-  longLat: LongLat;
+  reason?: TaskReason;
+  point: Point;
 }
 
-export const StaticMapWithMarker = ({ longLat }: Props) => {
+export const StaticMapWithMarker = ({ reason, point }: Props) => {
   const initialMapRegion: Region = {
-    latitude: longLat.latitude,
-    longitude: longLat.longitude,
+    longitude: point.coordinates[0],
+    latitude: point.coordinates[1],
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
@@ -24,18 +27,18 @@ export const StaticMapWithMarker = ({ longLat }: Props) => {
   useEffect(() => {
     (async () => {
       setMapRegion({
-        latitude: longLat.latitude,
-        longitude: longLat.longitude,
+        longitude: point.coordinates[0],
+        latitude: point.coordinates[1],
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       });
     })();
-  }, [longLat]);
+  }, [point]);
 
   return (
     <>
       <MapView
-        provider={PROVIDER_GOOGLE}
+        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
         initialRegion={initialMapRegion}
         region={mapRegion}
@@ -46,7 +49,7 @@ export const StaticMapWithMarker = ({ longLat }: Props) => {
         toolbarEnabled={false}
         zoomControlEnabled={false}
       />
-      {/* Fixed Marker */}
+      {/* Fixed Pin overlay */}
       <Stack
         pointerEvents="none"
         position="absolute"
@@ -56,14 +59,7 @@ export const StaticMapWithMarker = ({ longLat }: Props) => {
         bottom={0}
         center
       >
-        <Box mt={-20}>
-          <FontAwesomeIcon
-            icon={faLocationPin}
-            color={colors.pink[400]}
-            size={40}
-            style={{ opacity: 0.95 }}
-          />
-        </Box>
+        <TaskPin reason={reason} />
       </Stack>
     </>
   );
