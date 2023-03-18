@@ -10,5 +10,9 @@ npm-debug.*
 *.orig.*
 web-build/
 
+build-*.ipa
+build-*.tar.gz
+timetogive.app
+
 # macOS
 .DS_Store
