@@ -10,5 +10,8 @@ npm-debug.*
 *.orig.*
 web-build/
 
+build-*
+timetogive.app
+
 # macOS
 .DS_Store
