@@ -32,6 +32,13 @@ module.exports = {
     },
     plugins: [
       [
+        '@rnmapbox/maps',
+        {
+          RNMapboxMapsImpl: 'mapbox',
+          RNMapboxMapsDownloadToken: process.env.MAPBOX_API_KEY,
+        },
+      ],
+      [
         'expo-image-picker',
         {
           photosPermission: 'Allow TimeToGive to access your photos',
