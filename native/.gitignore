@@ -12,7 +12,9 @@ web-build/
 
 build-*.ipa
 build-*.tar.gz
-timetogive.app
+timetogive*.app
+ios/
+android/
 
 # macOS
 .DS_Store
