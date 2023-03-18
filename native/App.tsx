@@ -1,3 +1,4 @@
+import 'expo-dev-client';
 import 'react-native-url-polyfill/auto';
 import Toast from 'react-native-toast-message';
 import { Button, ThemeProvider } from '@rneui/themed';
