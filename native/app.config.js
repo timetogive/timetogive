@@ -52,6 +52,7 @@ module.exports = {
       supabaseProjectId: process.env.SUPABASE_PROJECT_ID,
       multiAvatarApiUrl: process.env.MULTIAVATAR_API_URL,
       multiAvatarApiKey: process.env.MULTIAVATAR_API_KEY,
+      mapBoxApiKey: process.env.MAPBOX_API_KEY,
       eas: {
         projectId: '18442e1f-ce66-4b53-86df-d77aea5c3d8f',
       },

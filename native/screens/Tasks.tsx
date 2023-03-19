@@ -131,10 +131,6 @@ export const Tasks = ({ navigation }: Props) => {
   const tasks =
     searchTasksQuery.data?.pages.flatMap(({ data }) => data) || [];
 
-  if (searchTasksQuery.isLoading || searchTasksQuery.isIdle) {
-    return <Text>Loading...</Text>;
-  }
-
   return (
     <>
       <LocationBar mode={mode} onChangeMode={setMapListMode} />
@@ -165,7 +161,7 @@ export const Tasks = ({ navigation }: Props) => {
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl
-              refreshing={searchTasksQuery.isLoading}
+              refreshing={searchTasksQuery.isFetching}
               onRefresh={searchTasksQuery.refetch}
               title="Pull to refresh"
             />
@@ -183,6 +179,7 @@ export const Tasks = ({ navigation }: Props) => {
           onTaskPressed={(taskId) =>
             navigation.navigate('Task', { taskId })
           }
+          searching={searchTasksQuery.isFetching}
         />
       )}
     </>

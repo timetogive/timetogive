@@ -1,18 +1,13 @@
-import { FlatList } from 'react-native';
+import { Pressable } from 'react-native';
 import {
   SearchTasksResult,
   SearchTasksResultItem,
   TaskReason,
 } from '../types';
-import MapView, {
-  PROVIDER_GOOGLE,
-  Region,
-  Marker,
-  LatLng,
-} from 'react-native-maps';
 import { memo, useEffect, useRef, useState } from 'react';
 import {
   LocationMode,
+  SearchLocationDef,
   useSearchLocation,
 } from '../providers/searchLocation';
 import React from 'react';
@@ -44,46 +39,104 @@ import Animated, {
   FadeOutUp,
 } from 'react-native-reanimated';
 
+import Mapbox, {
+  Camera,
+  CameraBoundsWithPadding,
+  MarkerView,
+  CameraPadding,
+  MapState,
+  PointAnnotation,
+} from '@rnmapbox/maps';
+import { mapBoxApiKey } from '../lib/consts';
+import { Position } from 'geojson';
+
+Mapbox.setAccessToken(mapBoxApiKey);
+
 interface TasksMapMarkerProps {
   task: SearchTasksResultItem;
-  onPress?: () => void;
+  onSelected?: () => void;
 }
 
 // Pure component important for performance
-const MapMarker = memo(({ task, onPress }: TasksMapMarkerProps) => {
-  const googleLatLng: LatLng = {
-    latitude: task.latitude,
-    longitude: task.longitude,
-  };
+const MapMarker = ({ task, onSelected }: TasksMapMarkerProps) => {
   return (
-    <Marker coordinate={googleLatLng} onPress={onPress}>
+    <PointAnnotation
+      coordinate={[task.longitude, task.latitude]}
+      style={{ zIndex: 100 }}
+      onSelected={onSelected}
+    >
       <TaskPin reason={task.reason} />
-    </Marker>
+    </PointAnnotation>
   );
-});
+};
 
 interface TasksMapProps {
   tasks: SearchTasksResult;
+  searching?: boolean;
   onTaskPressed: (taskId: string) => void;
 }
 
-export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
-  const searchLocation = useSearchLocation();
-  const currentLocation = useCurrentLocation();
-
-  console.log('TasksMap');
-  console.log(searchLocation.searchLocation);
-
-  const centerPoint = getCenterPoint(searchLocation.searchLocation);
-
-  const initialMapRegion: Region = {
-    longitude: centerPoint.coordinates[0],
-    latitude: centerPoint.coordinates[1],
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
+const getBestCameraPosition = (
+  searchLocation: SearchLocationDef,
+  tasks?: SearchTasksResult
+) => {
+  // No tasks then return the center of the current search location
+  if (!tasks || tasks.length === 0) {
+    return {
+      centerCoordinate: getCenterPoint(searchLocation).coordinates,
+      zoomLevel: 12,
+    };
+  }
+  // If just one task then return the center of that task
+  if (tasks.length === 1) {
+    return {
+      centerCoordinate: [tasks[0].longitude, tasks[0].latitude],
+      zoomLevel: 12,
+    };
+  }
+  const positions = tasks.map((task) => {
+    const p: Position = [task.longitude, task.latitude];
+    return p;
+  });
+  const line = lineString(positions);
+  const box = bbox(line);
+  // With the task coordinates - set the camnera around them
+  const bounds: CameraBoundsWithPadding = {
+    ne: box.slice(2, 4),
+    sw: box.slice(0, 2),
   };
+  return {
+    bounds,
+    padding: defaultCameraPadding,
+  };
+};
 
-  const mapRef = useRef<MapView>(null);
+const getPolygonFromCurrentMapBounds = (bounds: Position[]) => {
+  const line = lineString(bounds);
+  const box = bbox(line);
+  const polygon = bboxPolygon(box);
+  return polygon;
+};
+
+const defaultCameraPadding: CameraPadding = {
+  paddingTop: 250,
+  paddingBottom: 60,
+  paddingLeft: 30,
+  paddingRight: 30,
+};
+
+export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
+  const currentLocation = useCurrentLocation();
+  const searchLocation = useSearchLocation();
+
+  const cameraProps = getBestCameraPosition(
+    searchLocation.searchLocation,
+    tasks
+  );
+
+  const mapRef = useRef<Mapbox.MapView>(null);
+  const cameraRef = useRef<Camera>(null);
+
   const [selectedTask, setSelectedTask] = useState<
     SearchTasksResultItem | undefined
   >(undefined);
@@ -91,90 +144,67 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   const [mapMoved, setMapMoved] = useState<boolean>(false);
 
   const searchThisAreaPressed = async () => {
-    const boundaries = await mapRef.current?.getMapBoundaries();
-    console.log('Search this area pressed');
-    console.log(boundaries);
-    // Set the search location
-    if (boundaries) {
-      const line = lineString([
-        [
-          boundaries.northEast.longitude,
-          boundaries.northEast.latitude,
-        ],
-        [
-          boundaries.southWest.longitude,
-          boundaries.southWest.latitude,
-        ],
-      ]);
-      const box = bbox(line);
-      const polygon = bboxPolygon(box).geometry;
+    if (mapRef.current) {
+      const bounds = await mapRef.current.getVisibleBounds();
 
+      const polygon = getPolygonFromCurrentMapBounds(bounds).geometry;
       searchLocation.set({
         locationMode: LocationMode.CustomArea,
         name: 'Custom Area',
         polygon,
       });
     }
-    setMapMoved(false);
   };
 
   const searchNearMePressed = async () => {
-    console.log('Search near me pressed');
     await searchLocation.setToLiveLocation();
-    setMapMoved(false);
   };
 
   const focusOnMe = () => {
-    if (currentLocation.currentLocation) {
-      mapRef.current?.animateToRegion({
-        longitude: currentLocation.currentLocation.coordinates[0],
-        latitude: currentLocation.currentLocation.coordinates[1],
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+    if (cameraRef.current && currentLocation.currentLocation) {
+      cameraRef.current.setCamera({
+        centerCoordinate: currentLocation.currentLocation.coordinates,
       });
-      return;
     }
-    currentLocation.forceRefresh();
   };
 
-  const home = () => {
-    console.log('Home pressed');
-  };
+  const home = () => {};
 
   // When the tasks change, animate to fit all the new
   // tasks nicely on the map
   useEffect(() => {
-    // Tranform the tasks into google long lat coords
-    const googleCoords: LatLng[] = tasks.map((task) => ({
-      latitude: task.latitude,
-      longitude: task.longitude,
-    }));
-    mapRef.current?.fitToCoordinates(googleCoords, {
-      edgePadding: { top: 100, right: 20, bottom: 100, left: 20 },
-    });
+    const cameraProps = getBestCameraPosition(
+      searchLocation.searchLocation,
+      tasks
+    );
+    if (cameraRef.current) {
+      cameraRef.current.setCamera(cameraProps);
+    }
+    setMapMoved(false);
   }, [tasks]);
 
   return (
     <Box style={{ flex: 1 }} pointerEvents="box-none">
-      <MapView
+      <Mapbox.MapView
         ref={mapRef}
-        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
-        initialRegion={initialMapRegion}
-        onTouchStart={() => {
-          setSelectedTask(undefined);
-          setMapMoved(true);
-        }}
-        showsUserLocation
+        onTouchMove={() => setMapMoved(true)}
+        onTouchEnd={() => setSelectedTask(undefined)}
       >
-        {tasks.map((task) => (
+        <Camera ref={cameraRef} {...cameraProps} />
+
+        <Mapbox.UserLocation />
+
+        {tasks.map((task, i) => (
           <MapMarker
             key={task.id}
             task={task}
-            onPress={() => setSelectedTask(task)}
+            onSelected={() => {
+              setSelectedTask(task);
+            }}
           />
         ))}
-      </MapView>
+      </Mapbox.MapView>
 
       <HStack
         position="absolute"
