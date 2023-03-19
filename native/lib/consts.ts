@@ -6,12 +6,14 @@ const multiAvatarApiUrl =
   Constants.expoConfig?.extra?.multiAvatarApiUrl;
 const multiAvatarApiKey =
   Constants.expoConfig?.extra?.multiAvatarApiKey;
+const mapBoxApiKey = Constants.expoConfig?.extra?.mapBoxApiKey;
 
 if (
   !supabaseUrl ||
   !supabaseAnonKey ||
   !multiAvatarApiUrl ||
-  !multiAvatarApiKey
+  !multiAvatarApiKey ||
+  !mapBoxApiKey
 ) {
   throw Error('Missing config values.');
 }
@@ -21,4 +23,5 @@ export {
   supabaseAnonKey,
   multiAvatarApiUrl,
   multiAvatarApiKey,
+  mapBoxApiKey,
 };
