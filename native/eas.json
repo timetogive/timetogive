@@ -3,13 +3,17 @@
     "version": ">= 3.5.2"
   },
   "build": {
-    "local-dev": {
+    "local-dev-simulator": {
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
       }
+    },
+    "local-dev-device": {
+      "developmentClient": true,
+      "distribution": "internal"
     },
     "development": {
       "developmentClient": true,
