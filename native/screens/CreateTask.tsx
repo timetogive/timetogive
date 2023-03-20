@@ -25,7 +25,10 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
 import axios from 'axios';
 import { supabase } from '../lib';
-import { BackBar } from '../components/BackBar';
+import {
+  BackBar,
+  BACK_BAR_CONTENT_HEIGHT,
+} from '../components/BackBar';
 import { Point } from 'geojson';
 
 const integerText = (value: number, word: string) => {
@@ -109,8 +112,9 @@ export const CreateTask = ({ route, navigation }: Props) => {
       return;
     }
 
-    Alert.alert('Success', `Created task ${data}`);
     setSaving(false);
+
+    navigation.goBack();
     return;
   };
 
@@ -120,7 +124,12 @@ export const CreateTask = ({ route, navigation }: Props) => {
       <BackBar onBackPress={() => navigation.goBack()} />
       {/* Create task form */}
       <ScrollView>
-        <Box ph={15} pb={insets.bottom + 15} bg={colors.white}>
+        <Box
+          ph={15}
+          pt={BACK_BAR_CONTENT_HEIGHT + insets.top}
+          pb={insets.bottom + 20}
+          bg={colors.white}
+        >
           <Box pv={20}>
             <Text size="xl" weight="bold">
               {screenTitle}

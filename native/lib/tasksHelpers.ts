@@ -1,13 +1,13 @@
-import { faHouseHeart } from '@fortawesome/pro-solid-svg-icons/faHouseHeart';
-import { faPeopleGroup } from '@fortawesome/pro-solid-svg-icons/faPeopleGroup';
+import { faHouseHeart } from '@fortawesome/pro-light-svg-icons/faHouseHeart';
+import { faPeopleGroup } from '@fortawesome/pro-light-svg-icons/faPeopleGroup';
 import { faHandWave } from '@fortawesome/pro-light-svg-icons/faHandWave';
-import { faHandshake } from '@fortawesome/pro-solid-svg-icons/faHandshake';
-import { faHandHoldingDollar } from '@fortawesome/pro-solid-svg-icons/faHandHoldingDollar';
-import { faMessagesQuestion } from '@fortawesome/pro-solid-svg-icons/faMessagesQuestion';
+import { faHandshake } from '@fortawesome/pro-light-svg-icons/faHandshake';
+import { faHandHoldingDollar } from '@fortawesome/pro-light-svg-icons/faHandHoldingDollar';
+import { faMessagesQuestion } from '@fortawesome/pro-light-svg-icons/faMessagesQuestion';
 import { TaskReason } from '../types';
 import pluralize from 'pluralize';
 
-export const getTtgIcon = (reason: TaskReason) => {
+export const getTtgIcon = (reason: TaskReason | string) => {
   switch (reason) {
     case 'Charity':
       return faHouseHeart;
@@ -16,9 +16,11 @@ export const getTtgIcon = (reason: TaskReason) => {
     case 'In Need':
       return faHandWave;
     case 'Mutual Benefit':
-      return faHandshake;
-    case 'Return For Pledge':
       return faHandHoldingDollar;
+    case 'Return For Pledge':
+      return faHandshake;
+    case 'Advice':
+      return faMessagesQuestion;
     default:
       return faHandWave;
   }

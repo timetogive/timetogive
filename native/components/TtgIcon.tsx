@@ -1,9 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { getTtgIcon } from '../lib/tasksHelpers';
 import { defaultColor } from '../styles/colors';
+import { TaskReason } from '../types';
 
 interface TtgIconProps {
-  reason: string;
+  reason: TaskReason | string;
 }
 
 export const TtgIcon = ({ reason }: TtgIconProps) => {
