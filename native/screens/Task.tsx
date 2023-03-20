@@ -12,7 +12,10 @@ import { SvgUri } from 'react-native-svg';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
 import { TaskOfferActionMenuBottomSheetModal } from '../components/TaskOfferActionMenu';
-import { BackBar } from '../components/BackBar';
+import {
+  BackBar,
+  BACK_BAR_CONTENT_HEIGHT,
+} from '../components/BackBar';
 import { InfoBar } from '../components/InfoBar';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { TaskInformation } from '../components/TaskInformation';
@@ -171,19 +174,6 @@ export const Task = ({ route, navigation }: Props) => {
     <>
       <VStack style={{ flex: 1 }}>
         <BackBar onBackPress={() => navigation.goBack()} />
-        {isMyTask && <InfoBar message="You created this task" />}
-        {task.status === 'Assigned' && (
-          <InfoBar message="This task has been assigned" />
-        )}
-        {task.status === 'Partially Assigned' && (
-          <InfoBar message="This task still needs more volunteers" />
-        )}
-        {task.status === 'Closed' && (
-          <InfoBar message="This task is now closed" />
-        )}
-        {task.status === 'Completed' && (
-          <InfoBar message="This task has been completed" />
-        )}
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -197,142 +187,164 @@ export const Task = ({ route, navigation }: Props) => {
             />
           }
         >
-          <Box style={{ flex: 1 }} bg={colors.white} p={20}>
-            <TaskInformation
-              taskId={task.id}
-              taskUserId={task.user_id}
-              taskUserFullName={task.user_full_name}
-              taskUserAvatarUrl={task.user_avatar_url}
-              title={task.title}
-              reason={task.reason}
-              timing={task.timing}
-              duration={effortText(
-                task.effort_days,
-                task.effort_hours,
-                task.effort_minutes
-              )}
-            />
-          </Box>
-          <TaskConversations
-            conversations={conversations}
-            onClickConversation={(userId: string) =>
-              navigation.navigate('TaskConversation', {
-                taskId,
-                userId,
-              })
-            }
-          ></TaskConversations>
-          {isMyTask && (
-            <TaskOffers
-              offers={offers}
-              onOfferPressed={offerPressed}
-            ></TaskOffers>
-          )}
+          <Box
+            style={{ flex: 1 }}
+            bg={colors.white}
+            pt={BACK_BAR_CONTENT_HEIGHT + insets.top}
+            pb={insets.bottom + 20}
+          >
+            {isMyTask && <InfoBar message="You created this task" />}
+            {task.status === 'Assigned' && (
+              <InfoBar message="This task has been assigned" />
+            )}
+            {task.status === 'Partially Assigned' && (
+              <InfoBar message="This task still needs more volunteers" />
+            )}
+            {task.status === 'Closed' && (
+              <InfoBar message="This task is now closed" />
+            )}
+            {task.status === 'Completed' && (
+              <InfoBar message="This task has been completed" />
+            )}
 
-          {myOffer && (
-            <VStack shouldWrapChildren bg={colors.white} mt={20}>
-              <VStack ph={20} pv={10}>
-                {myOffer.status === 'Pending' && (
-                  <Text
-                    size="sm"
-                    color={colors.gray[700]}
-                    weight="semi-bold"
-                  >
-                    You have sent an offer to volunteer. Let's see
-                    what comes back.
-                  </Text>
+            <Box p={20}>
+              <TaskInformation
+                taskId={task.id}
+                taskUserId={task.user_id}
+                taskUserFullName={task.user_full_name}
+                taskUserAvatarUrl={task.user_avatar_url}
+                title={task.title}
+                reason={task.reason}
+                timing={task.timing}
+                duration={effortText(
+                  task.effort_days,
+                  task.effort_hours,
+                  task.effort_minutes
                 )}
-                {myOffer.status === 'Accepted' && (
-                  <HStack
-                    items="center"
-                    spacing={5}
-                    shouldWrapChildren
-                  >
-                    <Text size="sm">🎉</Text>
+              />
+            </Box>
+
+            <TaskConversations
+              conversations={conversations}
+              onClickConversation={(userId: string) =>
+                navigation.navigate('TaskConversation', {
+                  taskId,
+                  userId,
+                })
+              }
+            ></TaskConversations>
+            {isMyTask && (
+              <TaskOffers
+                offers={offers}
+                onOfferPressed={offerPressed}
+              ></TaskOffers>
+            )}
+
+            {myOffer && (
+              <VStack shouldWrapChildren bg={colors.white} mt={20}>
+                <VStack ph={20} pv={10}>
+                  {myOffer.status === 'Pending' && (
                     <Text
                       size="sm"
                       color={colors.gray[700]}
                       weight="semi-bold"
                     >
-                      Woohoo! Your offer to volunteer has been
-                      accepted.
+                      You have sent an offer to volunteer. Let's see
+                      what comes back.
                     </Text>
-                  </HStack>
-                )}
-                {myOffer.status === 'Declined' && (
-                  <Text
-                    size="sm"
-                    color={colors.gray[700]}
-                    weight="semi-bold"
-                  >
-                    Your offer to volunteer has very kindly been
-                    declined. You can offer to volunteer again, or
-                    message {task.user_full_name} if you are still
-                    keen.
-                  </Text>
-                )}
+                  )}
+                  {myOffer.status === 'Accepted' && (
+                    <HStack
+                      items="center"
+                      spacing={5}
+                      shouldWrapChildren
+                    >
+                      <Text size="sm">🎉</Text>
+                      <Text
+                        size="sm"
+                        color={colors.gray[700]}
+                        weight="semi-bold"
+                      >
+                        Woohoo! Your offer to volunteer has been
+                        accepted.
+                      </Text>
+                    </HStack>
+                  )}
+                  {myOffer.status === 'Declined' && (
+                    <Text
+                      size="sm"
+                      color={colors.gray[700]}
+                      weight="semi-bold"
+                    >
+                      Your offer to volunteer has very kindly been
+                      declined. You can offer to volunteer again, or
+                      message {task.user_full_name} if you are still
+                      keen.
+                    </Text>
+                  )}
+                </VStack>
+              </VStack>
+            )}
+
+            <VStack shouldWrapChildren bg={colors.white} mt={20}>
+              <VStack ph={20} pv={10}>
+                <Text
+                  size="sm"
+                  color={colors.gray[700]}
+                  weight="semi-bold"
+                >
+                  Full details
+                </Text>
+              </VStack>
+              <VStack ph={20} pv={10}>
+                <Text size="sm" color={colors.gray[700]}>
+                  {task.description}
+                </Text>
               </VStack>
             </VStack>
-          )}
-
-          <VStack shouldWrapChildren bg={colors.white} mt={20}>
-            <VStack ph={20} pv={10}>
-              <Text
-                size="sm"
-                color={colors.gray[700]}
-                weight="semi-bold"
-              >
-                Full details
-              </Text>
+            <VStack shouldWrapChildren bg={colors.white} mt={20}>
+              <VStack ph={20} pv={10}>
+                <Text
+                  size="sm"
+                  color={colors.gray[700]}
+                  weight="semi-bold"
+                >
+                  Timing
+                </Text>
+              </VStack>
+              <VStack ph={20} pv={10}>
+                <Text size="sm" color={colors.gray[700]}>
+                  {task.timing}
+                </Text>
+              </VStack>
             </VStack>
-            <VStack ph={20} pv={10}>
-              <Text size="sm" color={colors.gray[700]}>
-                {task.description}
-              </Text>
-            </VStack>
-          </VStack>
-          <VStack shouldWrapChildren bg={colors.white} mt={20}>
-            <VStack ph={20} pv={10}>
-              <Text
-                size="sm"
-                color={colors.gray[700]}
-                weight="semi-bold"
-              >
-                Timing
-              </Text>
-            </VStack>
-            <VStack ph={20} pv={10}>
-              <Text size="sm" color={colors.gray[700]}>
-                {task.timing}
-              </Text>
-            </VStack>
-          </VStack>
-          <VStack shouldWrapChildren bg={colors.white} mt={20}>
-            <VStack ph={20} pv={10}>
-              <Text
-                size="sm"
-                color={colors.gray[700]}
-                weight="semi-bold"
-              >
-                Location
-              </Text>
-            </VStack>
-            <Stack ph={20}>
-              <Stack
-                minH={200}
-                pointerEvents="box-only"
-                radius={20}
-                overflow="hidden"
-              >
-                <StaticMapWithMarker
-                  point={{
-                    type: 'Point',
-                    coordinates: [task.longitude, task.latitude],
-                  }}
-                />
+            <VStack shouldWrapChildren bg={colors.white} mt={20}>
+              <VStack ph={20} pv={10}>
+                <Text
+                  size="sm"
+                  color={colors.gray[700]}
+                  weight="semi-bold"
+                >
+                  Location
+                </Text>
+              </VStack>
+              <Stack ph={20}>
+                <Stack
+                  minH={200}
+                  pointerEvents="box-only"
+                  radius={20}
+                  overflow="hidden"
+                >
+                  <StaticMapWithMarker
+                    point={{
+                      type: 'Point',
+                      coordinates: [task.longitude, task.latitude],
+                    }}
+                  />
+                </Stack>
               </Stack>
-            </Stack>
-          </VStack>
+            </VStack>
+          </Box>
         </ScrollView>
         {!isMyTask && (
           <VStack

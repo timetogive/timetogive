@@ -120,7 +120,7 @@ const getPolygonFromCurrentMapBounds = (bounds: Position[]) => {
 
 const defaultCameraPadding: CameraPadding = {
   paddingTop: 250,
-  paddingBottom: 60,
+  paddingBottom: 140,
   paddingLeft: 30,
   paddingRight: 30,
 };
@@ -291,7 +291,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         <Animated.View
           style={{
             position: 'absolute',
-            bottom: 30,
+            bottom: 130,
             right: 0,
             left: 0,
             marginHorizontal: 50,

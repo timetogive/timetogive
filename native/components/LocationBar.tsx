@@ -74,7 +74,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
         ph={insets.left + 20}
         style={{
           ...(mode === MapListMode.List
-            ? { backgroundColor: defaultColor[500] }
+            ? { backgroundColor: colors.whiteAlpha[300] }
             : {}),
         }}
         {...{}}

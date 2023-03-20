@@ -27,6 +27,7 @@ import { Notifications } from './Notifications';
 import { Menu } from './Menu';
 import { useNotifications } from '../providers/notifications';
 import { useSideMenu } from '../providers/sideMenu';
+import { TabBar } from '../components/TabBar';
 
 export type MainTabParamList = {
   Tasks: undefined;
@@ -37,159 +38,6 @@ export type MainTabParamList = {
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
-export const TabWithIcon = ({
-  focused,
-  iconDefinition,
-  focussedIconDefinition,
-  title,
-  redAlert,
-}: {
-  focused: boolean;
-  iconDefinition: IconDefinition;
-  focussedIconDefinition: IconDefinition;
-  title: string;
-  redAlert?: number;
-}) => {
-  const color = focused ? defaultColor[500] : colors.blackAlpha[500];
-  const icon = focused ? focussedIconDefinition : iconDefinition;
-  const redAlertText =
-    redAlert && redAlert > 0 ? redAlert : undefined;
-  return (
-    <VStack spacing={3} center w={70}>
-      <Box w={25} h={25} position="relative">
-        <FontAwesomeIcon icon={icon} size={25} color={color} />
-        {redAlertText && (
-          <Stack
-            center
-            bg={colors.red[500]}
-            radius={20}
-            w={20}
-            h={20}
-            position="absolute"
-            right={-10}
-            top={-5}
-          >
-            <Text size="xxs" color={colors.white}>
-              {redAlertText}
-            </Text>
-          </Stack>
-        )}
-      </Box>
-      <Text size="xxs" textAlign="center" color={color}>
-        {title}
-      </Text>
-    </VStack>
-  );
-};
-
-const TabBar = ({
-  state,
-  descriptors,
-  navigation,
-}: BottomTabBarProps) => {
-  // Bottom tab navigation
-  const insets = useSafeAreaInsets();
-
-  // Side menu navigation
-  const { open, setOpen } = useSideMenu();
-
-  const { routes, index } = state;
-
-  const { count } = useNotifications();
-
-  console.log('notifications count');
-  console.log(count);
-
-  const [createModalOpen, setCreateModalOpen] = React.useState(false);
-
-  // Clicking on tabs
-  const onNavPress = (route: string) => {
-    const event = navigation.emit({
-      type: 'tabPress',
-      target: route,
-      canPreventDefault: true,
-    });
-
-    if (routes[index].name !== route && !event.defaultPrevented) {
-      navigation.navigate(route);
-    }
-  };
-
-  const onCreatePress = () => {
-    setCreateModalOpen(true);
-  };
-
-  const onMenuPress = () => {
-    setOpen(true);
-  };
-
-  const onCreateMenuItemPress = (action: string) => {
-    setCreateModalOpen(false);
-    navigation.navigate('CreateTask', { reason: action });
-  };
-
-  return (
-    <>
-      <HStack
-        pb={insets.bottom + 5}
-        pl={insets.left + 10}
-        pr={insets.right + 10}
-        style={{ width: '100%' }}
-        pt={10}
-        bg={colors.white}
-        justify="between"
-      >
-        <TouchableOpacity onPress={() => onNavPress('Tasks')}>
-          <TabWithIcon
-            iconDefinition={faHeartCircleCheck}
-            focussedIconDefinition={faHeartCircleCheckSolid}
-            title="Tasks"
-            focused={routes[index].name === 'Tasks'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onNavPress('Advice')}>
-          <TabWithIcon
-            iconDefinition={faMessagesQuestion}
-            focussedIconDefinition={faMessagesQuestionSolid}
-            title="Advice"
-            focused={routes[index].name === 'Advice'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onCreatePress()}>
-          <TabWithIcon
-            iconDefinition={faCirclePlus}
-            focussedIconDefinition={faCirclePlusSolid}
-            title="Create"
-            focused={routes[index].name === 'Create'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onNavPress('Notifications')}>
-          <TabWithIcon
-            iconDefinition={faBell}
-            focussedIconDefinition={faBellSolid}
-            title="Notifications"
-            focused={routes[index].name === 'Notifications'}
-            redAlert={count}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onMenuPress()}>
-          <TabWithIcon
-            iconDefinition={faBars}
-            focussedIconDefinition={faBarsSolid}
-            title="Menu"
-            focused={routes[index].name === 'Menu'}
-          />
-        </TouchableOpacity>
-      </HStack>
-      <CreateActionMenuBottomSheetModal
-        isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onMenuItemPress={onCreateMenuItemPress}
-      />
-    </>
-  );
-};
-
 export const Main = () => {
   return (
     <>
@@ -198,14 +46,6 @@ export const Main = () => {
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <TabWithIcon
-                iconDefinition={faHeartCircleCheck}
-                focussedIconDefinition={faHeartCircleCheckSolid}
-                title="Tasks"
-                focused={focused}
-              />
-            ),
           }}
           name="Tasks"
           component={Tasks}
@@ -214,14 +54,6 @@ export const Main = () => {
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <TabWithIcon
-                iconDefinition={faMessagesQuestion}
-                focussedIconDefinition={faMessagesQuestionSolid}
-                title="Advice"
-                focused={focused}
-              />
-            ),
           }}
           name="Advice"
           component={Advice}
@@ -231,14 +63,6 @@ export const Main = () => {
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <TabWithIcon
-                iconDefinition={faBell}
-                focussedIconDefinition={faBellSolid}
-                title="Notifications"
-                focused={focused}
-              />
-            ),
           }}
           name="Notifications"
           component={Notifications}
@@ -247,14 +71,6 @@ export const Main = () => {
           options={{
             headerShown: false,
             tabBarShowLabel: false,
-            tabBarIcon: ({ focused }) => (
-              <TabWithIcon
-                iconDefinition={faBars}
-                focussedIconDefinition={faBarsSolid}
-                title="Menu"
-                focused={focused}
-              />
-            ),
           }}
           name="Menu"
           component={Menu}
