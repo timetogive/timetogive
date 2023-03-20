@@ -47,7 +47,7 @@ export const BackBar = ({ onBackPress, children }: Props) => {
             <Stack
               style={{
                 backgroundColor: colors.white,
-                shadowColor: colors.gray[200],
+                shadowColor: colors.gray[600],
                 shadowOffset: { width: -4, height: 6 },
                 shadowOpacity: 0.7,
                 shadowRadius: 20,

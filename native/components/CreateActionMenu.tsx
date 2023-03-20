@@ -12,6 +12,7 @@ import {
 } from '@gorhom/bottom-sheet';
 import { useRef, useCallback, useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
+import { TaskReason } from '../types';
 
 interface CreateButtonProps {
   action: string;
@@ -45,7 +46,7 @@ const CreateButton = ({
           radius={50}
           center
         >
-          <TtgIcon reason={action} />
+          <TtgIcon reason={action as TaskReason} />
         </Stack>
         <VStack shouldWrapChildren spacing={5}>
           <Text size="sm">{title}</Text>
@@ -68,19 +69,11 @@ export const CreateActionMenu = ({
   return (
     <VStack>
       <CreateButton
-        title="Task for charity"
-        description="Create a task on behalf of a charity"
-        action="Charity"
+        title="Task in return for pledge"
+        description="Create a task where you will make a pledge in return"
+        action="Return For Pledge"
         onMenuItemPress={() =>
-          onMenuItemPress && onMenuItemPress('Charity')
-        }
-      />
-      <CreateButton
-        title="Task for community"
-        description="Create a task benefiting the community or local group"
-        action="Community"
-        onMenuItemPress={() =>
-          onMenuItemPress && onMenuItemPress('Community')
+          onMenuItemPress && onMenuItemPress('Return For Pledge')
         }
       />
       <CreateButton
@@ -92,19 +85,11 @@ export const CreateActionMenu = ({
         }
       />
       <CreateButton
-        title="Task for mutual benefit"
-        description="Create a task where you both will benefit"
-        action="Mutual Benefit"
+        title="Task for charity or community group"
+        description="Create a task on behalf of a charity or local group"
+        action="Charity"
         onMenuItemPress={() =>
-          onMenuItemPress && onMenuItemPress('Mutual Benefit')
-        }
-      />
-      <CreateButton
-        title="Task in return for pledge"
-        description="Create a task where you will make a pledge in return"
-        action="Return For Pledge"
-        onMenuItemPress={() =>
-          onMenuItemPress && onMenuItemPress('Return For Pledge')
+          onMenuItemPress && onMenuItemPress('Charity')
         }
       />
       <CreateButton
@@ -162,7 +147,7 @@ export const CreateActionMenuBottomSheetModal = ({
     <BottomSheetModalProvider>
       <BottomSheetModal
         ref={bottomSheetModalRef}
-        snapPoints={['75%']}
+        snapPoints={['50%']}
         backdropComponent={renderBackdrop}
         onDismiss={onClose}
       >

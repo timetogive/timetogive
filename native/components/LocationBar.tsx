@@ -62,12 +62,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
 
   return (
     <>
-      <StatusBar
-        animated={true}
-        barStyle={
-          mode === MapListMode.List ? 'light-content' : 'dark-content'
-        }
-      />
+      <StatusBar animated={true} barStyle={'dark-content'} />
       <Stack
         pt={insets.top + 5}
         pb={10}

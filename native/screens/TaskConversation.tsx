@@ -297,7 +297,7 @@ export const TaskConversation = ({ route, navigation }: Props) => {
               />
             </Stack>
             <VStack spacing={2} shouldWrapChildren>
-              <Text size="xxs" color={colors.white}>
+              <Text size="xxs" color={colors.gray[700]}>
                 {user.full_name}
               </Text>
               <HStack items="center" spacing={4}>
@@ -306,7 +306,7 @@ export const TaskConversation = ({ route, navigation }: Props) => {
                   color={colors.yellow[400]}
                   size={15}
                 />
-                <Text size="xs" color={colors.white}>
+                <Text size="xs" color={colors.gray[700]}>
                   5.0
                 </Text>
               </HStack>

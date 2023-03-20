@@ -190,6 +190,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         style={{ flex: 1 }}
         onTouchMove={() => setMapMoved(true)}
         onTouchEnd={() => setSelectedTask(undefined)}
+        scaleBarEnabled={false}
       >
         <Camera ref={cameraRef} {...cameraProps} />
 

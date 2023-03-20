@@ -13,10 +13,11 @@ export const MessageBubble = ({ messageText, isMine }: Props) => {
       pv={10}
       ph={20}
       style={{
-        shadowOffset: { width: 4, height: 4 },
+        shadowColor: colors.gray[600],
+        shadowOffset: { width: -4, height: 6 },
         shadowOpacity: 0.7,
-        shadowRadius: 5,
-        elevation: 1,
+        shadowRadius: 10,
+        elevation: 2,
         backgroundColor: isMine
           ? colors.green[800]
           : colors.gray[800],
