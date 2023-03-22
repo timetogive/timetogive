@@ -7,8 +7,8 @@ module.exports = {
     icon: './assets/icon.png',
     userInterfaceStyle: 'light',
     splash: {
-      image: './assets/ttg-white.png',
-      resizeMode: 'contain',
+      image: './assets/splash.png',
+      resizeMode: 'cover',
       backgroundColor: '#B794F4',
     },
     updates: {
