@@ -1,5 +1,5 @@
-create or replace function public.save_home_search_location(
-    p_search_location json
+create or replace function public.save_home_polygon(
+    p_home_polygon json
 )
 returns public.prefs.id%type
 language plpgsql
@@ -17,7 +17,7 @@ begin
     l_user_id := auth.uid();
 
     update public.prefs
-    set    home_search_location = p_search_location
+    set    home_polygon = p_home_polygon
     where  id = l_user_id
     returning id into return_id;
    

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { profileIsComplete } from '../lib/profileHelpers';
+import { missingProfileData } from '../lib/profileHelpers';
 import { useSession } from '../providers/session';
 
 interface Props {
@@ -12,7 +12,7 @@ export const ProfileIsComplete = ({ children }: Props) => {
   if (
     session.isReady &&
     session.user &&
-    profileIsComplete(session.user)
+    !missingProfileData(session.user)
   ) {
     return <>{children}</>;
   }

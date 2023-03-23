@@ -45,10 +45,14 @@ export const SessionProvider = ({
   const userQuery = useQuery(
     'activeUser',
     async () => {
+      console.log('I am here');
       const { data, error } = await supabase.auth.getUser();
       if (error || !data) {
+        console.log('error', error);
         return undefined;
       }
+
+      console.log('I am here 2');
 
       const user = data.user;
 
@@ -58,11 +62,18 @@ export const SessionProvider = ({
         .eq('id', user.id)
         .single();
 
+      const { data: prefsData } = await supabase
+        .from('prefs')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
       if (!profileData) {
+        console.log('no profile data');
         return undefined;
       }
 
-      return profileData;
+      return { ...profileData, ...prefsData } as Profile;
     },
     {
       initialData: initialUser,
@@ -77,6 +88,7 @@ export const SessionProvider = ({
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent) => {
         if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+          console.log('AuthChangeEvent', event);
           await userQuery.refetch();
         }
 

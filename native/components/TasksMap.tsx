@@ -76,7 +76,7 @@ interface TasksMapProps {
   onTaskPressed: (taskId: string) => void;
 }
 
-const getBestCameraPosition = (
+export const getBestCameraPosition = (
   searchLocation: SearchLocationDef,
   tasks?: SearchTasksResult
 ) => {

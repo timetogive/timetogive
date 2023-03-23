@@ -72,17 +72,17 @@ export interface Database {
       }
       prefs: {
         Row: {
-          home_search_location: Json | null
+          home_polygon: Json | null
           id: string
           last_search_location: Json | null
         }
         Insert: {
-          home_search_location?: Json | null
+          home_polygon?: Json | null
           id: string
           last_search_location?: Json | null
         }
         Update: {
-          home_search_location?: Json | null
+          home_polygon?: Json | null
           id?: string
           last_search_location?: Json | null
         }
@@ -364,6 +364,12 @@ export interface Database {
           p_user_id: string
         }
         Returns: boolean
+      }
+      save_home_polygon: {
+        Args: {
+          p_home_polygon: Json
+        }
+        Returns: string
       }
       save_home_search_location: {
         Args: {
