@@ -4,7 +4,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { MissingAvatar } from '../components/MissingAvatar';
 import { MissingBio } from '../components/MissingBio';
-import { MissingHome } from '../components/MissingHome';
+import { MissingHomeArea } from '../components/MissingHomeArea';
 import { MissingName } from '../components/MissingName';
 import { Text } from '../components/Text';
 import { missingProfileData } from '../lib/profileHelpers';
@@ -52,7 +52,7 @@ export const MissingProfile = () => {
       )}
       {missing === 'home' && (
         <SlideInWrapper>
-          <MissingHome />
+          <MissingHomeArea />
         </SlideInWrapper>
       )}
     </>

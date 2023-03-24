@@ -9,7 +9,7 @@ import colors, { defaultColor } from '../styles/colors';
 import { SetPolygonSheetModal } from './SetPolygon';
 import { Text } from './Text';
 
-export const MissingHome = () => {
+export const MissingHomeArea = () => {
   const [mapModalOpen, setMapModalOpen] = useState(false);
   const session = useSession();
 
@@ -42,10 +42,9 @@ export const MissingHome = () => {
           </Button>
           <Text size="xs" color={defaultColor[400]}>
             TimeToGive is all about helping each other in your local
-            community. Your home area is really important. It defines
-            where you are willing to help out but also determines the
-            default area of people that you would like to receive help
-            from (essentially your home areas must intersect).
+            community. The home area is used to define which areas you
+            are willing to volunteer in and therefore also determines
+            which tasks you will be notified about.
           </Text>
         </VStack>
       </VStack>
