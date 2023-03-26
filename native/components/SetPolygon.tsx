@@ -157,7 +157,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
   }, []);
 
   return (
-    <Box style={{ flex: 1 }} pointerEvents="box-none">
+    <Box style={{ flex: 1 }}>
       <Mapbox.MapView
         ref={mapRef}
         style={{ flex: 1 }}
@@ -226,6 +226,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
         w="100%"
         shouldWrapChildren
         ph={20}
+        pointerEvents="box-none"
       >
         {(lineString || firstPoint) && (
           <TouchableOpacity onPress={() => undo()}>

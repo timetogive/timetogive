@@ -12,7 +12,7 @@ interface Props {
 }
 export const TaskPin = ({ opacity, reason }: Props) => {
   return (
-    <Box position="relative" h={40} w={40} pointerEvents="box-none">
+    <Box position="relative" h={40} w={40} pointerEvents="none">
       <Box
         style={{
           opacity: opacity || 0.9,

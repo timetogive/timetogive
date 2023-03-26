@@ -331,7 +331,7 @@ export const Task = ({ route, navigation }: Props) => {
               <Stack ph={20}>
                 <Stack
                   minH={200}
-                  pointerEvents="box-only"
+                  pointerEvents="none"
                   radius={20}
                   overflow="hidden"
                 >

@@ -274,7 +274,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
                 onPress={() => setLocationModalOpen(true)}
               >
                 {location ? (
-                  <Stack minH={240} pointerEvents="box-only">
+                  <Stack minH={240} pointerEvents="none">
                     <StaticMapWithMarker point={location} />
                   </Stack>
                 ) : (
