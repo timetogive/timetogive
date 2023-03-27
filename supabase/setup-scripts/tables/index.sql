@@ -5,4 +5,5 @@
 -- \ir notifications.sql
 -- \ir geo_tracking.sql
 -- \ir prefs.sql
-\ir reviews.sql
+-- \ir reviews.sql
+\ir push_tokens.sql
