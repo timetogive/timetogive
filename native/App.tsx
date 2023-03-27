@@ -36,7 +36,6 @@ import { NotificationsProvider } from './providers/notifications';
 import { SideMenuDrawer } from './components/SideMenuDrawer';
 import { SideMenuProvider } from './providers/sideMenu';
 import { PushProvider } from './providers/push';
-import { PresenceProvider } from './providers/presence';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -85,63 +84,61 @@ export default function App() {
                     <SignedIn>
                       {/* majority of providers are only needed once signed in */}
                       <PushProvider>
-                        <PresenceProvider>
-                          <NotificationsProvider>
-                            <CurrentLocationProvider>
-                              <SearchLocationProvider>
-                                <ProfileIsComplete>
-                                  <NavStack.Navigator>
-                                    <NavStack.Screen
-                                      name="Main"
-                                      component={Main}
-                                      options={{
-                                        title: 'Main',
-                                        headerShown: false,
-                                      }}
-                                    />
-                                    <NavStack.Screen
-                                      name="Task"
-                                      options={{
-                                        title: 'Task',
-                                        headerShown: false,
-                                      }}
-                                      component={Task}
-                                    />
-                                    <NavStack.Screen
-                                      name="CreateTask"
-                                      options={{
-                                        title: 'CreateTask',
-                                        headerShown: false,
-                                      }}
-                                      component={CreateTask}
-                                    />
-                                    <NavStack.Screen
-                                      name="TaskConversation"
-                                      options={{
-                                        title: 'TaskConversation',
-                                        headerShown: false,
-                                      }}
-                                      component={TaskConversation}
-                                    />
-                                  </NavStack.Navigator>
-                                  <SideMenuDrawer />
-                                </ProfileIsComplete>
-                                <ProfileNotComplete>
-                                  <NavStack.Navigator>
-                                    <NavStack.Screen
-                                      name="MissingProfile"
-                                      component={MissingProfile}
-                                      options={{
-                                        title: 'MissingProfile',
-                                        headerShown: false,
-                                      }}
-                                    />
-                                  </NavStack.Navigator>
-                                </ProfileNotComplete>
-                              </SearchLocationProvider>
-                            </CurrentLocationProvider>
-                          </NotificationsProvider>
-                        </PresenceProvider>
+                        <NotificationsProvider>
+                          <CurrentLocationProvider>
+                            <SearchLocationProvider>
+                              <ProfileIsComplete>
+                                <NavStack.Navigator>
+                                  <NavStack.Screen
+                                    name="Main"
+                                    component={Main}
+                                    options={{
+                                      title: 'Main',
+                                      headerShown: false,
+                                    }}
+                                  />
+                                  <NavStack.Screen
+                                    name="Task"
+                                    options={{
+                                      title: 'Task',
+                                      headerShown: false,
+                                    }}
+                                    component={Task}
+                                  />
+                                  <NavStack.Screen
+                                    name="CreateTask"
+                                    options={{
+                                      title: 'CreateTask',
+                                      headerShown: false,
+                                    }}
+                                    component={CreateTask}
+                                  />
+                                  <NavStack.Screen
+                                    name="TaskConversation"
+                                    options={{
+                                      title: 'TaskConversation',
+                                      headerShown: false,
+                                    }}
+                                    component={TaskConversation}
+                                  />
+                                </NavStack.Navigator>
+                                <SideMenuDrawer />
+                              </ProfileIsComplete>
+                              <ProfileNotComplete>
+                                <NavStack.Navigator>
+                                  <NavStack.Screen
+                                    name="MissingProfile"
+                                    component={MissingProfile}
+                                    options={{
+                                      title: 'MissingProfile',
+                                      headerShown: false,
+                                    }}
+                                  />
+                                </NavStack.Navigator>
+                              </ProfileNotComplete>
+                            </SearchLocationProvider>
+                          </CurrentLocationProvider>
+                        </NotificationsProvider>
                       </PushProvider>
                     </SignedIn>
                     <SignedOut>

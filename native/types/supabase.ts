@@ -26,6 +26,8 @@ export interface Database {
       notifications: {
         Row: {
           created_datetime: string
+          delivered: boolean
+          delivered_datetime: string | null
           id: string
           payload: Json
           type: Database["public"]["Enums"]["notifications_item_type"]
@@ -34,6 +36,8 @@ export interface Database {
         }
         Insert: {
           created_datetime?: string
+          delivered?: boolean
+          delivered_datetime?: string | null
           id?: string
           payload: Json
           type: Database["public"]["Enums"]["notifications_item_type"]
@@ -42,6 +46,8 @@ export interface Database {
         }
         Update: {
           created_datetime?: string
+          delivered?: boolean
+          delivered_datetime?: string | null
           id?: string
           payload?: Json
           type?: Database["public"]["Enums"]["notifications_item_type"]
@@ -350,6 +356,12 @@ export interface Database {
           created_datetime: string
           processed_datetime: string
         }[]
+      }
+      mark_notification_delivered: {
+        Args: {
+          p_notification_id: string
+        }
+        Returns: boolean
       }
       mark_task_conversation_read: {
         Args: {

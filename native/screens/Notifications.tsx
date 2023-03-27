@@ -1,8 +1,12 @@
 import { faChevronLeft } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps } from '@react-navigation/native';
+import {
+  CompositeScreenProps,
+  useFocusEffect,
+} from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useCallback, useEffect } from 'react';
 import { VStack } from 'react-native-flex-layout';
 import { useQuery } from 'react-query';
 import { RootStackParamList } from '../App';
@@ -13,6 +17,7 @@ import {
   getNotificationsSupabaseCall,
   getTaskSupabaseCall,
 } from '../lib/supabaseCalls';
+import { useNotifications } from '../providers/notifications';
 import { NotificationsItem } from '../types';
 import { MainTabParamList } from './Main';
 
@@ -22,6 +27,8 @@ type Props = CompositeScreenProps<
 >;
 
 export const Notifications = ({ route, navigation }: Props) => {
+  const notif = useNotifications();
+
   const notificationsQuery = useQuery(
     ['GetNotifications'],
     async () => {
@@ -50,6 +57,24 @@ export const Notifications = ({ route, navigation }: Props) => {
         );
     }
   };
+
+  const reload = async () => {
+    notif.reset();
+    await notificationsQuery.refetch();
+  };
+
+  // When the screen is reloaded (in react navigation terms when it is focused)
+  useFocusEffect(
+    useCallback(() => {
+      console.log('Calling useFocusEffect');
+      reload();
+    }, [])
+  );
+
+  useEffect(() => {
+    // Reset the counter that the user sees on the notifications tab icon
+    notif.reset();
+  }, []);
 
   if (!notificationsItems) {
     return <></>;

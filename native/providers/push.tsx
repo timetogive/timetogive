@@ -48,6 +48,9 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
     string | undefined
   >(undefined);
 
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
+
   const savePushTokenToServer = async (pushToken: string) => {
     if (session.user) {
       console.log('Saving push token to the server', pushToken);
@@ -126,8 +129,37 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    initialise();
-    return () => {};
+    const a = async () => {
+      await initialise();
+      notificationListener.current =
+        Notifications.addNotificationReceivedListener(
+          (notification) => {
+            console.log('Notification received', notification);
+          }
+        );
+
+      responseListener.current =
+        Notifications.addNotificationResponseReceivedListener(
+          (response) => {
+            console.log('Response received', response);
+          }
+        );
+    };
+
+    a();
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(
+          notificationListener.current
+        );
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(
+          responseListener.current
+        );
+      }
+    };
   }, []);
 
   return (
