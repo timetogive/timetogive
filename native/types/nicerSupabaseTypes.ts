@@ -1,7 +1,10 @@
+import { Polygon } from 'react-native-svg';
 import { Database } from './supabase';
 
 // Nicer names to work with
-export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Profile =
+  Database['public']['Tables']['profiles']['Row'] &
+    Database['public']['Tables']['prefs']['Row'];
 export type TaskReason = Database['public']['Enums']['task_reason'];
 export type TaskStatus = Database['public']['Enums']['task_status'];
 export type TaskOfferStatus =

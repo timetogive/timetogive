@@ -1,8 +1,17 @@
 import { Profile } from '../types/nicerSupabaseTypes';
 
-export const profileIsComplete = (profile: Profile) => {
-  if (profile.avatar_url) {
-    return true;
+export const missingProfileData = (profile?: Profile | null) => {
+  if (!profile?.full_name) {
+    return 'name';
   }
-  return false;
+  if (!profile?.description) {
+    return 'bio';
+  }
+  if (!profile?.avatar_url) {
+    return 'avatar';
+  }
+  if (!profile?.home_polygon) {
+    return 'home';
+  }
+  return undefined;
 };

@@ -9,7 +9,7 @@
 create table public.prefs (
   id uuid references auth.users on delete cascade not null primary key,
   last_search_location json,
-  home_search_location json
+  home_polygon json
 );
 
 -- Set up Row Level Security (RLS)
@@ -22,3 +22,6 @@ create policy "Prefs is private" on prefs
 
 create policy "Users can update own prefs." on prefs
   for update using (auth.uid() = id);
+
+
+

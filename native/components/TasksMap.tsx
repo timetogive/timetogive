@@ -76,7 +76,7 @@ interface TasksMapProps {
   onTaskPressed: (taskId: string) => void;
 }
 
-const getBestCameraPosition = (
+export const getBestCameraPosition = (
   searchLocation: SearchLocationDef,
   tasks?: SearchTasksResult
 ) => {
@@ -184,7 +184,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   }, [tasks]);
 
   return (
-    <Box style={{ flex: 1 }} pointerEvents="box-none">
+    <Box style={{ flex: 1 }}>
       <Mapbox.MapView
         ref={mapRef}
         style={{ flex: 1 }}
@@ -214,6 +214,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         w="100%"
         shouldWrapChildren
         ph={20}
+        pointerEvents="box-none"
       >
         <HStack spacing={5}>
           <TouchableOpacity onPress={() => searchNearMePressed()}>

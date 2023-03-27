@@ -4,11 +4,11 @@ module.exports = {
     slug: 'timetogive',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    icon: './assets/icon-ios.png',
     userInterfaceStyle: 'light',
     splash: {
-      image: './assets/ttg-white.png',
-      resizeMode: 'contain',
+      image: './assets/splash.png',
+      resizeMode: 'cover',
       backgroundColor: '#B794F4',
     },
     updates: {
@@ -18,13 +18,14 @@ module.exports = {
     ios: {
       bundleIdentifier: 'com.timetogiveapp.timetogive',
       supportsTablet: true,
+      icon: './assets/icon-ios.png',
     },
     android: {
       package: 'com.timetogiveapp.timetogive',
       versionCode: 1,
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#FFFFFF',
+        foregroundImage: './assets/icon-android-foreground.png',
+        backgroundImage: './assets/icon-android-background.png',
       },
     },
     web: {

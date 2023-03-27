@@ -61,6 +61,12 @@ export const NotificationsProvider = ({ children }: Props) => {
     Toast.show(toastParams);
   };
 
+  const setNotificationAsDelivered = async (id: string) => {
+    await supabase.rpc('mark_notification_delivered', {
+      p_notification_id: id,
+    });
+  };
+
   // Run once on load, listens for items going into the notifications
   // on the server, it's pretty simple, it adds to a count
   // that can be cleared using a hook elsewhere in the app
@@ -79,7 +85,7 @@ export const NotificationsProvider = ({ children }: Props) => {
           const notificationsItem = row.new as NotificationsItem;
           // This function acts as a central coordinator
           // for refreshing the various react query caches
-          const { type, payload } = notificationsItem;
+          const { id, type, payload } = notificationsItem;
           if (!payload) {
             return;
           }
@@ -171,11 +177,14 @@ export const NotificationsProvider = ({ children }: Props) => {
             return;
           }
           if (type === 'TaskMessage') {
-            const { taskId, taskOfferUserFullName, taskTitle } =
-              payload as any;
+            const { taskId } = payload as any;
+            // Don't bother with toast for messages - would be too annoying
+            // just stick with incrementing the notification count
             refreshTaskQueries(taskId);
             return;
           }
+          // Record that we've seen this notification on server
+          setNotificationAsDelivered(id);
         }
       )
       .subscribe();

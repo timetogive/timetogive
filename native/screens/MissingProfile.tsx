@@ -1,36 +1,60 @@
+import Animated, {
+  SlideInRight,
+  SlideOutRight,
+} from 'react-native-reanimated';
+import { MissingAvatar } from '../components/MissingAvatar';
+import { MissingBio } from '../components/MissingBio';
+import { MissingHomeArea } from '../components/MissingHomeArea';
+import { MissingName } from '../components/MissingName';
 import { Text } from '../components/Text';
+import { missingProfileData } from '../lib/profileHelpers';
 import { useSession } from '../providers/session';
-import { Profile } from '../types';
-import { MissingAvatar } from './MissingAvatar';
-import { MissingBio } from './MissingBio';
-import { MissingName } from './MissingName';
 
-const missingStuff = (profile?: Profile | null) => {
-  if (!profile?.full_name) {
-    return 'name';
-  }
-  if (!profile?.description) {
-    return 'bio';
-  }
-  if (!profile?.avatar_url) {
-    return 'avatar';
-  }
-  return undefined;
+interface SlideInWrapperProps {
+  children: React.ReactNode;
+}
+
+const SlideInWrapper = ({ children }: SlideInWrapperProps) => {
+  return (
+    <Animated.View
+      style={{
+        flex: 1,
+      }}
+      entering={SlideInRight.duration(1000)}
+      exiting={SlideOutRight.duration(1000)}
+    >
+      {children}
+    </Animated.View>
+  );
 };
 
 export const MissingProfile = () => {
   const session = useSession();
 
-  const missing = missingStuff(session.user);
+  const missing = missingProfileData(session.user);
 
-  switch (missing) {
-    case 'name':
-      return <MissingName />;
-    case 'bio':
-      return <MissingBio />;
-    case 'avatar':
-      return <MissingAvatar />;
-    default:
-      return <Text>Nothing missing</Text>;
-  }
+  return (
+    <>
+      {missing === 'name' && (
+        <SlideInWrapper>
+          <MissingName />
+        </SlideInWrapper>
+      )}
+      {missing === 'bio' && (
+        <SlideInWrapper>
+          <MissingBio />
+        </SlideInWrapper>
+      )}
+      {missing === 'avatar' && (
+        <SlideInWrapper>
+          <MissingAvatar />
+        </SlideInWrapper>
+      )}
+      {missing === 'home' && (
+        <SlideInWrapper>
+          <MissingHomeArea />
+        </SlideInWrapper>
+      )}
+    </>
+  );
 };

@@ -14,13 +14,18 @@ import Animated, {
   SlideInRight,
   SlideOutRight,
 } from 'react-native-reanimated';
+import { usePush } from '../providers/push';
 
 export const SideMenuDrawer = () => {
+  const push = usePush();
   const { open, setOpen } = useSideMenu();
 
-  const signOut = () => {
+  const signOut = async () => {
     setOpen(false);
-    supabase.auth.signOut();
+    console.log('Clicked on sign out', push.canPushOnDevice);
+    // Clear the push token on the server
+    await push.clearPushToken();
+    await supabase.auth.signOut();
   };
 
   return (

@@ -29,6 +29,11 @@ declare
     user_id public.tasks.user_id%type;
     status public.tasks.status%type;
     effort_normalised_minutes public.tasks.effort_normalised_minutes%type;
+    l_auth_user_full_name public.profiles.full_name%type;
+    l_auth_user_avatar_url public.profiles.avatar_url%type;
+    l_notifications_type public.notifications.type%type;
+    l_jsonb jsonb;
+
 begin
 
     -- Set user id to current authenticated user
@@ -82,6 +87,53 @@ begin
         fuzzy_geo_location,
         lifespan_days
     ) returning id into return_id;
+
+
+    -- Finally let's notify all users who's home area contains this task
+    l_notifications_type := 'Task';
+    
+    -- Get the auth user information
+    select full_name
+    ,      avatar_url
+    into   l_auth_user_full_name
+    ,      l_auth_user_avatar_url
+    from   public.profiles
+    where  id = user_id;
+
+    -- Build the jsonb payload
+    l_jsonb := json_build_object(
+        'taskId', return_id,
+        'taskTitle', title,
+        'taskDescription', description,
+        'taskOwnerId', user_id,
+        'taskOwnerFullName', l_auth_user_full_name,
+        'taskOwnerAvatarUrl', l_auth_user_avatar_url,
+        'taskReason', reason,
+        'taskWillPledge', will_pledge,
+        'taskPledge', pledge,
+        'taskEffortDays', effort_days,
+        'taskEffortHours', effort_hours,
+        'taskEffortMinutes', effort_minutes,
+        'taskEffortNormalisedMinutes', effort_normalised_minutes,
+        'taskEffortPeople', effort_people,
+        'taskTiming', timing,
+        'taskRemote', remote,
+        'taskFuzzyGeoLocation', fuzzy_geo_location,
+        'taskLifespanDays', lifespan_days
+    );
+
+    insert into public.notifications(
+        user_id,
+        you_actioned,
+        type,
+        payload       
+    ) select id
+        ,      false
+        ,      l_notifications_type
+        ,      l_jsonb
+        from   public.geo_tracking g
+        where  ST_Intersects(geo_location, g.home_polygon)
+        and    g.id != user_id;
 
     -- Return the id of the new task
     return return_id;

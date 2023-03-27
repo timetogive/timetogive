@@ -27,6 +27,7 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
     if (error) {
       Alert.alert(error.message);
     }
+    console.log('signInWithEmail');
     setLoading(false);
   }
 
