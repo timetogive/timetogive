@@ -51,6 +51,12 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
 
+  console.log(
+    'notificationListener.current',
+    notificationListener.current
+  );
+  console.log('responseListener.current', responseListener.current);
+
   const savePushTokenToServer = async (pushToken: string) => {
     if (session.user) {
       console.log('Saving push token to the server', pushToken);
@@ -130,6 +136,7 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
 
   useEffect(() => {
     const a = async () => {
+      console.log('AAAAAAAAAA');
       await initialise();
       notificationListener.current =
         Notifications.addNotificationReceivedListener(
@@ -149,6 +156,7 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
     a();
 
     return () => {
+      console.log('Unmounting push provider');
       if (notificationListener.current) {
         Notifications.removeNotificationSubscription(
           notificationListener.current
