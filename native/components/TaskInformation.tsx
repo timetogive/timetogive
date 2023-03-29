@@ -53,7 +53,7 @@ export const TaskInformation = ({
           </HStack>
         </VStack>
 
-        <VStack items="center" shouldWrapChildren>
+        <VStack items="end" shouldWrapChildren>
           <Stack
             w={40}
             h={40}
