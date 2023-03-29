@@ -42,9 +42,9 @@ export const MissingHomeArea = () => {
           </Button>
           <Text size="xs" color={defaultColor[400]}>
             TimeToGive is all about helping each other in your local
-            community. The home area is used to define which areas you
-            are willing to volunteer in and therefore also determines
-            which tasks you will be notified about.
+            community. The home area determines the default area you
+            are willing to volunteer in and also determines which
+            tasks you will be notified about.
           </Text>
         </VStack>
       </VStack>

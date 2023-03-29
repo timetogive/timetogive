@@ -1,5 +1,3 @@
-drop function if exists public.get_task_offers;
-
 -- Get task offers
 
 create or replace function public.get_task_offers(

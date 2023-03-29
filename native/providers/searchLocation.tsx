@@ -15,14 +15,15 @@ import { supabase } from '../lib/supabase';
 import { useSession } from './session';
 import { setStatusBarStyle } from 'expo-status-bar';
 
-export enum LocationMode {
+export enum SearchShape {
   PointWithRadius = 'PointWithRadius',
   CustomArea = 'CustomArea',
 }
 
 // This context provider sets the selected location
 export interface SearchLocationDef {
-  locationMode: LocationMode;
+  mode: 'current' | 'home' | 'custom' | 'fallback';
+  searchShape: SearchShape;
   name?: string;
   point?: Point;
   distance?: number;
@@ -34,8 +35,9 @@ export const defaultSearchPoint: Point = {
 };
 
 // Set a default when the user hasn't set a location
-const defaultSearchLocation: SearchLocationDef = {
-  locationMode: LocationMode.PointWithRadius,
+const fallbackSearchLocation: SearchLocationDef = {
+  mode: 'fallback',
+  searchShape: SearchShape.PointWithRadius,
   name: 'Chesham',
   point: defaultSearchPoint,
   distance: 100000,
@@ -50,7 +52,7 @@ interface Context {
 
 const SearchLocationContext = createContext<Context>({
   set: () => undefined,
-  searchLocation: defaultSearchLocation,
+  searchLocation: fallbackSearchLocation,
   setToLiveLocation: async () => undefined,
 });
 
@@ -66,13 +68,14 @@ export const SearchLocationProvider = ({
   const [ready, setReady] = useState<boolean>(false);
 
   const initialSearchLocation = currentLocation.currentLocation
-    ? {
+    ? ({
+        mode: 'current',
         name: 'Current Location',
-        locationMode: LocationMode.PointWithRadius,
+        searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
         distance: 100000,
-      }
-    : defaultSearchLocation;
+      } as SearchLocationDef)
+    : fallbackSearchLocation;
 
   const [searchLocation, setSearchLocation] =
     useState<SearchLocationDef>(initialSearchLocation);
@@ -108,8 +111,9 @@ export const SearchLocationProvider = ({
   const setToLiveLocation = () => {
     if (currentLocation.currentLocation) {
       const loc: SearchLocationDef = {
+        mode: 'current',
         name: 'Current Location',
-        locationMode: LocationMode.PointWithRadius,
+        searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
         distance: 100000,
       };
@@ -151,6 +155,24 @@ export const SearchLocationProvider = ({
     };
     getLastSearchLocationFromServer();
   }, []);
+
+  // When the current location changes, update the search location
+  // if it is currently using the fall back location
+  useEffect(() => {
+    if (
+      currentLocation.currentLocation &&
+      searchLocation.mode === 'fallback'
+    ) {
+      const loc: SearchLocationDef = {
+        mode: 'current',
+        name: 'Current Location',
+        searchShape: SearchShape.PointWithRadius,
+        point: currentLocation.currentLocation,
+        distance: 100000,
+      };
+      set(loc);
+    }
+  }, [currentLocation.currentLocation]);
 
   if (!ready) {
     return <></>;

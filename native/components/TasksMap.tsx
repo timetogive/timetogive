@@ -6,7 +6,7 @@ import {
 } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import {
-  LocationMode,
+  SearchShape,
   SearchLocationDef,
   useSearchLocation,
 } from '../providers/searchLocation';
@@ -48,7 +48,7 @@ import Mapbox, {
   PointAnnotation,
 } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
-import { Position } from 'geojson';
+import { Point, Position } from 'geojson';
 
 Mapbox.setAccessToken(mapBoxApiKey);
 
@@ -76,6 +76,10 @@ interface TasksMapProps {
   onTaskPressed: (taskId: string) => void;
 }
 
+// Generic function for determining the best initial
+// camera position for the mapbox map, based on
+// current location, last search, and tasks (that might
+// from search results)
 export const getBestCameraPosition = (
   searchLocation: SearchLocationDef,
   tasks?: SearchTasksResult
@@ -149,7 +153,8 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
 
       const polygon = getPolygonFromCurrentMapBounds(bounds).geometry;
       searchLocation.set({
-        locationMode: LocationMode.CustomArea,
+        mode: 'custom',
+        searchShape: SearchShape.CustomArea,
         name: 'Custom Area',
         polygon,
       });

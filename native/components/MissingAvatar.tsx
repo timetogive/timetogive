@@ -1,4 +1,9 @@
-import { useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Stack, VStack, HStack, Box } from 'react-native-flex-layout';
 import { SafeWrapper } from '../components/SafeWrapper';
 import { Text, translateFontSize } from '../components/Text';
@@ -9,8 +14,8 @@ import Constants from 'expo-constants';
 import { Button, Input } from '@rneui/themed';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons/faArrowsRotate';
-import { faCamera } from '@fortawesome/pro-light-svg-icons/faCamera';
-import { Image } from 'react-native';
+import { faImage, faCamera } from '@fortawesome/pro-light-svg-icons';
+import { Image, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
 import { StandardModal } from '../components/StandardModal';
@@ -23,13 +28,146 @@ import {
   multiAvatarApiUrl,
   supabaseUrl,
 } from '../lib/consts';
+import {
+  BottomSheetModal,
+  BottomSheetBackdropProps,
+  BottomSheetBackdrop,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import { CreateActionMenu } from './CreateActionMenu';
+import { TaskReason } from '../types';
+import { TtgIcon } from './TtgIcon';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { decode } from 'base64-arraybuffer';
+
+interface MenuBottomSheetModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onMenuItemPress?: (action: string) => void;
+}
+
+export const MenuBottomSheetModal = ({
+  isOpen,
+  onClose,
+  onMenuItemPress,
+}: MenuBottomSheetModalProps) => {
+  // Bottom sheet
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const showModal = useCallback(() => {
+    bottomSheetModalRef.current?.present();
+  }, []);
+  const hideModal = useCallback(() => {
+    bottomSheetModalRef.current?.dismiss();
+  }, []);
+  const renderBackdrop = useCallback(
+    (props_: BottomSheetBackdropProps) => (
+      <BottomSheetBackdrop
+        {...props_}
+        pressBehavior="close"
+        opacity={0.5}
+        disappearsOnIndex={-1}
+      />
+    ),
+    []
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      showModal();
+    } else {
+      hideModal();
+    }
+  }, [isOpen]);
+
+  return (
+    <BottomSheetModalProvider>
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        snapPoints={['35%']}
+        backdropComponent={renderBackdrop}
+        onDismiss={onClose}
+      >
+        <VStack>
+          <TouchableOpacity
+            onPress={() =>
+              onMenuItemPress && onMenuItemPress('camera')
+            }
+          >
+            <HStack
+              borderBottom={1}
+              p={20}
+              spacing={20}
+              borderColor={colors.gray[300]}
+            >
+              <Stack
+                w={50}
+                h={50}
+                style={{
+                  backgroundColor: defaultColor[50],
+                }}
+                radius={50}
+                center
+              >
+                <FontAwesomeIcon
+                  icon={faCamera}
+                  color={colors.gray[800]}
+                  size={20}
+                />
+              </Stack>
+              <VStack shouldWrapChildren spacing={5}>
+                <Text size="sm">Use your camera</Text>
+                <Text size="xxs" color={colors.gray[400]}>
+                  Use your camera to take a photo or selfie
+                </Text>
+              </VStack>
+            </HStack>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              onMenuItemPress && onMenuItemPress('photos')
+            }
+          >
+            <HStack
+              borderBottom={1}
+              p={20}
+              spacing={20}
+              borderColor={colors.gray[300]}
+            >
+              <Stack
+                w={50}
+                h={50}
+                style={{
+                  backgroundColor: defaultColor[50],
+                }}
+                radius={50}
+                center
+              >
+                <FontAwesomeIcon
+                  icon={faImage}
+                  color={colors.gray[800]}
+                  size={20}
+                />
+              </Stack>
+              <VStack shouldWrapChildren spacing={5}>
+                <Text size="sm">Select from photos</Text>
+                <Text size="xxs" color={colors.gray[400]}>
+                  Select a photo or file from your library
+                </Text>
+              </VStack>
+            </HStack>
+          </TouchableOpacity>
+        </VStack>
+      </BottomSheetModal>
+    </BottomSheetModalProvider>
+  );
+};
 
 const getNewAvatarUrl = () => {
   return `${multiAvatarApiUrl}/${nanoid()}.svg?apiKey=${multiAvatarApiKey}`;
 };
 
 export const MissingAvatar = () => {
-  const [avatarUrl, setAvatarUrl] = useState<string>(
+  const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
     getNewAvatarUrl()
   );
   const [imageUri, setImageUri] = useState<string | undefined>(
@@ -56,7 +194,7 @@ export const MissingAvatar = () => {
     if (status !== 'granted') {
       Alert.alert(
         'Permission Denied',
-        'Your device would now allow access to your camera. Go to app settings and allow camera to be used',
+        'Your device would not allow access to your camera. Go to app settings and allow camera to be used',
         [
           { text: 'OK', onPress: () => console.log('OK Pressed') },
           { text: 'Settings', onPress: () => Linking.openSettings() },
@@ -74,12 +212,13 @@ export const MissingAvatar = () => {
 
     // Assuming the user picked something from their library
     if (!result.canceled) {
-      setDialogVisible(false);
       setImageUri(result.assets[0].uri);
+      setAvatarUrl(undefined);
     }
   };
 
   const clickFile = async () => {
+    console.log('In clickFile');
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -89,24 +228,17 @@ export const MissingAvatar = () => {
     });
     // Assuming the user picked something from their library
     if (!result.canceled) {
-      setDialogVisible(false);
       setImageUri(result.assets[0].uri);
+      setAvatarUrl(undefined);
     }
   };
 
-  const clickSaveAndContinue = async () => {
-    setSaving(true);
-    if (imageUri) {
-      Alert.alert(
-        'Custom avatar not yet supported - please regenerate'
-      );
-      return;
-    }
-
+  const proceedWithAvatar = async () => {
     if (!avatarUrl) {
+      Alert.alert('No image selected');
       return;
     }
-
+    setSaving(true);
     // Bit inefficient, but we need to download the avatar
     const { data } = await axios.get(avatarUrl);
 
@@ -137,6 +269,75 @@ export const MissingAvatar = () => {
 
     // Refetch the user session
     session.refetch();
+    setSaving(false);
+  };
+
+  const proceedWithFile = async () => {
+    if (!imageUri) {
+      Alert.alert('No image selected');
+      return;
+    }
+    setSaving(true);
+    console.log('imageUri');
+
+    console.log(imageUri);
+
+    // We need to use base64 decoded to upload to supabase storage
+    // See: https://supabase.com/docs/reference/javascript/storage-from-upload
+    const { base64 } = await manipulateAsync(
+      imageUri,
+      [{ resize: { width: 600 } }],
+      {
+        compress: 1,
+        format: SaveFormat.JPEG,
+        base64: true,
+      }
+    );
+
+    const filePath = `${nanoid()}.jpg`;
+
+    if (!base64) {
+      Alert.alert('Could not use the image. Please try a new photo.');
+      return;
+    }
+
+    // Use supabase storage to upload the avatar
+    let { error } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, decode(base64), {
+        contentType: 'image/jpeg',
+      });
+
+    if (error) {
+      Alert.alert('Error uploading avatar');
+      throw error;
+    }
+
+    // Now update the user's profile with the new avatar URL
+    const fullAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${filePath}`;
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: fullAvatarUrl })
+      .eq('id', session.user?.id);
+
+    if (updateError) {
+      Alert.alert('Error setting the avatar URL');
+      throw error;
+    }
+
+    // Refetch the user session
+    session.refetch();
+    setSaving(false);
+  };
+
+  const clickSaveAndContinue = async () => {
+    // Todo implement resizing of the image
+    if (imageUri) {
+      proceedWithFile();
+    } else if (avatarUrl) {
+      proceedWithAvatar();
+    }
   };
 
   return (
@@ -155,12 +356,13 @@ export const MissingAvatar = () => {
           radius={70}
           overflow="hidden"
         >
-          {imageUri ? (
+          {imageUri && (
             <Image
               source={{ uri: imageUri }}
               style={{ width: 200, height: 200 }}
             />
-          ) : (
+          )}
+          {avatarUrl && (
             <SvgUri width="100%" height="100%" uri={avatarUrl} />
           )}
         </Stack>
@@ -186,11 +388,9 @@ export const MissingAvatar = () => {
 
         <Box>
           <Text size="xs" color={defaultColor[400]}>
-            Profile pictures are fun but they also help with safety in
-            the community. They help people recognise you on the
+            A profile picture helps other users recognise you on the
             platform. For the best trust factor, we recommend
-            uploading a photo. If you're not comfortable with that,
-            you can use a random avatar.
+            uploading a photo.
           </Text>
         </Box>
         <Button
@@ -201,6 +401,19 @@ export const MissingAvatar = () => {
           Save and continue
         </Button>
       </VStack>
+      <MenuBottomSheetModal
+        isOpen={dialogVisible}
+        onClose={() => setDialogVisible(false)}
+        onMenuItemPress={(item) => {
+          console.log('item', item);
+          if (item === 'camera') {
+            clickCamera();
+          } else if (item === 'photos') {
+            clickFile();
+          }
+          setDialogVisible(false);
+        }}
+      />
     </VStack>
   );
 };

@@ -1,6 +1,7 @@
 import {
   faBackwardFast,
   faBackwardStep,
+  faInfoCircle,
   faLocationCrosshairs,
   faTrash,
   faUndo,
@@ -15,7 +16,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { Button } from '@rneui/themed';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { HStack, Stack, Box } from 'react-native-flex-layout';
+import { HStack, Stack, Box, VStack } from 'react-native-flex-layout';
 import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import colors, { defaultColor } from '../styles/colors';
 import { Text, translateFontSize } from './Text';
@@ -38,19 +39,15 @@ import { TaskPin } from './TaskPin';
 import { TaskReason } from '../types';
 import { getBestCameraPosition } from './TasksMap';
 
-import Mapbox, {
-  Camera,
-  CameraBoundsWithPadding,
-  MarkerView,
-  CameraPadding,
-  MapState,
-  PointAnnotation,
-} from '@rnmapbox/maps';
+import Mapbox, { Camera, PointAnnotation } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
 import { Position } from 'geojson';
 import { lineString } from '@turf/helpers';
 
 Mapbox.setAccessToken(mapBoxApiKey);
+
+const initialInstructions =
+  'Tap anywhere on the map as the starting point of your shape';
 
 interface Props {
   onPolygonChange?: (polygon: Polygon) => void;
@@ -60,6 +57,8 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
   const currentLocation = useCurrentLocation();
   const searchLocation = useSearchLocation();
   const insets = useSafeAreaInsets();
+  const [instructionMessage, setInstructionMessage] =
+    useState<string>(initialInstructions);
 
   const cameraProps = getBestCameraPosition(
     searchLocation.searchLocation,
@@ -84,18 +83,30 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
   >(undefined);
 
   const syncPositionsToState = () => {
+    if (positions.current.length === 0) {
+      setInstructionMessage(initialInstructions);
+    }
     if (positions.current.length === 1) {
       setFirstPoint({
         type: 'Point',
         coordinates: positions.current[0],
       });
+      setInstructionMessage('Tap again to create your first edge');
     }
     if (positions.current.length >= 2) {
       setLineString({
         type: 'LineString',
         coordinates: positions.current,
       });
+      if (positions.current.length === 2) {
+        setInstructionMessage('Keep tapping to build up your shape');
+      } else {
+        setInstructionMessage(
+          'When you are done, tap the first point again to complete your shape'
+        );
+      }
     }
+    // Set the instructions accordingly
   };
 
   const addPoint = (point: Point) => {
@@ -136,6 +147,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
     setFirstPoint(undefined);
     setLineString(undefined);
     setPolygon(undefined);
+    syncPositionsToState();
   };
 
   const undo = () => {
@@ -221,15 +233,51 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
       <HStack
         position="absolute"
         top={20}
-        justify="end"
+        justify="between"
         spacing={10}
         w="100%"
         shouldWrapChildren
         ph={20}
         pointerEvents="box-none"
       >
-        {(lineString || firstPoint) && (
-          <TouchableOpacity onPress={() => undo()}>
+        <HStack spacing={10}>
+          {(lineString || firstPoint) && (
+            <TouchableOpacity onPress={() => undo()}>
+              <Stack
+                radius={50}
+                style={{ backgroundColor: defaultColor[700] }}
+                spacing={10}
+                h={30}
+                w={30}
+                center
+              >
+                <FontAwesomeIcon
+                  icon={faUndo}
+                  color={colors.white}
+                  size={15}
+                />
+              </Stack>
+            </TouchableOpacity>
+          )}
+          {(polygon || lineString || firstPoint) && (
+            <TouchableOpacity onPress={() => reset()}>
+              <Stack
+                radius={50}
+                style={{ backgroundColor: defaultColor[700] }}
+                spacing={10}
+                h={30}
+                w={30}
+                center
+              >
+                <FontAwesomeIcon
+                  icon={faTrash}
+                  color={colors.white}
+                  size={15}
+                />
+              </Stack>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity onPress={() => focusOnMe()}>
             <Stack
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}
@@ -239,56 +287,49 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
               center
             >
               <FontAwesomeIcon
-                icon={faUndo}
+                icon={faLocationCrosshairs}
                 color={colors.white}
                 size={15}
               />
             </Stack>
           </TouchableOpacity>
-        )}
-        {(polygon || lineString || firstPoint) && (
-          <TouchableOpacity onPress={() => reset()}>
-            <Stack
-              radius={50}
-              style={{ backgroundColor: defaultColor[700] }}
-              spacing={10}
-              h={30}
-              w={30}
-              center
-            >
-              <FontAwesomeIcon
-                icon={faTrash}
-                color={colors.white}
-                size={15}
-              />
-            </Stack>
-          </TouchableOpacity>
-        )}
-        <TouchableOpacity onPress={() => focusOnMe()}>
-          <Stack
-            radius={50}
-            style={{ backgroundColor: defaultColor[700] }}
+        </HStack>
+      </HStack>
+
+      <VStack
+        position="absolute"
+        right={0}
+        left={0}
+        bottom={insets.bottom + 20}
+        mh={20}
+      >
+        {!polygon && (
+          <HStack
+            bg={colors.pink[500]}
+            opacity={0.8}
+            ph={15}
+            pv={15}
+            radius={5}
             spacing={10}
-            h={30}
-            w={30}
-            center
+            maxW={400}
           >
             <FontAwesomeIcon
-              icon={faLocationCrosshairs}
+              icon={faInfoCircle}
               color={colors.white}
-              size={15}
+              size={20}
             />
-          </Stack>
-        </TouchableOpacity>
-      </HStack>
-      {polygon && (
-        <Stack
-          position="absolute"
-          right={0}
-          left={0}
-          bottom={insets.bottom + 20}
-          mh={20}
-        >
+            <Box style={{ flex: 1 }}>
+              <Text
+                size="xs"
+                color={colors.white}
+                style={{ flex: 1 }}
+              >
+                {instructionMessage}
+              </Text>
+            </Box>
+          </HStack>
+        )}
+        {polygon && (
           <Button
             color={defaultColor[500]}
             style={{ width: '100%' }}
@@ -300,8 +341,8 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
               Set this as my home area
             </Text>
           </Button>
-        </Stack>
-      )}
+        )}
+      </VStack>
     </Box>
   );
 };

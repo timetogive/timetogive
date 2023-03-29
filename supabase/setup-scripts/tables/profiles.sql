@@ -13,7 +13,7 @@ create table public.profiles (
   avatar_url text,
   public_link1 text,
   public_link2 text,
-  public_link3 text,
+  public_link3 text
 );
 
 -- Set up Row Level Security (RLS)

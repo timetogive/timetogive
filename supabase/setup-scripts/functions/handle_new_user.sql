@@ -5,8 +5,11 @@ returns trigger as $$
 begin
   insert into public.geo_tracking (id) values (new.id);
   insert into public.prefs (id) values (new.id);
-  insert into public.profiles (id, full_name, avatar_url)
-  values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
+  insert into public.profiles (id, full_name)
+  values (new.id, new.raw_user_meta_data->>'full_name');
+  -- Don't use the avatar image for now
+  -- insert into public.profiles (id, full_name, avatar_url)
+  -- values (new.id, new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'avatar_url');
   return new;
 end;
 $$ language plpgsql security definer;

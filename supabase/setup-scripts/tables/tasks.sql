@@ -2,23 +2,6 @@
 \echo 'Setting up tasks'
 \echo '---------------------------'
 
-CREATE TYPE public.task_status AS ENUM (
-   'Live', /* The default */
-   'Partially Assigned', /* If the task has more than one person needed */
-   'Assigned', /* Once fully assigned or assigned to a single person task*/
-   'Completed', /* Once completed it is marked completed */
-   'Closed' /* Listing has been closed automatically or manually closed by the user */
-);
-
-CREATE TYPE public.task_reason AS ENUM (
-   'Charity', -- its for a charity
-   'Community', -- it benefits the community
-   'In Need', -- someone who it genuinely in need
-   'Mutual Benefit', -- for mutual benefit to both parties - hooking up for a coffee, speaking a foreign language
-   'Return For Pledge' -- it's a job that might normally be paid for but will be paid for via a pledge
-);
-
-
 create table public.tasks(
    id uuid not null primary key default uuid_generate_v4(),
    user_id uuid references public.profiles not null, -- who created this

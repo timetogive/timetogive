@@ -3,16 +3,6 @@
 \echo 'Setting up notifications'
 \echo '---------------------------'
 
-
-CREATE TYPE public.notifications_item_type AS ENUM (
-    'Task',
-    'TaskOffer',
-    'TaskOfferAccepted',
-    'TaskOfferDeclined',
-    'TaskOfferCancelled',
-    'TaskMessage'
-);
-
 create table public.notifications(
    id uuid not null primary key default uuid_generate_v4(), 
    user_id uuid references public.profiles not null, -- who the notifications is for

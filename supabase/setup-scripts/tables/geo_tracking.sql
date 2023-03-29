@@ -8,7 +8,7 @@
 
 create table public.geo_tracking (
   id uuid references auth.users on delete cascade not null primary key,
-  home_polygon geography(Polygon), -- home point can be a point or a polygon
+  home_polygon geography(Polygon) -- home point can be a point or a polygon
 );
 
 -- Set up Row Level Security (RLS)

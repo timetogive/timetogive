@@ -99,7 +99,7 @@ export const SetLocation = ({
   };
 
   return (
-    <Box style={{ flex: 1 }} pointerEvents="none">
+    <Box style={{ flex: 1 }} pointerEvents="box-none">
       <MapView
         ref={mapRef}
         //provider={PROVIDER_GOOGLE}

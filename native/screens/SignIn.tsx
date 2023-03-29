@@ -6,11 +6,7 @@ import { Image, Input, Button, Text } from '@rneui/themed';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { VStack, Stack } from 'react-native-flex-layout';
-import {
-  makeRedirectUri,
-  startAsync,
-  useAuthRequest,
-} from 'expo-auth-session';
+import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
 
 export type SignInScreenProps = NativeStackScreenProps<
@@ -45,16 +41,12 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
   };
 
   const signInWithGoogle = async () => {
-    // This will create a redirectUri
-
     // This builds the URL for the signin page based on the
     // expo URL scheme specified in the config. Ensures it works
     // in local dev and in production.
     const redirectUrl = makeRedirectUri({
       path: 'signin',
     });
-
-    console.log('signInWithGoogle 1', redirectUrl);
 
     // authUrl: https://{YOUR_PROJECT_REFERENCE_ID}.supabase.co
     // returnURL: the redirectUrl you created above.
@@ -63,8 +55,6 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
       returnUrl: redirectUrl,
       projectNameForProxy: '@hoochani/timetogive',
     });
-
-    console.log('signInWithGoogle 3');
 
     // If the user successfully signs in
     // we will have access to an accessToken and an refreshToken

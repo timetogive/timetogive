@@ -7,7 +7,7 @@ import { useInfiniteQuery } from 'react-query';
 import { Text } from '../components/Text';
 
 import {
-  LocationMode,
+  SearchShape,
   SearchLocationDef,
   useSearchLocation,
 } from '../providers/searchLocation';
@@ -32,7 +32,7 @@ const supabaseParams = (
   currentLocation?: Point
 ) => {
   if (
-    searchLocation.locationMode === LocationMode.PointWithRadius &&
+    searchLocation.searchShape === SearchShape.PointWithRadius &&
     searchLocation.point
   ) {
     return {
@@ -44,7 +44,7 @@ const supabaseParams = (
     };
   }
   if (
-    searchLocation.locationMode === LocationMode.CustomArea &&
+    searchLocation.searchShape === SearchShape.CustomArea &&
     searchLocation.polygon
   ) {
     return {
