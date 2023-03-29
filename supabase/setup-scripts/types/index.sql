@@ -22,6 +22,7 @@ create type public.task_full_info as (
    user_avatar_url text
 );
 
+
 create type public.notifications_item_type AS ENUM (
     'Task',
     'TaskOffer',

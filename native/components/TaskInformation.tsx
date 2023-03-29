@@ -21,6 +21,7 @@ import {
 } from '@fortawesome/pro-solid-svg-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { TaskCardProps } from './TaskCardWithDistanceBar';
+import { MiniProfile } from './MiniProfile';
 
 export const TaskInformation = ({
   taskId,
@@ -70,38 +71,12 @@ export const TaskInformation = ({
         </VStack>
       </HStack>
       <HStack justify="between" items="end" shouldWrapChildren>
-        <HStack spacing={10}>
-          {taskUserAvatarUrl && (
-            <Stack
-              center
-              h={36}
-              w={36}
-              bg={colors.blue[100]}
-              radius={18}
-              overflow="hidden"
-            >
-              <SvgUri
-                width="100%"
-                height="100%"
-                uri={taskUserAvatarUrl}
-              />
-            </Stack>
-          )}
-
-          <VStack spacing={2} shouldWrapChildren>
-            <Text size="xxs">{taskUserFullName}</Text>
-            <HStack items="center" spacing={4}>
-              <FontAwesomeIcon
-                icon={faStar}
-                color={colors.yellow[400]}
-                size={15}
-              />
-              <Text size="xs" color={colors.gray[500]}>
-                5.0
-              </Text>
-            </HStack>
-          </VStack>
-        </HStack>
+        {taskUserAvatarUrl && taskUserFullName && (
+          <MiniProfile
+            avatarUrl={taskUserAvatarUrl}
+            fullName={taskUserFullName}
+          />
+        )}
         <Chip textSize="xxs">{duration}</Chip>
       </HStack>
     </VStack>

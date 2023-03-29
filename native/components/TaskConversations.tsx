@@ -8,6 +8,7 @@ import { GetTaskConversationsResult } from '../types';
 import { Text } from '../components/Text';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { faChevronRight } from '@fortawesome/sharp-solid-svg-icons';
+import { MiniProfile } from './MiniProfile';
 
 interface Props {
   conversations?: GetTaskConversationsResult | null;
@@ -49,38 +50,10 @@ export const TaskConversations = ({
                   borderColor={colors.gray[200]}
                   pv={10}
                 >
-                  <HStack spacing={10}>
-                    <Stack
-                      center
-                      h={36}
-                      w={36}
-                      bg={colors.blue[100]}
-                      radius={18}
-                      overflow="hidden"
-                    >
-                      <SvgUri
-                        width="100%"
-                        height="100%"
-                        uri={c.avatar_url}
-                      />
-                    </Stack>
-                    <VStack spacing={2} shouldWrapChildren>
-                      <Text size="xxs" color={colors.gray[500]}>
-                        {c.full_name}
-                      </Text>
-                      <HStack items="center" spacing={4}>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          color={colors.yellow[400]}
-                          size={15}
-                        />
-                        <Text size="xs" color={colors.gray[500]}>
-                          5.0
-                        </Text>
-                      </HStack>
-                    </VStack>
-                  </HStack>
-
+                  <MiniProfile
+                    avatarUrl={c.avatar_url}
+                    fullName={c.full_name}
+                  />
                   <HStack spacing={5}>
                     {c.my_unread_count > 0 && (
                       <VStack

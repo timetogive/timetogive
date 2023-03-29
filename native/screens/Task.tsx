@@ -53,11 +53,16 @@ export const Task = ({ route, navigation }: Props) => {
 
   const { taskId } = route.params;
 
+  console.log(route.params);
+
   const taskQuery = useQuery(
     ['GetTask', taskId],
     async () => {
       const query = getTaskSupabaseCall(taskId);
       const { data, error } = await query;
+      if (error) {
+        Alert.alert('Error', error.message);
+      }
       return data;
     },
     { enabled: !!taskId }

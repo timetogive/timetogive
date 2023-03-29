@@ -10,6 +10,7 @@ import { AcceptDeclineButtons } from './AcceptDeclineButtons';
 import { faChevronRight } from '@fortawesome/sharp-solid-svg-icons';
 import { TouchableOpacity } from 'react-native';
 import { Chip } from './Chip';
+import { MiniProfile } from './MiniProfile';
 
 interface Props {
   offers?: GetTaskOffersResult | null;
@@ -61,37 +62,10 @@ export const TaskOffers = ({ offers, onOfferPressed }: Props) => {
                   pv={10}
                   key={o.id}
                 >
-                  <HStack spacing={10}>
-                    <Stack
-                      center
-                      h={36}
-                      w={36}
-                      bg={colors.blue[100]}
-                      radius={18}
-                      overflow="hidden"
-                    >
-                      <SvgUri
-                        width="100%"
-                        height="100%"
-                        uri={o.avatar_url}
-                      />
-                    </Stack>
-                    <VStack spacing={2} shouldWrapChildren>
-                      <Text size="xxs" color={colors.gray[500]}>
-                        {o.full_name}
-                      </Text>
-                      <HStack items="center" spacing={4}>
-                        <FontAwesomeIcon
-                          icon={faStar}
-                          color={colors.yellow[400]}
-                          size={15}
-                        />
-                        <Text size="xs" color={colors.gray[500]}>
-                          5.0
-                        </Text>
-                      </HStack>
-                    </VStack>
-                  </HStack>
+                  <MiniProfile
+                    avatarUrl={o.avatar_url}
+                    fullName={o.full_name}
+                  />
                   <HStack
                     items="center"
                     spacing={5}

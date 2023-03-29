@@ -44,6 +44,7 @@ import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { MapListMode, TaskOfferStatus } from '../types';
 import { useFocusEffect } from '@react-navigation/native';
+import { MiniProfile } from '../components/MiniProfile';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,
@@ -280,38 +281,11 @@ export const TaskConversation = ({ route, navigation }: Props) => {
   return (
     <Stack style={{ flex: 1 }}>
       <BackBar onBackPress={() => navigation.goBack()}>
-        {user && (
-          <HStack spacing={10}>
-            <Stack
-              center
-              h={36}
-              w={36}
-              bg={colors.blue[100]}
-              radius={18}
-              overflow="hidden"
-            >
-              <SvgUri
-                width="100%"
-                height="100%"
-                uri={user.avatar_url}
-              />
-            </Stack>
-            <VStack spacing={2} shouldWrapChildren>
-              <Text size="xxs" color={colors.gray[700]}>
-                {user.full_name}
-              </Text>
-              <HStack items="center" spacing={4}>
-                <FontAwesomeIcon
-                  icon={faStar}
-                  color={colors.yellow[400]}
-                  size={15}
-                />
-                <Text size="xs" color={colors.gray[700]}>
-                  5.0
-                </Text>
-              </HStack>
-            </VStack>
-          </HStack>
+        {user?.avatar_url && user?.full_name && (
+          <MiniProfile
+            avatarUrl={user.avatar_url}
+            fullName={user.full_name}
+          />
         )}
       </BackBar>
       <KeyboardAvoidingView
