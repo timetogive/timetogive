@@ -46,8 +46,13 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
 
   const signInWithGoogle = async () => {
     // This will create a redirectUri
-    // This should be the URL you added to "Redirect URLs" in Supabase URL Configuration
-    // If they are different add the value of redirectUrl to your Supabase Redirect URLs
+
+    // This builds the URL for the signin page based on the
+    // expo URL scheme specified in the config. Ensures it works
+    // in local dev and in production.
+    const redirectUrl = makeRedirectUri({
+      path: 'signin',
+    });
 
     console.log('signInWithGoogle 1', redirectUrl);
 
