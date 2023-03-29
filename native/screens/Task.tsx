@@ -124,6 +124,18 @@ export const Task = ({ route, navigation }: Props) => {
     setTaskOfferActionModalOpen(true);
   };
 
+  const actionTask = async (status: TaskStatus) => {
+    const { error } = await supabase.rpc('action_task', {
+      p_task_id: taskId,
+      p_status: status,
+    });
+    if (error) {
+      console.log('Error');
+      console.log(error);
+    }
+    await reload();
+  };
+
   const actionTaskOffer = async (
     taskOfferId: string,
     status: TaskOfferStatus
@@ -196,7 +208,7 @@ export const Task = ({ route, navigation }: Props) => {
             style={{ flex: 1 }}
             bg={colors.white}
             pt={BACK_BAR_CONTENT_HEIGHT + insets.top}
-            pb={insets.bottom + 20}
+            pb={insets.bottom + 100}
           >
             {isMyTask && <InfoBar message="You created this task" />}
             {task.status === 'Assigned' && (
@@ -206,7 +218,7 @@ export const Task = ({ route, navigation }: Props) => {
               <InfoBar message="This task still needs more volunteers" />
             )}
             {task.status === 'Closed' && (
-              <InfoBar message="This task is now closed" />
+              <InfoBar message="This task has been closed" />
             )}
             {task.status === 'Completed' && (
               <InfoBar message="This task has been completed" />
@@ -351,6 +363,34 @@ export const Task = ({ route, navigation }: Props) => {
             </VStack>
           </Box>
         </ScrollView>
+        {isMyTask && taskIsOpen && (
+          <VStack
+            position="absolute"
+            bottom={insets.bottom + 10}
+            left={insets.left}
+            right={insets.right}
+            ph={15}
+            spacing={10}
+          >
+            {}
+            <Button
+              onPress={() => {
+                actionTask('Completed');
+              }}
+            >
+              Mark task completed
+            </Button>
+            <Button
+              color={colors.red[500]}
+              onPress={() => {
+                actionTask('Closed');
+              }}
+              loading={volunteerCallBusy}
+            >
+              Close this task
+            </Button>
+          </VStack>
+        )}
         {!isMyTask && (
           <VStack
             position="absolute"

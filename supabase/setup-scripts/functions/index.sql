@@ -15,6 +15,7 @@
 \ir save_home_polygon.sql
 \ir save_last_search_location.sql
 \ir mark_notification_delivered.sql
+\ir action_task.sql
 
 -- This tells postgrest to reload the schema
 NOTIFY pgrst, 'reload schema';

@@ -35,6 +35,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 import { Polygon } from 'react-native-svg';
 import { TaskPin } from './TaskPin';
 import Animated, {
+  FadeIn,
   FadeInDown,
   FadeOutUp,
 } from 'react-native-reanimated';
@@ -49,6 +50,9 @@ import Mapbox, {
 } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
 import { Point, Position } from 'geojson';
+import { MapInfoPink } from './MapInfoPink';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TAB_BAR_CONTENT_HEIGHT } from './TabBar';
 
 Mapbox.setAccessToken(mapBoxApiKey);
 
@@ -86,6 +90,7 @@ export const getBestCameraPosition = (
 ) => {
   // No tasks then return the center of the current search location
   if (!tasks || tasks.length === 0) {
+    console.log('NO RESULTS!!');
     return {
       centerCoordinate: getCenterPoint(searchLocation).coordinates,
       zoomLevel: 12,
@@ -129,17 +134,19 @@ const defaultCameraPadding: CameraPadding = {
   paddingRight: 30,
 };
 
-export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
+export const TasksMap = ({
+  tasks,
+  searching,
+  onTaskPressed,
+}: TasksMapProps) => {
   const currentLocation = useCurrentLocation();
   const searchLocation = useSearchLocation();
+  const insets = useSafeAreaInsets();
 
   const cameraProps = getBestCameraPosition(
     searchLocation.searchLocation,
     tasks
   );
-
-  console.log('cameraProps');
-  console.log(cameraProps);
 
   const mapRef = useRef<Mapbox.MapView>(null);
   const cameraRef = useRef<Camera>(null);
@@ -151,6 +158,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   const [mapMoved, setMapMoved] = useState<boolean>(false);
 
   const searchThisAreaPressed = async () => {
+    setSelectedTask(undefined);
     if (mapRef.current) {
       const bounds = await mapRef.current.getVisibleBounds();
 
@@ -165,10 +173,12 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   };
 
   const searchNearMePressed = async () => {
+    setSelectedTask(undefined);
     await searchLocation.setToCurrentLocation();
   };
 
   const homeButtonPressed = async () => {
+    setSelectedTask(undefined);
     await searchLocation.setToHomeArea();
   };
 
@@ -306,7 +316,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         <Animated.View
           style={{
             position: 'absolute',
-            bottom: 130,
+            bottom: insets.bottom + TAB_BAR_CONTENT_HEIGHT + 20,
             right: 0,
             left: 0,
             marginHorizontal: 50,
@@ -332,6 +342,19 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
             onPress={() => onTaskPressed(selectedTask.id)}
           />
         </Animated.View>
+      )}
+      {!searching && tasks.length === 0 && (
+        <Box
+          style={{
+            position: 'absolute',
+            bottom: insets.bottom + TAB_BAR_CONTENT_HEIGHT + 20,
+            right: 0,
+            left: 0,
+            marginHorizontal: 50,
+          }}
+        >
+          <MapInfoPink message="No tasks found. Try widening your search area or create a task." />
+        </Box>
       )}
     </Box>
   );

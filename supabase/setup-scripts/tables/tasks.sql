@@ -23,7 +23,8 @@ create table public.tasks(
    created_datetime TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP not null, -- when the task was created
    has_images boolean default false,
    images_data jsonb default '[]'::jsonb not null,
-   lifespan_days integer not null default 30 -- how long the task should be live for
+   lifespan_days integer not null default 30, -- how long the task should be live for
+   closed_or_completed_datetime TIMESTAMP WITH TIME ZONE -- when the task was created
 );
 
 alter table public.tasks enable row level security;

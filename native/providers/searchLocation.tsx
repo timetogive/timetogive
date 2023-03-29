@@ -34,13 +34,15 @@ export const defaultSearchPoint: Point = {
   coordinates: [-0.6130131525736177, 51.70449870090452],
 };
 
+export const defaultDistance = 10000;
+
 // Set a default when the user hasn't set a location
 const fallbackSearchLocation: SearchLocationDef = {
   mode: 'fallback',
   searchShape: SearchShape.PointWithRadius,
   name: 'Chesham',
   point: defaultSearchPoint,
-  distance: 100000,
+  distance: defaultDistance,
 };
 
 interface Context {
@@ -75,7 +77,7 @@ export const SearchLocationProvider = ({
         name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
-        distance: 100000,
+        distance: defaultDistance,
       } as SearchLocationDef)
     : fallbackSearchLocation;
 
@@ -117,7 +119,7 @@ export const SearchLocationProvider = ({
         name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
-        distance: 100000,
+        distance: defaultDistance,
       };
       set(loc);
       return;
@@ -185,7 +187,7 @@ export const SearchLocationProvider = ({
         name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
-        distance: 100000,
+        distance: defaultDistance,
       };
       set(loc);
     }
