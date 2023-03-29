@@ -92,14 +92,6 @@ export const CreateActionMenu = ({
           onMenuItemPress && onMenuItemPress('Charity')
         }
       />
-      <CreateButton
-        title="Request advice or ask a question"
-        description="Ask for advice in your local community"
-        action="Advice"
-        onMenuItemPress={() =>
-          onMenuItemPress && onMenuItemPress('Advice')
-        }
-      />
     </VStack>
   );
 };
