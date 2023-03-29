@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import {
+  LinkingOptions,
   NavigationContainer,
   NavigationState,
   useNavigationContainerRef,
@@ -49,6 +50,29 @@ export type RootStackParamList = {
 
 const NavStack = createNativeStackNavigator<RootStackParamList>();
 
+// We need to specify the default type for linking options - all a bit of hack for typescript
+// https://reactnavigation.org/docs/typescript#specifying-default-types-for-usenavigation-link-ref-etc
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList extends RootStackParamList {}
+  }
+}
+
+const linkingOpts: LinkingOptions<RootStackParamList> = {
+  prefixes: ['timetogive://' /*, 'https://timetogiveapp.com'*/],
+  config: {
+    screens: {
+      Main: 'main',
+      SignIn: 'signin',
+      SignUp: 'signup',
+      MissingProfile: 'missingprofile',
+      CreateTask: 'createtask',
+      TaskConversation: 'taskconversation',
+      Task: 'task',
+    },
+  },
+};
+
 export default function App() {
   const navigationRef = useNavigationContainerRef();
   const routeNameRef = useRef<string | undefined>();
@@ -62,6 +86,7 @@ export default function App() {
               <SessionProvider>
                 <SideMenuProvider>
                   <NavigationContainer
+                    linking={linkingOpts}
                     ref={navigationRef}
                     onReady={() => {
                       routeNameRef.current =

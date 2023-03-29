@@ -58,5 +58,6 @@ module.exports = {
         projectId: '18442e1f-ce66-4b53-86df-d77aea5c3d8f',
       },
     },
+    scheme: 'timetogive',
   },
 };
