@@ -138,6 +138,9 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     tasks
   );
 
+  console.log('cameraProps');
+  console.log(cameraProps);
+
   const mapRef = useRef<Mapbox.MapView>(null);
   const cameraRef = useRef<Camera>(null);
 
@@ -162,10 +165,14 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   };
 
   const searchNearMePressed = async () => {
-    await searchLocation.setToLiveLocation();
+    await searchLocation.setToCurrentLocation();
   };
 
-  const focusOnMe = () => {
+  const homeButtonPressed = async () => {
+    await searchLocation.setToHomeArea();
+  };
+
+  const focusOnMePressed = () => {
     if (cameraRef.current && currentLocation.currentLocation) {
       cameraRef.current.setCamera({
         centerCoordinate: currentLocation.currentLocation.coordinates,
@@ -173,11 +180,10 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     }
   };
 
-  const home = () => {};
-
   // When the tasks change, animate to fit all the new
   // tasks nicely on the map
   useEffect(() => {
+    console.log('tasks changed');
     const cameraProps = getBestCameraPosition(
       searchLocation.searchLocation,
       tasks
@@ -196,8 +202,10 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         onTouchMove={() => setMapMoved(true)}
         onTouchEnd={() => setSelectedTask(undefined)}
         scaleBarEnabled={false}
+        pitchEnabled={false}
+        logoEnabled={false}
       >
-        <Camera ref={cameraRef} {...cameraProps} />
+        <Camera ref={cameraRef} defaultSettings={cameraProps} />
 
         <Mapbox.UserLocation />
 
@@ -260,7 +268,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
           )}
         </HStack>
         <HStack spacing={5}>
-          <TouchableOpacity onPress={() => focusOnMe()}>
+          <TouchableOpacity onPress={() => focusOnMePressed()}>
             <Stack
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}
@@ -276,7 +284,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
               />
             </Stack>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => home()}>
+          <TouchableOpacity onPress={() => homeButtonPressed()}>
             <Stack
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}

@@ -47,13 +47,15 @@ interface Context {
   set: (searchLocation: SearchLocationDef) => void;
   searchLocation: SearchLocationDef;
   // Convenience method to set to live location
-  setToLiveLocation: () => void;
+  setToCurrentLocation: () => void;
+  setToHomeArea: () => void;
 }
 
 const SearchLocationContext = createContext<Context>({
   set: () => undefined,
   searchLocation: fallbackSearchLocation,
-  setToLiveLocation: async () => undefined,
+  setToCurrentLocation: async () => undefined,
+  setToHomeArea: async () => undefined,
 });
 
 interface Props {
@@ -70,7 +72,7 @@ export const SearchLocationProvider = ({
   const initialSearchLocation = currentLocation.currentLocation
     ? ({
         mode: 'current',
-        name: 'Current Location',
+        name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
         distance: 100000,
@@ -108,11 +110,11 @@ export const SearchLocationProvider = ({
   // Set search location to the live location - this is
   // a user triggered action - therefore it's OK to
   // force a refresh and request permission if necessary
-  const setToLiveLocation = () => {
+  const setToCurrentLocation = () => {
     if (currentLocation.currentLocation) {
       const loc: SearchLocationDef = {
         mode: 'current',
-        name: 'Current Location',
+        name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
         distance: 100000,
@@ -125,6 +127,21 @@ export const SearchLocationProvider = ({
       !currentLocation.currentLocation
     ) {
       currentLocation.forceRefresh();
+      return;
+    }
+  };
+
+  // Again triggered by the user when they click on home
+  // search button
+  const setToHomeArea = () => {
+    if (session.user?.home_polygon) {
+      const loc: SearchLocationDef = {
+        mode: 'home',
+        name: 'Home Area',
+        searchShape: SearchShape.CustomArea,
+        polygon: session.user.home_polygon as any as Polygon,
+      };
+      set(loc);
       return;
     }
   };
@@ -165,7 +182,7 @@ export const SearchLocationProvider = ({
     ) {
       const loc: SearchLocationDef = {
         mode: 'current',
-        name: 'Current Location',
+        name: 'Near Me',
         searchShape: SearchShape.PointWithRadius,
         point: currentLocation.currentLocation,
         distance: 100000,
@@ -183,7 +200,8 @@ export const SearchLocationProvider = ({
       value={{
         set,
         searchLocation,
-        setToLiveLocation,
+        setToCurrentLocation,
+        setToHomeArea,
       }}
     >
       {children}

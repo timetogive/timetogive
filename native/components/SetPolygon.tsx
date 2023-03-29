@@ -181,7 +181,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
           }
         }}
       >
-        <Camera ref={cameraRef} {...cameraProps} />
+        <Camera ref={cameraRef} defaultSettings={cameraProps} />
         <Mapbox.UserLocation />
         {firstPoint && (
           <PointAnnotation
