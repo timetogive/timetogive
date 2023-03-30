@@ -3,7 +3,7 @@ import { points } from '@turf/helpers';
 import { Point } from 'geojson';
 import {
   defaultSearchPoint,
-  LocationMode,
+  SearchShape,
   SearchLocationDef,
 } from '../providers/searchLocation';
 
@@ -12,20 +12,17 @@ export const getCenterPoint = (
 ): Point => {
   console.log('getCenterPoint', searchLocation);
   if (
-    searchLocation.locationMode === LocationMode.PointWithRadius &&
+    searchLocation.searchShape === SearchShape.PointWithRadius &&
     searchLocation.point
   ) {
     return searchLocation.point;
   }
 
   if (
-    searchLocation.locationMode === LocationMode.CustomBox &&
-    searchLocation.points
+    searchLocation.searchShape === SearchShape.CustomArea &&
+    searchLocation.polygon
   ) {
-    const box = points(
-      searchLocation.points.map((point) => point.coordinates)
-    );
-    const ctr = center(box);
+    const ctr = center(searchLocation.polygon);
     return ctr.geometry as Point;
   }
   return defaultSearchPoint;
@@ -40,7 +37,7 @@ export const getMainText = (
 export const getDistanceText = (
   searchLocation: SearchLocationDef
 ): string => {
-  if (searchLocation.locationMode === LocationMode.CustomBox) {
+  if (searchLocation.searchShape === SearchShape.CustomArea) {
     return '';
   }
   return `${((searchLocation.distance || 0) / 1000).toFixed(0)} km`;

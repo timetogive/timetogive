@@ -2,12 +2,6 @@
 \echo 'Setting up reviews'
 \echo '---------------------------'
 
-CREATE TYPE public.reviewee AS ENUM (
-   'Task Lister', /* The default */
-   'Volunteer' /* If the task has more than one person needed */
-);
-
-
 -- auth to profiles setup (copied from standard supabase setup)
 -- Create a table for public profiles
 create table public.reviews (

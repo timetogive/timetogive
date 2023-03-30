@@ -1,5 +1,3 @@
-drop function if exists public.get_task_conversations;
-
 -- Search for tasks via a location and radius
 
 create or replace function public.get_task_conversations(

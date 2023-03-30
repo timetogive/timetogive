@@ -6,7 +6,7 @@ import {
 } from '../types';
 import { memo, useEffect, useRef, useState } from 'react';
 import {
-  LocationMode,
+  SearchShape,
   SearchLocationDef,
   useSearchLocation,
 } from '../providers/searchLocation';
@@ -35,6 +35,7 @@ import bboxPolygon from '@turf/bbox-polygon';
 import { Polygon } from 'react-native-svg';
 import { TaskPin } from './TaskPin';
 import Animated, {
+  FadeIn,
   FadeInDown,
   FadeOutUp,
 } from 'react-native-reanimated';
@@ -48,7 +49,10 @@ import Mapbox, {
   PointAnnotation,
 } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
-import { Position } from 'geojson';
+import { Point, Position } from 'geojson';
+import { MapInfoPink } from './MapInfoPink';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TAB_BAR_CONTENT_HEIGHT } from './TabBar';
 
 Mapbox.setAccessToken(mapBoxApiKey);
 
@@ -76,12 +80,17 @@ interface TasksMapProps {
   onTaskPressed: (taskId: string) => void;
 }
 
+// Generic function for determining the best initial
+// camera position for the mapbox map, based on
+// current location, last search, and tasks (that might
+// from search results)
 export const getBestCameraPosition = (
   searchLocation: SearchLocationDef,
   tasks?: SearchTasksResult
 ) => {
   // No tasks then return the center of the current search location
   if (!tasks || tasks.length === 0) {
+    console.log('NO RESULTS!!');
     return {
       centerCoordinate: getCenterPoint(searchLocation).coordinates,
       zoomLevel: 12,
@@ -125,9 +134,14 @@ const defaultCameraPadding: CameraPadding = {
   paddingRight: 30,
 };
 
-export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
+export const TasksMap = ({
+  tasks,
+  searching,
+  onTaskPressed,
+}: TasksMapProps) => {
   const currentLocation = useCurrentLocation();
   const searchLocation = useSearchLocation();
+  const insets = useSafeAreaInsets();
 
   const cameraProps = getBestCameraPosition(
     searchLocation.searchLocation,
@@ -144,12 +158,14 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   const [mapMoved, setMapMoved] = useState<boolean>(false);
 
   const searchThisAreaPressed = async () => {
+    setSelectedTask(undefined);
     if (mapRef.current) {
       const bounds = await mapRef.current.getVisibleBounds();
 
       const polygon = getPolygonFromCurrentMapBounds(bounds).geometry;
       searchLocation.set({
-        locationMode: LocationMode.CustomArea,
+        mode: 'custom',
+        searchShape: SearchShape.CustomArea,
         name: 'Custom Area',
         polygon,
       });
@@ -157,10 +173,16 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
   };
 
   const searchNearMePressed = async () => {
-    await searchLocation.setToLiveLocation();
+    setSelectedTask(undefined);
+    await searchLocation.setToCurrentLocation();
   };
 
-  const focusOnMe = () => {
+  const homeButtonPressed = async () => {
+    setSelectedTask(undefined);
+    await searchLocation.setToHomeArea();
+  };
+
+  const focusOnMePressed = () => {
     if (cameraRef.current && currentLocation.currentLocation) {
       cameraRef.current.setCamera({
         centerCoordinate: currentLocation.currentLocation.coordinates,
@@ -168,11 +190,10 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
     }
   };
 
-  const home = () => {};
-
   // When the tasks change, animate to fit all the new
   // tasks nicely on the map
   useEffect(() => {
+    console.log('tasks changed');
     const cameraProps = getBestCameraPosition(
       searchLocation.searchLocation,
       tasks
@@ -191,8 +212,10 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         onTouchMove={() => setMapMoved(true)}
         onTouchEnd={() => setSelectedTask(undefined)}
         scaleBarEnabled={false}
+        pitchEnabled={false}
+        logoEnabled={false}
       >
-        <Camera ref={cameraRef} {...cameraProps} />
+        <Camera ref={cameraRef} defaultSettings={cameraProps} />
 
         <Mapbox.UserLocation />
 
@@ -255,7 +278,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
           )}
         </HStack>
         <HStack spacing={5}>
-          <TouchableOpacity onPress={() => focusOnMe()}>
+          <TouchableOpacity onPress={() => focusOnMePressed()}>
             <Stack
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}
@@ -271,7 +294,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
               />
             </Stack>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => home()}>
+          <TouchableOpacity onPress={() => homeButtonPressed()}>
             <Stack
               radius={50}
               style={{ backgroundColor: defaultColor[700] }}
@@ -293,7 +316,7 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
         <Animated.View
           style={{
             position: 'absolute',
-            bottom: 130,
+            bottom: insets.bottom + TAB_BAR_CONTENT_HEIGHT + 20,
             right: 0,
             left: 0,
             marginHorizontal: 50,
@@ -319,6 +342,19 @@ export const TasksMap = ({ tasks, onTaskPressed }: TasksMapProps) => {
             onPress={() => onTaskPressed(selectedTask.id)}
           />
         </Animated.View>
+      )}
+      {!searching && tasks.length === 0 && (
+        <Box
+          style={{
+            position: 'absolute',
+            bottom: insets.bottom + TAB_BAR_CONTENT_HEIGHT + 20,
+            right: 0,
+            left: 0,
+            marginHorizontal: 50,
+          }}
+        >
+          <MapInfoPink message="No tasks found. Try widening your search area or create a task." />
+        </Box>
       )}
     </Box>
   );

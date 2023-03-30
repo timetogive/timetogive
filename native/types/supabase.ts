@@ -210,6 +210,7 @@ export interface Database {
       }
       tasks: {
         Row: {
+          closed_or_completed_datetime: string | null
           created_datetime: string
           description: string | null
           effort_days: number | null
@@ -233,6 +234,7 @@ export interface Database {
           will_pledge: boolean
         }
         Insert: {
+          closed_or_completed_datetime?: string | null
           created_datetime?: string
           description?: string | null
           effort_days?: number | null
@@ -256,6 +258,7 @@ export interface Database {
           will_pledge?: boolean
         }
         Update: {
+          closed_or_completed_datetime?: string | null
           created_datetime?: string
           description?: string | null
           effort_days?: number | null
@@ -284,6 +287,13 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      action_task: {
+        Args: {
+          p_task_id: string
+          p_status: Database["public"]["Enums"]["task_status"]
+        }
+        Returns: string
+      }
       action_task_offer: {
         Args: {
           p_task_offer_id: string
@@ -417,13 +427,6 @@ export interface Database {
       }
     }
     Enums: {
-      feed_item_type:
-        | "Task"
-        | "TaskOffer"
-        | "TaskOfferAccepted"
-        | "TaskOfferDeclined"
-        | "TaskOfferCancelled"
-        | "TaskMessage"
       notifications_item_type:
         | "Task"
         | "TaskOffer"
@@ -441,10 +444,10 @@ export interface Database {
         | "Return For Pledge"
       task_status:
         | "Live"
-        | "Closed"
         | "Partially Assigned"
         | "Assigned"
         | "Completed"
+        | "Closed"
     }
     CompositeTypes: {
       task_full_info: {
@@ -469,6 +472,7 @@ export interface Database {
         distance: number
         user_full_name: string
         user_avatar_url: string
+        user_description: string
       }
     }
   }

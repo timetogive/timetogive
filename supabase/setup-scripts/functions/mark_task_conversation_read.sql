@@ -1,5 +1,3 @@
-drop function public.mark_task_conversation_read;
-
 create or replace function public.mark_task_conversation_read(
    p_task_id public.tasks.id%type,
    p_user_id public.profiles.id%type

@@ -1,6 +1,3 @@
--- Search for tasks via a location and radius
-drop function public.search_tasks;
-
 create or replace function public.search_tasks(
     p_current_point json default null, -- to get distances back you can pass in the current point (might be same as p_point_json)
     p_point_json json default null, -- if searching from a point

@@ -47,7 +47,6 @@ module.exports = {
       ],
     ],
     extra: {
-      supabaseAccessToken: process.env.SUPABASE_ACCESS_TOKEN,
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
       supabaseProjectId: process.env.SUPABASE_PROJECT_ID,
@@ -55,8 +54,9 @@ module.exports = {
       multiAvatarApiKey: process.env.MULTIAVATAR_API_KEY,
       mapBoxApiKey: process.env.MAPBOX_API_KEY,
       eas: {
-        projectId: '18442e1f-ce66-4b53-86df-d77aea5c3d8f',
+        projectId: process.env.EAS_EXPO_PROJECT_ID,
       },
     },
+    scheme: 'timetogive',
   },
 };

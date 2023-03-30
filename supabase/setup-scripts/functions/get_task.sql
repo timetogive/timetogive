@@ -1,31 +1,3 @@
-drop function if exists public.get_task;
-
-drop type public.task_full_info;
-
-create type public.task_full_info as (
-   id uuid,
-   user_id uuid,
-   status task_status,
-   reason task_reason,
-   will_pledge boolean,
-   pledge text,
-   title text,
-   description text,
-   effort_days integer,
-   effort_hours integer,
-   effort_minutes integer,
-   effort_normalised_minutes integer,
-   effort_people int ,
-   timing text,
-   remote boolean ,
-   longitude double precision,
-   latitude double precision,
-   created_datetime TIMESTAMP,
-   distance double precision,
-   user_full_name text,
-   user_avatar_url text
-);
-
 create or replace function public.get_task(
     p_id public.tasks.id%type,
     p_longitude double precision default null,
@@ -38,7 +10,7 @@ declare
     select_clause text;
     from_clause text;
     where_clause text;
-	final_sql text;
+	  final_sql text;
     rec task_full_info;
 begin
 
@@ -77,6 +49,7 @@ begin
     select_clause := select_clause||'
         , p.full_name
         , p.avatar_url
+        , p.description
     ';
 
     from_clause := '

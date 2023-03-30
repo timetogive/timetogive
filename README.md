@@ -120,11 +120,19 @@ yarn dev
 View it in your browser
 
 
+## Random historic setup
 
+Ultimately for setup on react native:
 
+https://dev.to/fedorish/google-sign-in-using-supabase-and-react-native-expo-14jf
 
+Config of google auth with supabase:
 
+https://supabase.com/docs/guides/auth/social-login/auth-google
 
+The credentials in GCP were done here:
+
+https://console.cloud.google.com/apis/credentials?project=timetogive
 
 
 

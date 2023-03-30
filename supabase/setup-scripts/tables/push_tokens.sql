@@ -5,10 +5,7 @@
 \echo 'Setting up push_tokens'
 \echo '---------------------------'
 
-drop table push_tokens;
-
 -- User preferences and state
-
 create table public.push_tokens (
   user_id uuid references auth.users on delete cascade not null,
   push_token text,
