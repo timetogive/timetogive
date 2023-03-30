@@ -9,19 +9,30 @@
       "ios": {
         "resourceClass": "m-medium",
         "simulator": true
+      },
+      "env": {
+        "APP_ENV": "dev"
       }
     },
     "dev-client-device": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "dev"
+      }
     },
-    "development": {
+    "dev": {
+      "channel": "dev",
       "distribution": "internal",
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_ENV": "dev"
       }
     },
-    "production": {
+    "prod": {
+      "channel": "prod",
       "ios": {
         "resourceClass": "m-medium"
       }
