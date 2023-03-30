@@ -8,4 +8,4 @@ echo "To add to your device drag and drop through Finder with the phone connecte
 echo "Note you will need to trust the phone on your mac and your mac will need to trust the phone"
 echo "DON'T FORGET to enable developer mode in privacy and settings on your phone"
 echo "-----------------------------------------------------------------------"
-eas build --profile production --platform ios --local
+eas build --profile prod --platform ios --local
