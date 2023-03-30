@@ -78,15 +78,15 @@ export const CreateActionMenu = ({
       />
       <CreateButton
         title="Task for those in need"
-        description="Create a task on behalf of the vulnerable or in need"
+        description="Create a task directly on behalf of the vulnerable or in need"
         action="In Need"
         onMenuItemPress={() =>
           onMenuItemPress && onMenuItemPress('In Need')
         }
       />
       <CreateButton
-        title="Task for charity or community group"
-        description="Create a task on behalf of a charity or local group"
+        title="Task for charity or community"
+        description="Create a task on behalf of a charity, community group, or to help neighbourhood"
         action="Charity"
         onMenuItemPress={() =>
           onMenuItemPress && onMenuItemPress('Charity')

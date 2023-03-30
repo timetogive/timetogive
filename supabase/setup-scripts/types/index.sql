@@ -19,7 +19,8 @@ create type public.task_full_info as (
    created_datetime TIMESTAMP,
    distance double precision,
    user_full_name text,
-   user_avatar_url text
+   user_avatar_url text,
+   user_description text
 );
 
 

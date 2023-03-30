@@ -10,7 +10,7 @@ declare
     select_clause text;
     from_clause text;
     where_clause text;
-	final_sql text;
+	  final_sql text;
     rec task_full_info;
 begin
 
@@ -49,6 +49,7 @@ begin
     select_clause := select_clause||'
         , p.full_name
         , p.avatar_url
+        , p.description
     ';
 
     from_clause := '

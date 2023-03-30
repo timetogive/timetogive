@@ -472,6 +472,7 @@ export interface Database {
         distance: number
         user_full_name: string
         user_avatar_url: string
+        user_description: string
       }
     }
   }

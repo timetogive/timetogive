@@ -342,6 +342,23 @@ export const Task = ({ route, navigation }: Props) => {
                   color={colors.gray[700]}
                   weight="semi-bold"
                 >
+                  About {task.user_full_name}
+                </Text>
+              </VStack>
+              <VStack ph={20} pv={10}>
+                <Text size="sm" color={colors.gray[700]}>
+                  {task.user_description}
+                </Text>
+              </VStack>
+            </VStack>
+
+            <VStack shouldWrapChildren bg={colors.white} mt={20}>
+              <VStack ph={20} pv={10}>
+                <Text
+                  size="sm"
+                  color={colors.gray[700]}
+                  weight="semi-bold"
+                >
                   Location
                 </Text>
               </VStack>
