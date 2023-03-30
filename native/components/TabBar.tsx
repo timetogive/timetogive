@@ -100,12 +100,12 @@ export const TabBar = ({
             focused={routes[index].name === 'Tasks'}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => onNavPress('Advice')}>
+        <TouchableOpacity onPress={() => onNavPress('Dashboard')}>
           <TabWithIcon
             iconDefinition={faHeartCircleCheck}
             focussedIconDefinition={faHeartCircleCheckSolid}
-            title="Your Tasks"
-            focused={routes[index].name === 'Advice'}
+            title="Dashboard"
+            focused={routes[index].name === 'Dashboard'}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onCreatePress()}>

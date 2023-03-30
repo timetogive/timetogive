@@ -22,7 +22,7 @@ import colors, { defaultColor } from '../styles/colors';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CreateActionMenuBottomSheetModal } from '../components/CreateActionMenu';
-import { Advice } from './Advice';
+import { Dashboard } from './Dashboard';
 import { Notifications } from './Notifications';
 import { Menu } from './Menu';
 import { useNotifications } from '../providers/notifications';
@@ -31,7 +31,7 @@ import { TabBar } from '../components/TabBar';
 
 export type MainTabParamList = {
   Tasks: undefined;
-  Advice: undefined;
+  Dashboard: undefined;
   Notifications: undefined;
   Menu: undefined;
 };
@@ -55,8 +55,8 @@ export const Main = () => {
             headerShown: false,
             tabBarShowLabel: false,
           }}
-          name="Advice"
-          component={Advice}
+          name="Dashboard"
+          component={Dashboard}
         />
 
         <Tab.Screen
