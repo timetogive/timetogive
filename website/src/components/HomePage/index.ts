@@ -1,2 +1,5 @@
 export * from './HomePageHero';
-export * from './HomePageParagraph';
+export * from './HomePageScreenshots';
+export * from './HomePageCommitments';
+export * from './HomePageTasks';
+export * from './HomePageDownload';
