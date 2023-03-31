@@ -1,0 +1,5 @@
+VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$VERCEL_PROJECT_ID \
+yarn vercel \
+  --token $VERCEL_DEPLOYMENT_TOKEN \
+  --yes \
+  --prod

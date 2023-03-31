@@ -32,5 +32,8 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
     "typescript": "4.9.5"
+  },
+  "devDependencies": {
+    "vercel": "^28.18.3"
   }
 }
