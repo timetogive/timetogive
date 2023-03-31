@@ -14,9 +14,13 @@ However, the idea around tasks also comes with a further "twist". Tasks don't ha
 
 Tasks don't have to be physical, they might also be remote in nature - for example answering a question, or offering advice to your local community. And can therefore be done entirely through the app.
 
+More information can be found on the app [landing page website here](https://timetogiveapp.com)*. 
+
+* like everything on TimeToGive, the code to the website can be found in this repo. So please raise a PR if you spot a mistake or can make improvements.
+
 # Origin
 
-TimeToGive was started by James Allchin ([hoochani](https://github.com/hoochani)) and this repo is currently maintained by James. It's hoped that the open source community can contribute to future direction if the TimeToGive platform and service gains traction.
+TimeToGive was started by James Allchin ([hoochani](https://github.com/hoochani)) and this repo is currently maintained by James. It is purely a philanthropic project. It's hoped that the open source community can contribute to future direction if the TimeToGive platform and service gains traction.
 
 # License
 
