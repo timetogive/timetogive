@@ -44,8 +44,7 @@ export const HomePageHero = () => {
               fontWeight={700}
             >
               It&apos;s free to use, entirely open source, and is
-              itself run by volunteers (we think that bit is
-              important)
+              itself run by volunteers.
             </Text>
           </VStack>
         </VStack>
