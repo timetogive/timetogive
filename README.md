@@ -10,19 +10,19 @@ TimeToGive is a micro volunteering app and platform. It connects people with eve
 
 Tasks can be traditional volunteering opportunities (like helping hospices, community groups, or charities), or directly for individuals in need in the community (like the elderly, vulnerable, or those going through a tough time). Leveraging technology, doing this at scale on a global level, and doing this for free through a compelling mobile app is in itself a differentiator.
 
-However, the idea around tasks also comes with a further "twist". Tasks don't have to be directly for good causes. Instead tasks can be for neighbours, businesses or other local groups, who need a hand with something. Instead of making a monetary payment, will do something good in return (e.g. buying the volunteer a coffee, making them dinner, making a pledge to charity, do something in return, volunteer to help someone else). Think of this as a "TaskRabbit" but for good not cash.
+However, the idea around tasks also comes with a further "twist". Tasks don't have to be directly for good causes. Instead tasks can be for neighbours, businesses or other local groups, who need a hand with something. Instead of making a monetary payment, will do something good in return (e.g. buying the volunteer a coffee, making them dinner, making a pledge to charity, do something in return, volunteer to help someone else).
 
-Tasks don't have to be physical, they might also be remote in nature - for example answering a question, or offering advice to your local community. And can therefore be done entirely through the app. Think of this as an ultra-local "Quora" but for local communities globally. 
+Tasks don't have to be physical, they might also be remote in nature - for example answering a question, or offering advice to your local community. And can therefore be done entirely through the app. 
 
 # Tell me more about the tech
 
-At the moment we're building an MVP. We have no idea (yet) if anyone will actually use the app, and what the product market fit actually is. Therefore, we're focussed on building a simple app, on top of a simple architecture that incurs as little cost as possible. If we eventually see usage we can redesign and refactor for scale.
+At the moment we're trying to get a public beta ready. Currently we don't know how well the app will be adopted and what the product market fit actually is. Therefore, we're focussed on building a simple app, on top of a simple, scalable architecture that incurs low cost (James Allchin, the founder of the project, is currently footing the bill).
 
-The frontend of TimeToGive is a mobile app for iOS and Android. It is built using [React Native](https://reactnative.dev/). Mainly because the MVP requirements are pretty basic. We also have the skills to build in TypeScript (Objective-C, Swift, and Java would make things a little more painful) and we get a "twofer" a single codebase for both iOS and Android. The React Native app takes advantage of [Expo](https://expo.dev/). It's perhaps likely that if we get out of an MVP stage, we'd probably need to eject from Expo, but for the moment it's making dev pretty easy and of course it helps (or will help) us to manage build pipelines and app store / play store publishing.
+The frontend of TimeToGive is a mobile app for iOS and Android. It is built using [React Native](https://reactnative.dev/). We also have the skills to build in TypeScript (Objective-C, Swift, and Java would make things a little more painful) and we get a "twofer" a single codebase for both iOS and Android. The React Native app takes advantage of [Expo](https://expo.dev/). It's really helping us with the build and submission process and making the app a little easier to develop.
 
-The backend is built on top of [Supabase](https://supabase.com/) - it's kind of an open-source alternative to firebase all built on top of Postgres - yep pretty crazy. Oh yep, and it's also only in Beta release. But hey, it feels like a good choice for an MVP - as it gives us a lot out of the box - auth, authorisation, realtime notifications and comms, auto-generated backend APIs (kind of) and of course a database.
+The backend is built on top of [Supabase](https://supabase.com/) - it's an open-source alternative to firebase all built on top of Postgres which is pretty cool. Most features are now GA but some are still in Alpha or Beta. But it's got a good community using it and the supabase team are responsive and doing some cool stuff. It feels like a good choice for the initial Beta release - as it gives us a lot out of the box - auth, authorisation, realtime notifications and comms, auto-generated backend APIs (kind of) and of course a database.
 
-The marketing website is built on [NextJS](https://nextjs.org/). It's likely this same NextJS app will also be used to provide middleware APIs as where we need them (as NextJS serverless functions). Again another twofer on our MVP.
+The marketing website is built on [NextJS](https://nextjs.org/). It's likely this same NextJS app will also be used to provide middleware APIs as where we need them (as NextJS serverless functions). Again another twofer our Beta releases. It will be hosted on [Vercel](https://vercel.com/).
 
 # Folder structure
 
@@ -77,7 +77,9 @@ You can then photo the QR code to run on your own phone device, or trigger the s
 
 For the local dev, the supabase environment is already running in the cloud. You "can" run supabase locally but can't see the point for what we're trying to do.
 
-For the MVP we're relying quite heavily on Postgres SQL (psql) functions which are then exposed as RPC web service functions to the frontend.
+For your own experiments, you could also spin up your own supabase cloud instance on your own supabase account really quickly. All you need to do is to install the supabase setup scripts contained in the repo.
+
+For the beta release we're relying quite heavily on Postgres SQL (psql) functions which are then exposed as RPC web service functions to the frontend.
 
 In order to apply code + schema changes to the dev supabase environment. You can use the scripts in the database directory.
 
@@ -117,23 +119,7 @@ Run it
 yarn dev
 ```
 
-View it in your browser
-
-
-## Random historic setup
-
-Ultimately for setup on react native:
-
-https://dev.to/fedorish/google-sign-in-using-supabase-and-react-native-expo-14jf
-
-Config of google auth with supabase:
-
-https://supabase.com/docs/guides/auth/social-login/auth-google
-
-The credentials in GCP were done here:
-
-https://console.cloud.google.com/apis/credentials?project=timetogive
-
+View it in your browser. 
 
 
 

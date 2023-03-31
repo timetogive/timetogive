@@ -15,6 +15,7 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { FiGithub } from 'react-icons/fi';
 import { ContentWrapper } from '../ContentWrapper';
 import { Sidebar } from './Sidebar';
@@ -46,10 +47,15 @@ export const Navbar = () => {
               colorScheme="cyan"
               spacing="1"
             >
-              <IconButton
-                icon={<FiGithub fontSize="1.25rem" />}
-                aria-label="Search"
-              />
+              <Link
+                href="https://github.com/timetogive/timetogive"
+                target="_blank"
+              >
+                <IconButton
+                  icon={<FiGithub fontSize="1.25rem" />}
+                  aria-label="Search"
+                />
+              </Link>
             </ButtonGroup>
           </HStack>
         </Flex>

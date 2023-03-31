@@ -13,10 +13,11 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { faBadgeCheck } from '@fortawesome/pro-light-svg-icons';
+import Link from 'next/link';
 import { HiChevronRight } from 'react-icons/hi';
 import { ChakraFaIcon } from '../ChakraFaIcon';
 
-export const HomePageDownload = () => {
+export const HomePageOpenSource = () => {
   return (
     <Box as="section" pt={32} pb={20}>
       <VStack
@@ -34,15 +35,20 @@ export const HomePageDownload = () => {
             fontWeight="bold"
             textAlign="center"
           >
-            How do I sign up and get the app?
+            I&apos;m a developer, how can I contribute?
           </Heading>
           <Text fontSize={{ md: 'xl' }} mt="4" textAlign="center">
-            James Allchin is the founder of the project and is
-            currently beavering away on the first version of the app.
-            It&apos;s currently in Alpha but a Beta version is
-            expected to land on the Apple App Store and Google Play
-            Store in April 2023.
+            The code is hosted on GitHub and is open source. We would
+            love you to contribute.
           </Text>
+          <Link
+            href="https://github.com/timetogive/timetogive"
+            target="_blank"
+          >
+            <Button colorScheme="cyan" size="lg">
+              Visit GitHub Repo
+            </Button>
+          </Link>
         </VStack>
       </VStack>
     </Box>
