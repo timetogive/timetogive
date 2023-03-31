@@ -12,7 +12,15 @@ Tasks can be traditional volunteering opportunities (like helping hospices, comm
 
 However, the idea around tasks also comes with a further "twist". Tasks don't have to be directly for good causes. Instead tasks can be for neighbours, businesses or other local groups, who need a hand with something. Instead of making a monetary payment, will do something good in return (e.g. buying the volunteer a coffee, making them dinner, making a pledge to charity, do something in return, volunteer to help someone else).
 
-Tasks don't have to be physical, they might also be remote in nature - for example answering a question, or offering advice to your local community. And can therefore be done entirely through the app. 
+Tasks don't have to be physical, they might also be remote in nature - for example answering a question, or offering advice to your local community. And can therefore be done entirely through the app.
+
+# Origin
+
+TimeToGive was started by James Allchin ([hoochani](https://github.com/hoochani)) and this repo is currently maintained by James. It's hoped that the open source community can contribute to future direction if the TimeToGive platform and service gains traction.
+
+# License
+
+TimeToGive is GPLv2 licensed. You may use, distribute and copy code under the license terms.
 
 # Tell me more about the tech
 
