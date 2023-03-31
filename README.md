@@ -20,7 +20,7 @@ TimeToGive was started by James Allchin ([hoochani](https://github.com/hoochani)
 
 # License
 
-TimeToGive is GPLv2 licensed. You may use, distribute and copy code under the license terms.
+TimeToGive is [GPLv3 licensed](/LICENSE). You may use, distribute and copy code under the license terms.
 
 # Tell me more about the tech
 
