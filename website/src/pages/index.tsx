@@ -2,7 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { Inter } from '@next/font/google';
 import { Navbar } from '@/components/Navbar';
-import { Box, Divider, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import {
   HomePageHero,
   HomePageScreenshots,
@@ -10,9 +10,9 @@ import {
   HomePageTasks,
   HomePageDownload,
   HomePageNewHome,
-  ContentWrapper,
   HomePageFeedback,
   HomePageOpenSource,
+  Footer,
 } from '@/components';
 
 export default function Home() {
@@ -45,10 +45,7 @@ export default function Home() {
           <HomePageNewHome />
         </main>
         <footer>
-          <ContentWrapper>
-            <Divider color="gray.200" />
-            <Text color="white">hello</Text>
-          </ContentWrapper>
+          <Footer />
         </footer>
       </Box>
     </>

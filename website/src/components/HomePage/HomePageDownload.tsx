@@ -13,6 +13,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { faBadgeCheck } from '@fortawesome/pro-light-svg-icons';
+import Link from 'next/link';
 import { HiChevronRight } from 'react-icons/hi';
 import { ChakraFaIcon } from '../ChakraFaIcon';
 
@@ -37,11 +38,18 @@ export const HomePageDownload = () => {
             How do I sign up and get the app?
           </Heading>
           <Text fontSize={{ md: 'xl' }} mt="4" textAlign="center">
-            James Allchin is the founder of the project and is
-            currently beavering away on the first version of the app.
-            It&apos;s currently in Alpha but a Beta version is
-            expected to land on the Apple App Store and Google Play
-            Store in April 2023.
+            <Link
+              href="https://www.linkedin.com/in/jamesallchin"
+              target="_blank"
+            >
+              <Text as="span" decoration="underline">
+                James Allchin
+              </Text>
+            </Link>{' '}
+            is the founder of the project and is currently beavering
+            away on the first version of the app. It&apos;s currently
+            in Alpha but a Beta version is expected to land on the
+            Apple App Store and Google Play Store in April 2023.
           </Text>
         </VStack>
       </VStack>

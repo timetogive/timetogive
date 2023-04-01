@@ -13,6 +13,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react';
 import { faBadgeCheck } from '@fortawesome/pro-light-svg-icons';
+import Link from 'next/link';
 import { HiChevronRight } from 'react-icons/hi';
 import { ChakraFaIcon } from '../ChakraFaIcon';
 
@@ -39,8 +40,16 @@ export const HomePageNewHome = () => {
             Can you help find a long-term home for TimeToGive?
           </Heading>
           <Text fontSize={{ md: 'xl' }} mt="4">
-            This is a personal philanthropic project that James has
-            started. However, to host the platform and provide the
+            This is a personal philanthropic project that{' '}
+            <Link
+              href="https://www.linkedin.com/in/jamesallchin"
+              target="_blank"
+            >
+              <Text as="span" decoration="underline">
+                James Allchin
+              </Text>
+            </Link>{' '}
+            has started. However, to host the platform and provide the
             service to end users he&apos;s temporarily using his own
             limited company to run it. This allows him to deal with
             terms and conditions, privacy policy, and GDPR.
