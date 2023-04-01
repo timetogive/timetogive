@@ -11,3 +11,5 @@ drop table if exists notifications;
 drop table if exists prefs;
 drop table if exists profiles;
 drop table if exists push_tokens;
+drop table if exists global_settings;
+drop table if exists tc_agreements;
