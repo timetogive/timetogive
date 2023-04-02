@@ -71,6 +71,7 @@ export const SignUp = ({ navigation }: Props) => {
 
     if (error) {
       Alert.alert(error.message);
+      return;
     }
     setLoading(false);
     setMode('verify');
@@ -78,6 +79,13 @@ export const SignUp = ({ navigation }: Props) => {
 
   const confirmCode = async () => {
     setLoading(true);
+
+    if (!verificationCode || verificationCode.length < 6) {
+      Alert.alert('Please enter a valid verification code');
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.verifyOtp({
       email,
       token: verificationCode,
@@ -209,24 +217,49 @@ export const SignUp = ({ navigation }: Props) => {
         )}
 
         {mode === 'verify' && (
-          <VStack ph={5} spacing={10}>
-            <Input
+          <VStack ph={20} spacing={20}>
+            <TextInput
               placeholder="Enter verification code"
               onChangeText={(text) => setVerificationCode(text)}
+              placeholderTextColor={colors.whiteAlpha[500]}
+              style={{
+                padding: 15,
+                borderRadius: 5,
+                backgroundColor: colors.whiteAlpha[100],
+                color: colors.whiteAlpha[900],
+                fontSize: 16,
+              }}
             />
-            <Button disabled={loading} onPress={() => confirmCode()}>
-              Submit Code
-            </Button>
-            <Text style={{ textAlign: 'center' }}>
-              You should have received an email with a verification
-              code. In can take a few seconds for it to arrive.
-            </Text>
-            <Text
-              style={{ color: 'blue', textAlign: 'center' }}
-              onPress={() => signUpWithEmail()}
+            <ButtonPrimary
+              disabled={loading}
+              onPress={() => confirmCode()}
             >
-              Resend email
-            </Text>
+              Submit code
+            </ButtonPrimary>
+            <VStack spacing={5} shouldWrapChildren>
+              <Text size="sm" textAlign="center" color="white">
+                You should have received an email with a verification
+                code. In can take a few seconds for it to arrive.
+              </Text>
+              <Text
+                decoration="underline"
+                size="sm"
+                textAlign="center"
+                color="white"
+                onPress={() => signUpWithEmail()}
+              >
+                Resend email verification
+              </Text>{' '}
+              <Text
+                decoration="underline"
+                size="sm"
+                textAlign="center"
+                color="white"
+                onPress={() => setMode('form')}
+              >
+                Go back
+              </Text>{' '}
+            </VStack>
           </VStack>
         )}
       </SafeWrapper>
