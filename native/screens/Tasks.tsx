@@ -103,11 +103,16 @@ export const Tasks = ({ navigation }: Props) => {
         searchLocation.searchLocation,
         currentLocation.currentLocation
       );
+
+      console.log('query', query);
+
       const { data, error, count } = await query;
 
       if (error) {
         console.log('error', error);
       }
+
+      console.log('data', data);
 
       return {
         data: data || [],
