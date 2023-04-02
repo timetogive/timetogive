@@ -1,8 +1,10 @@
 import React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
+import { Box } from 'react-native-flex-layout';
 import { effortText } from '../lib/tasksHelpers';
 import colors from '../styles/colors';
 import { SearchTasksResult } from '../types';
+import { InfoPink } from './InfoPink';
 import { TaskCardWithDistanceBar } from './TaskCardWithDistanceBar';
 
 interface TasksListProps {
@@ -20,6 +22,13 @@ export const TasksList = ({
   onRefresh,
   onTaskPressed,
 }: TasksListProps) => {
+  if (tasks.length === 0) {
+    return (
+      <Box p={20}>
+        <InfoPink message="No tasks found. Use the map view to widen your search area or create a new task to get things going." />
+      </Box>
+    );
+  }
   return (
     <FlatList
       data={tasks}
