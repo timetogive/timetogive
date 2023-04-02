@@ -62,7 +62,10 @@ interface TasksMapMarkerProps {
 }
 
 // Pure component important for performance
-const MapMarker = ({ task, onSelected }: TasksMapMarkerProps) => {
+export const MapMarker = ({
+  task,
+  onSelected,
+}: TasksMapMarkerProps) => {
   return (
     <PointAnnotation
       coordinate={[task.longitude, task.latitude]}

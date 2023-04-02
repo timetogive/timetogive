@@ -17,7 +17,6 @@ import {
   BACK_BAR_CONTENT_HEIGHT,
 } from '../components/BackBar';
 import { InfoBar } from '../components/InfoBar';
-import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { TaskInformation } from '../components/TaskInformation';
 import { TaskConversations } from '../components/TaskConversations';
 import { TaskOffers } from '../components/TaskOffers';
@@ -33,6 +32,7 @@ import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { Profile, TaskOfferStatus, TaskStatus } from '../types';
 import { useFocusEffect } from '@react-navigation/native';
+import { MapWithSingleTask } from '../components/MapWithSingleTask';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 
@@ -363,17 +363,14 @@ export const Task = ({ route, navigation }: Props) => {
                 </Text>
               </VStack>
               <Stack ph={20}>
-                <Stack
-                  minH={200}
-                  pointerEvents="none"
-                  radius={20}
-                  overflow="hidden"
-                >
-                  <StaticMapWithMarker
+                <Stack minH={200} radius={20} overflow="hidden">
+                  <MapWithSingleTask
                     point={{
                       type: 'Point',
                       coordinates: [task.longitude, task.latitude],
                     }}
+                    reason={task.reason}
+                    interactive={true}
                   />
                 </Stack>
               </Stack>

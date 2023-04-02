@@ -20,7 +20,7 @@ import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
 import { IntegerPickerSheetModal } from '../components/IntegerPicker';
 import { SetPointSheetModal } from '../components/SetPoint';
-import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
+import { MapWithSingleTask } from '../components/MapWithSingleTask';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
 import axios from 'axios';
@@ -275,7 +275,11 @@ export const CreateTask = ({ route, navigation }: Props) => {
               >
                 {location ? (
                   <Stack minH={240} pointerEvents="none">
-                    <StaticMapWithMarker point={location} />
+                    <MapWithSingleTask
+                      point={location}
+                      reason={reason}
+                      interactive={false}
+                    />
                   </Stack>
                 ) : (
                   <HStack

@@ -81,6 +81,8 @@ export const SetPoint = ({ reason, point, onPointChange }: Props) => {
         ref={mapRef}
         style={{ flex: 1 }}
         scaleBarEnabled={false}
+        pitchEnabled={false}
+        logoEnabled={false}
       >
         <Camera ref={cameraRef} defaultSettings={cameraProps} />
         <Mapbox.UserLocation />

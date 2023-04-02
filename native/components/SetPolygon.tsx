@@ -173,6 +173,8 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
         ref={mapRef}
         style={{ flex: 1 }}
         scaleBarEnabled={false}
+        pitchEnabled={false}
+        logoEnabled={false}
         onPress={(feature: Feature<Geometry, GeoJsonProperties>) => {
           if (feature.geometry.type === 'Point') {
             const point = feature.geometry as Point;
