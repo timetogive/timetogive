@@ -50,7 +50,7 @@ import Mapbox, {
 } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
 import { Point, Position } from 'geojson';
-import { MapInfoPink } from './MapInfoPink';
+import { InfoPink } from './InfoPink';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TAB_BAR_CONTENT_HEIGHT } from './TabBar';
 
@@ -350,10 +350,10 @@ export const TasksMap = ({
             bottom: insets.bottom + TAB_BAR_CONTENT_HEIGHT + 20,
             right: 0,
             left: 0,
-            marginHorizontal: 50,
+            marginHorizontal: 20,
           }}
         >
-          <MapInfoPink message="No tasks found. Try widening your search area or create a task." />
+          <InfoPink message="No tasks found. Try widening your search area or create a task." />
         </Box>
       )}
     </Box>

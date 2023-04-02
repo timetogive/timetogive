@@ -4,11 +4,11 @@ import { HStack, Box } from 'react-native-flex-layout';
 import { Text } from './Text';
 import colors from '../styles/colors';
 
-interface MapInfoPinkProps {
+interface InfoPinkProps {
   message: string;
 }
 
-export const MapInfoPink = ({ message }: MapInfoPinkProps) => {
+export const InfoPink = ({ message }: InfoPinkProps) => {
   return (
     <HStack
       bg={colors.pink[500]}
@@ -17,7 +17,6 @@ export const MapInfoPink = ({ message }: MapInfoPinkProps) => {
       pv={15}
       radius={5}
       spacing={10}
-      maxW={400}
     >
       <FontAwesomeIcon
         icon={faInfoCircle}

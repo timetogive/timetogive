@@ -44,7 +44,12 @@ const ModeToggleButton = ({ mode, onChangeMode }: Props) => {
         h={40}
         ph={20}
       >
-        <HStack shouldWrapChildren items="center" spacing={7}>
+        <HStack
+          shouldWrapChildren
+          items="center"
+          justify="between"
+          w="100%"
+        >
           <Text size="xs">
             {mode === MapListMode.List ? 'Show map' : 'Show list'}
           </Text>

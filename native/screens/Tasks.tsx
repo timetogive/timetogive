@@ -1,6 +1,7 @@
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LocationBar } from '../components/LocationBar';
 import { TasksMap } from '../components/TasksMap';
+import { TasksList } from '../components/TasksList';
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useInfiniteQuery } from 'react-query';
@@ -135,43 +136,13 @@ export const Tasks = ({ navigation }: Props) => {
     <>
       <LocationBar mode={mode} onChangeMode={setMapListMode} />
       {mode === MapListMode.List ? (
-        <FlatList
-          data={tasks}
-          renderItem={(task) => (
-            <TaskCardWithDistanceBar
-              key={task.item.id}
-              taskId={task.item.id}
-              taskUserId={task.item.user_id}
-              taskUserFullName={task.item.full_name}
-              taskUserAvatarUrl={task.item.avatar_url}
-              title={task.item.title}
-              reason={task.item.reason}
-              timing={task.item.timing}
-              duration={effortText(
-                task.item.effort_days,
-                task.item.effort_hours,
-                task.item.effort_minutes
-              )}
-              onPress={() =>
-                navigation.navigate('Task', { taskId: task.item.id })
-              }
-              showDistanceBar
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={searchTasksQuery.isFetching}
-              onRefresh={searchTasksQuery.refetch}
-              title="Pull to refresh"
-            />
+        <TasksList
+          tasks={tasks}
+          onTaskPressed={(taskId) =>
+            navigation.navigate('Task', { taskId })
           }
-          style={{
-            backgroundColor: colors.white,
-            flex: 1,
-            paddingTop: 10,
-            paddingRight: 15,
-          }}
+          searching={searchTasksQuery.isFetching}
+          onRefresh={() => searchTasksQuery.refetch()}
         />
       ) : (
         <TasksMap
