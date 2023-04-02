@@ -16,4 +16,4 @@ drop function if exists save_home_polygon;
 drop function if exists save_last_search_location;
 drop function if exists mark_notification_delivered;
 drop function if exists action_task;
-
+drop function if exists account_check;

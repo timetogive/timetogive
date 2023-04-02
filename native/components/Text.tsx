@@ -15,6 +15,12 @@ interface Props extends TextProps {
   textAlign?: 'auto' | 'left' | 'right' | 'center' | 'justify';
   children?: ReactNode;
   color?: string;
+  decoration?:
+    | 'none'
+    | 'underline'
+    | 'line-through'
+    | 'underline line-through';
+  onPress?: () => void;
 }
 
 export const translateFontSize = (size?: Size) => {
@@ -65,6 +71,8 @@ export const Text = ({
   weight,
   textAlign,
   color,
+  decoration,
+  onPress,
 }: Props) => {
   const finalSize = translateFontSize(size);
   const finalFamily = translateWeightToFamily(weight);
@@ -76,7 +84,9 @@ export const Text = ({
         fontFamily: finalFamily,
         ...(textAlign ? { textAlign } : {}),
         ...(color ? { color } : {}),
+        ...(decoration ? { textDecorationLine: decoration } : {}),
       }}
+      onPress={onPress}
     >
       {children}
     </ReactNativeText>

@@ -103,7 +103,7 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
         </Button>
         <Stack>
           <Text style={{ textAlign: 'center' }}>
-            Don&apos;t have account?{' '}
+            Don&apos;t have account?{'  '}
             <Text
               style={{ color: 'blue' }}
               onPress={() => navigation.navigate('SignUp')}

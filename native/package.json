@@ -4,7 +4,7 @@
   "scripts": {
     "start": "expo start --dev-client",
     "start:clear": "expo start --dev-client -c",
-    "update-supabase-types": "env-cmd npx supabase gen types typescript --project-id '$SUPABASE_PROJECT_ID' --schema public > ./types/supabase.ts",
+    "update-supabase-types": "env-cmd npx supabase gen types typescript --project-id '$DEV_SUPABASE_PROJECT_ID' --schema public > ./types/supabase.ts",
     "android": "expo run:android",
     "ios": "expo run:ios"
   },
@@ -12,6 +12,7 @@
     "@babel/preset-env": "^7.20.2",
     "@expo-google-fonts/open-sans": "^0.2.2",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
+    "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/pro-light-svg-icons": "^6.3.0",
     "@fortawesome/pro-regular-svg-icons": "^6.3.0",
     "@fortawesome/pro-solid-svg-icons": "^6.3.0",
