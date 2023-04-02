@@ -39,18 +39,26 @@ const ModeToggleButton = ({ mode, onChangeMode }: Props) => {
       <Stack
         style={{ backgroundColor: colors.white }}
         center
-        radius={100}
+        radius={20}
+        w={140}
         h={40}
-        w={40}
-        p={5}
+        ph={20}
       >
-        <VStack center>
+        <HStack
+          shouldWrapChildren
+          items="center"
+          justify="between"
+          w="100%"
+        >
+          <Text size="xs">
+            {mode === MapListMode.List ? 'Show map' : 'Show list'}
+          </Text>
           <FontAwesomeIcon
             icon={mode === MapListMode.List ? faLocationDot : faList}
             size={mode === MapListMode.List ? 25 : 18}
             color={defaultColor[500]}
           />
-        </VStack>
+        </HStack>
       </Stack>
     </TouchableOpacity>
   );

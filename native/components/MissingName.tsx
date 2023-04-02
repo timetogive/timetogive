@@ -64,11 +64,11 @@ export const MissingName = () => {
         </Box>
         <Box>
           <Text size="xs" color={defaultColor[400]}>
-            TimeToGive is a volunteering platform. This ultimately
-            means making real life connections. We take safety
-            seriously. It's important to use your real name in your
-            profile so other members of the community know who you
-            are.
+            TimeToGive is a volunteering platform for carrying out
+            small meaningful tasks in your local community. We take
+            safety seriously. It's important to use your real name in
+            your profile so other members of the community know who
+            you are.
           </Text>
         </Box>
         <Button

@@ -17,7 +17,6 @@ import { Picker } from '@react-native-picker/picker';
 import { Button } from '@rneui/themed';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, Stack, Box, VStack } from 'react-native-flex-layout';
-import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import colors, { defaultColor } from '../styles/colors';
 import { Text, translateFontSize } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -174,6 +173,8 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
         ref={mapRef}
         style={{ flex: 1 }}
         scaleBarEnabled={false}
+        pitchEnabled={false}
+        logoEnabled={false}
         onPress={(feature: Feature<Geometry, GeoJsonProperties>) => {
           if (feature.geometry.type === 'Point') {
             const point = feature.geometry as Point;

@@ -23,6 +23,17 @@ export interface Database {
           id?: string
         }
       }
+      global_settings: {
+        Row: {
+          latest_tc_version: string | null
+        }
+        Insert: {
+          latest_tc_version?: string | null
+        }
+        Update: {
+          latest_tc_version?: string | null
+        }
+      }
       notifications: {
         Row: {
           created_datetime: string
@@ -282,11 +293,34 @@ export interface Database {
           will_pledge?: boolean
         }
       }
+      tc_agreements: {
+        Row: {
+          created_datetime: string
+          tc_version: string
+          user_id: string
+        }
+        Insert: {
+          created_datetime?: string
+          tc_version: string
+          user_id: string
+        }
+        Update: {
+          created_datetime?: string
+          tc_version?: string
+          user_id?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      account_check: {
+        Args: {
+          p_email_address: string
+        }
+        Returns: boolean
+      }
       action_task: {
         Args: {
           p_task_id: string
