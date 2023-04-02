@@ -19,7 +19,7 @@ import { effortText, reasonToTitle } from '../lib/tasksHelpers';
 import colors, { defaultColor } from '../styles/colors';
 import pluralize from 'pluralize';
 import { IntegerPickerSheetModal } from '../components/IntegerPicker';
-import { SetLocationSheetModal } from '../components/SetLocation';
+import { SetPointSheetModal } from '../components/SetPoint';
 import { StaticMapWithMarker } from '../components/StaticMapWithMarker';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Switch } from '@rneui/themed';
@@ -357,7 +357,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
         min={1}
         max={30}
       />
-      <SetLocationSheetModal
+      <SetPointSheetModal
         isOpen={locationModalOpen}
         onClose={() => setLocationModalOpen(false)}
         point={location}

@@ -17,7 +17,6 @@ import { Picker } from '@react-native-picker/picker';
 import { Button } from '@rneui/themed';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, Stack, Box, VStack } from 'react-native-flex-layout';
-import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import colors, { defaultColor } from '../styles/colors';
 import { Text, translateFontSize } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

@@ -15,19 +15,28 @@ import { Picker } from '@react-native-picker/picker';
 import { Button } from '@rneui/themed';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, Stack, Box } from 'react-native-flex-layout';
-import MapView, { PROVIDER_GOOGLE, Region } from 'react-native-maps';
 import colors, { defaultColor } from '../styles/colors';
 import { Text, translateFontSize } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ColorSpace } from 'react-native-reanimated';
 import { TouchableOpacity } from 'react-native';
-import { useQueryClient, useQuery } from 'react-query';
-import { getCenterPoint, supabase } from '../lib';
-import { Point } from 'geojson';
 import { useCurrentLocation } from '../providers/currentLocation';
 import { useSearchLocation } from '../providers/searchLocation';
 import { TaskPin } from './TaskPin';
 import { TaskReason } from '../types';
+import { getBestCameraPosition } from './TasksMap';
+import {
+  Feature,
+  GeoJsonProperties,
+  Geometry,
+  LineString,
+  Point,
+  Polygon,
+} from 'geojson';
+
+import Mapbox, { Camera, PointAnnotation } from '@rnmapbox/maps';
+import { mapBoxApiKey } from '../lib/consts';
+import { Position } from 'geojson';
+import { lineString } from '@turf/helpers';
 
 interface Props {
   reason?: TaskReason;
@@ -35,79 +44,47 @@ interface Props {
   onPointChange?: (point: Point) => void;
 }
 
-export const SetLocation = ({
-  reason,
-  point,
-  onPointChange,
-}: Props) => {
+export const SetPoint = ({ reason, point, onPointChange }: Props) => {
   const searchLocation = useSearchLocation();
   const currentLocation = useCurrentLocation();
-  const centerPointOfSearchLocation = getCenterPoint(
-    searchLocation.searchLocation
-  );
 
-  const initialMapRegion: Region = point
-    ? {
-        longitude: point.coordinates[0],
-        latitude: point.coordinates[1],
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }
-    : {
-        longitude: centerPointOfSearchLocation.coordinates[0],
-        latitude: centerPointOfSearchLocation.coordinates[1],
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
-
-  const mapRef = useRef<MapView>(null);
   const insets = useSafeAreaInsets();
 
-  const mapRegionTracker = useRef<Region | undefined>();
+  const mapRef = useRef<Mapbox.MapView>(null);
+  const cameraRef = useRef<Camera>(null);
 
-  const onRegionChange = (region: Region) => {
-    mapRegionTracker.current = region;
-  };
+  const cameraProps = point
+    ? {
+        centerCoordinate: point.coordinates,
+        zoomLevel: 12,
+      }
+    : getBestCameraPosition(searchLocation.searchLocation, []);
 
-  const confirmPinLocation = () => {
-    if (
-      mapRegionTracker.current?.longitude &&
-      mapRegionTracker.current?.latitude
-    ) {
-      onPointChange &&
-        onPointChange({
-          type: 'Point',
-          coordinates: [
-            mapRegionTracker.current.longitude,
-            mapRegionTracker.current.latitude,
-          ],
-        });
+  const confirmPinLocation = async () => {
+    if (mapRef.current && onPointChange) {
+      const position = await mapRef.current.getCenter();
+      onPointChange({ type: 'Point', coordinates: position });
     }
   };
 
   const focusOnMe = () => {
-    if (currentLocation.currentLocation) {
-      mapRef.current?.animateToRegion({
-        longitude: currentLocation.currentLocation.coordinates[0],
-        latitude: currentLocation.currentLocation.coordinates[1],
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
+    if (cameraRef.current && currentLocation.currentLocation) {
+      cameraRef.current.setCamera({
+        centerCoordinate: currentLocation.currentLocation.coordinates,
       });
-      return;
     }
-    currentLocation.forceRefresh();
   };
 
   return (
     <Box style={{ flex: 1 }} pointerEvents="box-none">
-      <MapView
+      <Mapbox.MapView
         ref={mapRef}
-        //provider={PROVIDER_GOOGLE}
         style={{ flex: 1 }}
-        initialRegion={initialMapRegion}
-        onRegionChangeComplete={onRegionChange}
-        showsUserLocation
-      ></MapView>
+        scaleBarEnabled={false}
+      >
+        <Camera ref={cameraRef} defaultSettings={cameraProps} />
+        <Mapbox.UserLocation />
+      </Mapbox.MapView>
       {/* Fixed Pin overlay */}
       <Stack
         pointerEvents="none"
@@ -162,18 +139,18 @@ export const SetLocation = ({
   );
 };
 
-interface SetLocationSheetModalProps extends Props {
+interface SetPointSheetModalProps extends Props {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const SetLocationSheetModal = ({
+export const SetPointSheetModal = ({
   isOpen,
   onClose,
   reason,
   point,
   onPointChange,
-}: SetLocationSheetModalProps) => {
+}: SetPointSheetModalProps) => {
   // Bottom sheet
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const showModal = useCallback(() => {
@@ -216,7 +193,7 @@ export const SetLocationSheetModal = ({
         onDismiss={onClose}
       >
         <Box style={{ flex: 1 }} pt={10} overflow="hidden">
-          <SetLocation
+          <SetPoint
             reason={reason}
             point={point}
             onPointChange={interceptOnPointChange}
