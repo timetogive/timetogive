@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { SafeWrapper } from '../components/SafeWrapper';
-import { Alert, View } from 'react-native';
+import { Text } from '../components/Text';
+import { Alert, Linking, TextInput, View } from 'react-native';
 import { supabase } from '../lib/supabase';
-import { Image, Input, Button, Text } from '@rneui/themed';
+import { Image, Input, Button } from '@rneui/themed';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
-import { VStack, Stack } from 'react-native-flex-layout';
+import { VStack, Stack, Box } from 'react-native-flex-layout';
 import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
+import { faGoogle } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { ButtonPrimary } from '../components/ButtonPrimary';
+import colors, { defaultColor } from '../styles/colors';
 
 export type SignInScreenProps = NativeStackScreenProps<
   RootStackParamList,
@@ -69,50 +74,178 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
   };
 
   return (
-    <SafeWrapper>
-      <VStack ph={5} spacing={10}>
-        <Stack
-          style={{
-            height: 200,
-          }}
-        >
-          <Image
-            source={require('../assets/ttg.png')}
-            resizeMode="contain"
+    <Box style={{ flex: 1 }} bg={defaultColor[900]}>
+      <SafeWrapper>
+        <VStack ph={20} spacing={10}>
+          <Stack
             style={{
-              width: '100%',
-              height: '100%',
+              height: 200,
             }}
-          />
-        </Stack>
+          >
+            <Image
+              source={require('../assets/ttg-white.png')}
+              resizeMode="contain"
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
+          </Stack>
+        </VStack>
 
-        <Input
-          placeholder="Email address"
-          onChangeText={(text) => setEmail(text)}
-        />
-        <Input
-          placeholder="Password"
-          secureTextEntry={true}
-          onChangeText={(text) => setPassword(text)}
-        />
-        <Button disabled={loading} onPress={() => signInWithEmail()}>
-          Sign in
-        </Button>
-        <Button disabled={loading} onPress={() => signInWithGoogle()}>
-          Sign in with Google
-        </Button>
-        <Stack>
-          <Text style={{ textAlign: 'center' }}>
-            Don&apos;t have account?{'  '}
+        <VStack ph={20} spacing={20} shouldWrapChildren>
+          <VStack spacing={15} shouldWrapChildren>
+            <TextInput
+              placeholder="Email address"
+              onChangeText={(text) => setEmail(text)}
+              placeholderTextColor={colors.whiteAlpha[500]}
+              style={{
+                padding: 15,
+                borderRadius: 5,
+                backgroundColor: colors.whiteAlpha[100],
+                color: colors.whiteAlpha[900],
+                fontSize: 16,
+              }}
+            />
+            <TextInput
+              placeholder="Password"
+              secureTextEntry={true}
+              onChangeText={(text) => setPassword(text)}
+              placeholderTextColor={colors.whiteAlpha[500]}
+              style={{
+                padding: 15,
+                borderRadius: 5,
+                backgroundColor: colors.whiteAlpha[100],
+                color: colors.whiteAlpha[900],
+                fontSize: 16,
+              }}
+            />
+          </VStack>
+          <ButtonPrimary
+            disabled={loading}
+            onPress={() => signInWithEmail()}
+          >
+            Sign in with email
+          </ButtonPrimary>
+
+          <ButtonPrimary
+            disabled={loading}
+            onPress={() => signInWithGoogle()}
+            leftIcon={
+              <FontAwesomeIcon
+                icon={faGoogle as any}
+                color={colors.white}
+                size={20}
+              />
+            }
+          >
+            Sign in with Google
+          </ButtonPrimary>
+
+          <VStack spacing={5} shouldWrapChildren>
+            <Text size="sm" textAlign="center" color="white">
+              Don't have an account?{' '}
+            </Text>
             <Text
-              style={{ color: 'blue' }}
+              decoration="underline"
+              size="sm"
+              textAlign="center"
+              color="white"
               onPress={() => navigation.navigate('SignUp')}
             >
-              Sign up here.
+              Sign up here
+            </Text>{' '}
+          </VStack>
+          <VStack spacing={5} shouldWrapChildren>
+            <Text
+              size="xs"
+              textAlign="center"
+              color={colors.whiteAlpha[700]}
+            >
+              By signing in with Google, we will automatically create
+              an account for you. By doing this you are agreeing to
+              our
             </Text>
-          </Text>
-        </Stack>
-      </VStack>
-    </SafeWrapper>
+            <Text
+              size="xs"
+              textAlign="center"
+              color={colors.whiteAlpha[700]}
+            >
+              <Text
+                decoration="underline"
+                size="xs"
+                onPress={() =>
+                  Linking.openURL(
+                    'https://timetogiveapp.com/terms.html'
+                  )
+                }
+              >
+                Terms of Service
+              </Text>{' '}
+              and{' '}
+              <Text
+                decoration="underline"
+                size="xs"
+                onPress={() =>
+                  Linking.openURL(
+                    'https://timetogiveapp.com/privacy.html'
+                  )
+                }
+              >
+                Privacy Policy
+              </Text>
+            </Text>
+          </VStack>
+        </VStack>
+      </SafeWrapper>
+    </Box>
   );
+
+  // return (
+  //   <SafeWrapper>
+  //     <VStack ph={5} spacing={10}>
+  //       <Stack
+  //         style={{
+  //           height: 200,
+  //         }}
+  //       >
+  //         <Image
+  //           source={require('../assets/ttg.png')}
+  //           resizeMode="contain"
+  //           style={{
+  //             width: '100%',
+  //             height: '100%',
+  //           }}
+  //         />
+  //       </Stack>
+
+  //       <Input
+  //         placeholder="Email address"
+  //         onChangeText={(text) => setEmail(text)}
+  //       />
+  //       <Input
+  //         placeholder="Password"
+  //         secureTextEntry={true}
+  //         onChangeText={(text) => setPassword(text)}
+  //       />
+  //       <Button disabled={loading} onPress={() => signInWithEmail()}>
+  //         Sign in
+  //       </Button>
+  //       <Button disabled={loading} onPress={() => signInWithGoogle()}>
+  //         Sign in with Google
+  //       </Button>
+  //       <Stack>
+  //         <Text style={{ textAlign: 'center' }}>
+  //           Don&apos;t have account?{' '}
+  //           <Text
+  //             style={{ color: 'blue' }}
+  //             onPress={() => navigation.navigate('SignUp')}
+  //           >
+  //             Sign up here.
+  //           </Text>
+  //         </Text>
+  //       </Stack>
+  //     </VStack>
+  //   </SafeWrapper>
+  // );
 };

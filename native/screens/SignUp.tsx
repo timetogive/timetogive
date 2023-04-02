@@ -24,6 +24,8 @@ import {
   faGoogleDrive,
 } from '@fortawesome/free-brands-svg-icons';
 import { faStar } from '@fortawesome/sharp-solid-svg-icons';
+import { makeRedirectUri, startAsync } from 'expo-auth-session';
+import { supabaseUrl } from '../lib/consts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -75,6 +77,34 @@ export const SignUp = ({ navigation }: Props) => {
     }
     setLoading(false);
     setMode('verify');
+  };
+
+  const signUpWithGoogle = async () => {
+    // This builds the URL for the signin page based on the
+    // expo URL scheme specified in the config. Ensures it works
+    // in local dev and in production.
+    const redirectUrl = makeRedirectUri({
+      path: 'signin',
+    });
+
+    // authUrl: https://{YOUR_PROJECT_REFERENCE_ID}.supabase.co
+    // returnURL: the redirectUrl you created above.
+    const authResponse = await startAsync({
+      authUrl: `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${redirectUrl}`,
+      returnUrl: redirectUrl,
+      projectNameForProxy: '@hoochani/timetogive',
+    });
+
+    // If the user successfully signs in
+    // we will have access to an accessToken and an refreshToken
+    // and then we'll use setSession (https://supabase.com/docs/reference/javascript/auth-setsession)
+    // to create a Supabase-session using these token
+    if (authResponse.type === 'success') {
+      supabase.auth.setSession({
+        access_token: authResponse.params.access_token,
+        refresh_token: authResponse.params.refresh_token,
+      });
+    }
   };
 
   const confirmCode = async () => {
@@ -147,37 +177,6 @@ export const SignUp = ({ navigation }: Props) => {
                 }}
               />
             </VStack>
-            <VStack spacing={5} shouldWrapChildren>
-              <Text size="sm" textAlign="center" color="white">
-                By signing up, you agree to our{' '}
-              </Text>
-              <Text size="sm" textAlign="center" color="white">
-                <Text
-                  decoration="underline"
-                  size="sm"
-                  onPress={() =>
-                    Linking.openURL(
-                      'https://timetogiveapp.com/terms.html'
-                    )
-                  }
-                >
-                  Terms of Service
-                </Text>{' '}
-                and{' '}
-                <Text
-                  decoration="underline"
-                  size="sm"
-                  onPress={() =>
-                    Linking.openURL(
-                      'https://timetogiveapp.com/privacy.html'
-                    )
-                  }
-                >
-                  Privacy Policy
-                </Text>
-              </Text>
-            </VStack>
-
             <ButtonPrimary
               disabled={loading}
               onPress={() => signUpWithEmail()}
@@ -187,7 +186,7 @@ export const SignUp = ({ navigation }: Props) => {
 
             <ButtonPrimary
               disabled={loading}
-              onPress={() => signUpWithEmail()}
+              onPress={() => signUpWithGoogle()}
               leftIcon={
                 <FontAwesomeIcon
                   icon={faGoogle as any}
@@ -212,6 +211,44 @@ export const SignUp = ({ navigation }: Props) => {
               >
                 Sign in here
               </Text>{' '}
+            </VStack>
+            <VStack spacing={5} shouldWrapChildren>
+              <Text
+                size="xs"
+                textAlign="center"
+                color={colors.whiteAlpha[700]}
+              >
+                By signing up to an account you are agreeing to our
+              </Text>
+              <Text
+                size="xs"
+                textAlign="center"
+                color={colors.whiteAlpha[700]}
+              >
+                <Text
+                  decoration="underline"
+                  size="xs"
+                  onPress={() =>
+                    Linking.openURL(
+                      'https://timetogiveapp.com/terms.html'
+                    )
+                  }
+                >
+                  Terms of Service
+                </Text>{' '}
+                and{' '}
+                <Text
+                  decoration="underline"
+                  size="xs"
+                  onPress={() =>
+                    Linking.openURL(
+                      'https://timetogiveapp.com/privacy.html'
+                    )
+                  }
+                >
+                  Privacy Policy
+                </Text>
+              </Text>
             </VStack>
           </VStack>
         )}
