@@ -47,8 +47,8 @@ export const TasksList = ({
             task.item.effort_hours,
             task.item.effort_minutes
           )}
+          distance={task.item.distance}
           onPress={() => onTaskPressed(task.item.id)}
-          showDistanceBar
         />
       )}
       keyExtractor={(item) => item.id}
