@@ -6,7 +6,12 @@ export const Footer = () => {
   return (
     <ContentWrapper>
       <Divider color="gray.200" />
-      <Stack direction="row" pb={20} pt={10} justify="space-between">
+      <Stack
+        direction={{ base: 'column', md: 'row' }}
+        pb={20}
+        pt={10}
+        justify="space-between"
+      >
         <VStack align="start">
           <Text color="white">
             Fabulous Supplies Ltd doing business as{' '}
