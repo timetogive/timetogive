@@ -34,6 +34,7 @@ export interface TaskCardProps {
   distance?: number;
   shadowColor?: string;
   onPress?: () => void;
+  onPressProfile?: () => void;
 }
 
 export const TaskCardWithDistanceBar = (props: TaskCardProps) => {

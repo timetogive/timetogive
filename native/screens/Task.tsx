@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Button } from '@rneui/themed';
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Pressable } from 'react-native';
 import { Box, HStack, Stack, VStack } from 'react-native-flex-layout';
 import {
   ScrollView,
@@ -33,6 +33,8 @@ import colors, { defaultColor } from '../styles/colors';
 import { Profile, TaskOfferStatus, TaskStatus } from '../types';
 import { useFocusEffect } from '@react-navigation/native';
 import { MapWithSingleTask } from '../components/MapWithSingleTask';
+import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 
@@ -238,6 +240,11 @@ export const Task = ({ route, navigation }: Props) => {
                   task.effort_hours,
                   task.effort_minutes
                 )}
+                onPressProfile={() =>
+                  navigation.navigate('Profile', {
+                    userId: task.user_id,
+                  })
+                }
               />
             </Box>
 
@@ -254,7 +261,7 @@ export const Task = ({ route, navigation }: Props) => {
               <TaskOffers
                 offers={offers}
                 onOfferPressed={offerPressed}
-              ></TaskOffers>
+              />
             )}
 
             {myOffer && (
@@ -350,6 +357,24 @@ export const Task = ({ route, navigation }: Props) => {
                   {task.user_description}
                 </Text>
               </VStack>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate('Profile', {
+                    userId: task.user_id,
+                  })
+                }
+              >
+                <HStack ph={20} pv={10} justify="between">
+                  <Text size="sm" color={colors.gray[500]}>
+                    See full profile
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faChevronRight}
+                    size={15}
+                    color={colors.gray[500]}
+                  />
+                </HStack>
+              </Pressable>
             </VStack>
 
             <VStack shouldWrapChildren bg={colors.white} mt={20}>
