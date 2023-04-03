@@ -17,7 +17,10 @@ import { RootStackParamList } from '../App';
 import { VStack, Stack, Box } from 'react-native-flex-layout';
 import { nanoid } from 'nanoid/non-secure';
 import { Text } from '../components/Text';
-import { ButtonPrimary } from '../components/Buttons';
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+} from '../components/Buttons';
 import colors, { defaultColor } from '../styles/colors';
 import * as Linking from 'expo-linking';
 import { Link } from '@react-navigation/native';
@@ -189,7 +192,7 @@ export const SignUp = ({ navigation }: Props) => {
                 Sign up with email
               </ButtonPrimary>
 
-              <ButtonPrimary
+              <ButtonSecondary
                 disabled={loading}
                 onPress={() => signUpWithGoogle()}
                 leftIcon={
@@ -201,7 +204,7 @@ export const SignUp = ({ navigation }: Props) => {
                 }
               >
                 Sign up with Google
-              </ButtonPrimary>
+              </ButtonSecondary>
 
               <VStack spacing={5} shouldWrapChildren>
                 <Text size="sm" textAlign="center" color="white">

@@ -18,7 +18,10 @@ import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { ButtonPrimary } from '../components/Buttons';
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+} from '../components/Buttons';
 import colors, { defaultColor } from '../styles/colors';
 import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
 
@@ -137,7 +140,7 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
               Sign in with email
             </ButtonPrimary>
 
-            <ButtonPrimary
+            <ButtonSecondary
               disabled={loading}
               onPress={() => signInWithGoogle()}
               leftIcon={
@@ -149,7 +152,7 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
               }
             >
               Sign in with Google
-            </ButtonPrimary>
+            </ButtonSecondary>
 
             <VStack spacing={5} shouldWrapChildren>
               <Text size="sm" textAlign="center" color="white">

@@ -180,14 +180,14 @@ export default function App() {
                     <SignedOut>
                       <NavStack.Navigator>
                         <NavStack.Screen
-                          name="SignIn"
-                          options={{ headerShown: false }}
-                          component={SignIn}
-                        />
-                        <NavStack.Screen
                           name="SignUp"
                           options={{ headerShown: false }}
                           component={SignUp}
+                        />
+                        <NavStack.Screen
+                          name="SignIn"
+                          options={{ headerShown: false }}
+                          component={SignIn}
                         />
                       </NavStack.Navigator>
                     </SignedOut>
