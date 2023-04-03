@@ -39,6 +39,8 @@ import { TaskReason } from '../types';
 import { TtgIcon } from './TtgIcon';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { decode } from 'base64-arraybuffer';
+import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface MenuBottomSheetModalProps {
   isOpen: boolean;
@@ -167,6 +169,7 @@ const getNewAvatarUrl = () => {
 };
 
 export const MissingAvatar = () => {
+  const insets = useSafeAreaInsets();
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
     getNewAvatarUrl()
   );
@@ -341,79 +344,81 @@ export const MissingAvatar = () => {
   };
 
   return (
-    <VStack justify="center" style={{ flex: 1 }} bg={colors.white}>
-      <VStack items="center" spacing={20} ph={20}>
-        <Box>
-          <Text size="xl" weight="bold">
-            Set a profile picture
-          </Text>
-        </Box>
-        <Stack
-          center
-          h={140}
-          w={140}
-          bg={colors.white}
-          radius={70}
-          overflow="hidden"
-        >
-          {imageUri && (
-            <Image
-              source={{ uri: imageUri }}
-              style={{ width: 200, height: 200 }}
-            />
-          )}
-          {avatarUrl && (
-            <SvgUri width="100%" height="100%" uri={avatarUrl} />
-          )}
-        </Stack>
-        <HStack spacing={10} center shouldWrapChildren>
-          <Button
-            onPress={() => regenerateAvatarUrl()}
-            color={colors.gray[500]}
+    <ScrollWithAvoidKeyboardView>
+      <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
+        <VStack items="center" spacing={20} ph={20}>
+          <Box>
+            <Text size="xl" weight="bold">
+              Set a profile picture
+            </Text>
+          </Box>
+          <Stack
+            center
+            h={140}
+            w={140}
+            bg={colors.white}
+            radius={70}
+            overflow="hidden"
           >
-            Regenerate{' '}
-            <FontAwesomeIcon
-              icon={faArrowsRotate}
-              color={colors.white}
-            />
-          </Button>
-          <Button
-            onPress={() => clickOwnPic()}
-            color={colors.gray[500]}
-          >
-            Use my own{' '}
-            <FontAwesomeIcon icon={faCamera} color={colors.white} />
-          </Button>
-        </HStack>
+            {imageUri && (
+              <Image
+                source={{ uri: imageUri }}
+                style={{ width: 200, height: 200 }}
+              />
+            )}
+            {avatarUrl && (
+              <SvgUri width="100%" height="100%" uri={avatarUrl} />
+            )}
+          </Stack>
+          <HStack spacing={10} center shouldWrapChildren>
+            <Button
+              onPress={() => regenerateAvatarUrl()}
+              color={colors.gray[500]}
+            >
+              Regenerate{' '}
+              <FontAwesomeIcon
+                icon={faArrowsRotate}
+                color={colors.white}
+              />
+            </Button>
+            <Button
+              onPress={() => clickOwnPic()}
+              color={colors.gray[500]}
+            >
+              Use my own{' '}
+              <FontAwesomeIcon icon={faCamera} color={colors.white} />
+            </Button>
+          </HStack>
 
-        <Box>
-          <Text size="xs" color={defaultColor[400]}>
-            A profile picture helps other users recognise you on the
-            platform. For the best trust factor, we recommend
-            uploading a photo.
-          </Text>
-        </Box>
-        <Button
-          onPress={() => clickSaveAndContinue()}
-          color={defaultColor[500]}
-          loading={saving}
-        >
-          Save and continue
-        </Button>
-      </VStack>
-      <MenuBottomSheetModal
-        isOpen={dialogVisible}
-        onClose={() => setDialogVisible(false)}
-        onMenuItemPress={(item) => {
-          console.log('item', item);
-          if (item === 'camera') {
-            clickCamera();
-          } else if (item === 'photos') {
-            clickFile();
-          }
-          setDialogVisible(false);
-        }}
-      />
-    </VStack>
+          <Box>
+            <Text size="xs" color={defaultColor[400]}>
+              A profile picture helps other users recognise you on the
+              platform. For the best trust factor, we recommend
+              uploading a photo.
+            </Text>
+          </Box>
+          <Button
+            onPress={() => clickSaveAndContinue()}
+            color={defaultColor[500]}
+            loading={saving}
+          >
+            Save and continue
+          </Button>
+        </VStack>
+        <MenuBottomSheetModal
+          isOpen={dialogVisible}
+          onClose={() => setDialogVisible(false)}
+          onMenuItemPress={(item) => {
+            console.log('item', item);
+            if (item === 'camera') {
+              clickCamera();
+            } else if (item === 'photos') {
+              clickFile();
+            }
+            setDialogVisible(false);
+          }}
+        />
+      </Box>
+    </ScrollWithAvoidKeyboardView>
   );
 };
