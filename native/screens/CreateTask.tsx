@@ -30,6 +30,7 @@ import {
   BACK_BAR_CONTENT_HEIGHT,
 } from '../components/BackBar';
 import { Point } from 'geojson';
+import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
 
 const integerText = (value: number, word: string) => {
   const text = `${value} ${pluralize(word, value)}`;
@@ -123,7 +124,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
       {/* Top box with back button */}
       <BackBar onBackPress={() => navigation.goBack()} />
       {/* Create task form */}
-      <ScrollView>
+      <ScrollWithAvoidKeyboardView>
         <Box
           ph={15}
           pt={BACK_BAR_CONTENT_HEIGHT + insets.top}
@@ -331,7 +332,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
             </Button>
           </VStack>
         </Box>
-      </ScrollView>
+      </ScrollWithAvoidKeyboardView>
 
       <DaysHoursMinutesSheetModal
         isOpen={dhmModalOpen}

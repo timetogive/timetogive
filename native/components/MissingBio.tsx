@@ -7,8 +7,11 @@ import { Text, translateFontSize } from '../components/Text';
 import { supabase } from '../lib';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
+import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const MissingBio = () => {
+  const insets = useSafeAreaInsets();
   const session = useSession();
   const [description, setDescription] = useState<string | undefined>(
     undefined
@@ -41,45 +44,48 @@ export const MissingBio = () => {
   };
 
   return (
-    <VStack justify="center" style={{ flex: 1 }} bg={colors.white}>
-      <VStack items="center" spacing={20} ph={20}>
-        <Box>
-          <Text size="xl" weight="bold">
-            Your bio
-          </Text>
-        </Box>
-        <Box w="100%">
-          <Input
-            value={description}
-            onChangeText={setDescription}
-            placeholder="e.g. I live in Asheridge, have 3 kids, and a badly behaved dog. I'm really keen to help locally and I'm good with computers."
-            multiline
-            inputStyle={{
-              fontSize: translateFontSize('sm'),
-              lineHeight: 25,
-              paddingBottom: 10,
-            }}
-            containerStyle={{
-              paddingHorizontal: 0,
-            }}
-            errorStyle={{ margin: 0, padding: 0 }}
-          />
-        </Box>
-        <Box>
-          <Text size="xs" color={defaultColor[400]}>
-            Your bio helps people to get to know you. You don't have
-            to write very much but a little background helps with the
-            trust factor and is more likely to get you a response.
-          </Text>
-        </Box>
-        <Button
-          onPress={() => clickSaveAndContinue()}
-          color={defaultColor[500]}
-          loading={saving}
-        >
-          Save and continue
-        </Button>
-      </VStack>
-    </VStack>
+    <ScrollWithAvoidKeyboardView>
+      <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
+        <VStack items="center" spacing={20} ph={20}>
+          <Box>
+            <Text size="xl" weight="bold">
+              Your bio
+            </Text>
+          </Box>
+          <Box w="100%">
+            <Input
+              value={description}
+              onChangeText={setDescription}
+              placeholder="e.g. I live in Asheridge, have 3 kids, and a badly behaved dog. I'm really keen to help locally and I'm good with computers."
+              multiline
+              inputStyle={{
+                fontSize: translateFontSize('sm'),
+                lineHeight: 25,
+                paddingBottom: 10,
+              }}
+              containerStyle={{
+                paddingHorizontal: 0,
+              }}
+              errorStyle={{ margin: 0, padding: 0 }}
+            />
+          </Box>
+          <Box>
+            <Text size="xs" color={defaultColor[400]}>
+              Your bio helps people to get to know you. You don't have
+              to write very much but a little background helps with
+              the trust factor and is more likely to get you a
+              response.
+            </Text>
+          </Box>
+          <Button
+            onPress={() => clickSaveAndContinue()}
+            color={defaultColor[500]}
+            loading={saving}
+          >
+            Save and continue
+          </Button>
+        </VStack>
+      </Box>
+    </ScrollWithAvoidKeyboardView>
   );
 };

@@ -7,8 +7,11 @@ import { Text, translateFontSize } from '../components/Text';
 import { supabase } from '../lib';
 import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
+import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const MissingName = () => {
+  const insets = useSafeAreaInsets();
   const session = useSession();
   const [name, setName] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
@@ -39,46 +42,48 @@ export const MissingName = () => {
   };
 
   return (
-    <VStack justify="center" style={{ flex: 1 }} bg={colors.white}>
-      <VStack items="center" spacing={20} ph={20}>
-        <Box>
-          <Text size="xl" weight="bold">
-            Provide your full name
-          </Text>
-        </Box>
-        <Box w="100%">
-          <Input
-            value={name}
-            onChangeText={setName}
-            placeholder="e.g. Christine Doe"
-            inputStyle={{
-              fontSize: translateFontSize('sm'),
-              lineHeight: 25,
-              paddingBottom: 10,
-            }}
-            containerStyle={{
-              paddingHorizontal: 0,
-            }}
-            errorStyle={{ margin: 0, padding: 0 }}
-          />
-        </Box>
-        <Box>
-          <Text size="xs" color={defaultColor[400]}>
-            TimeToGive is a volunteering platform for carrying out
-            small meaningful tasks in your local community. We take
-            safety seriously. It's important to use your real name in
-            your profile so other members of the community know who
-            you are.
-          </Text>
-        </Box>
-        <Button
-          onPress={() => clickSaveAndContinue()}
-          color={defaultColor[500]}
-          loading={saving}
-        >
-          Save and continue
-        </Button>
-      </VStack>
-    </VStack>
+    <ScrollWithAvoidKeyboardView>
+      <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
+        <VStack items="center" spacing={20} ph={20}>
+          <Box>
+            <Text size="xl" weight="bold">
+              Provide your full name
+            </Text>
+          </Box>
+          <Box w="100%">
+            <Input
+              value={name}
+              onChangeText={setName}
+              placeholder="e.g. Christine Doe"
+              inputStyle={{
+                fontSize: translateFontSize('sm'),
+                lineHeight: 25,
+                paddingBottom: 10,
+              }}
+              containerStyle={{
+                paddingHorizontal: 0,
+              }}
+              errorStyle={{ margin: 0, padding: 0 }}
+            />
+          </Box>
+          <Box>
+            <Text size="xs" color={defaultColor[400]}>
+              TimeToGive is a volunteering platform for carrying out
+              small meaningful tasks in your local community. We take
+              safety seriously. It's important to use your real name
+              in your profile so other members of the community know
+              who you are.
+            </Text>
+          </Box>
+          <Button
+            onPress={() => clickSaveAndContinue()}
+            color={defaultColor[500]}
+            loading={saving}
+          >
+            Save and continue
+          </Button>
+        </VStack>
+      </Box>
+    </ScrollWithAvoidKeyboardView>
   );
 };

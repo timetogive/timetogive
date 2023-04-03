@@ -8,8 +8,11 @@ import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { SetPolygonSheetModal } from './SetPolygon';
 import { Text } from './Text';
+import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const MissingHomeArea = () => {
+  const insets = useSafeAreaInsets();
   const [mapModalOpen, setMapModalOpen] = useState(false);
   const session = useSession();
 
@@ -26,8 +29,8 @@ export const MissingHomeArea = () => {
   };
 
   return (
-    <>
-      <VStack justify="center" style={{ flex: 1 }} bg={colors.white}>
+    <ScrollWithAvoidKeyboardView>
+      <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
         <VStack
           items="center"
           spacing={20}
@@ -47,12 +50,12 @@ export const MissingHomeArea = () => {
             tasks you will be notified about.
           </Text>
         </VStack>
-      </VStack>
+      </Box>
       <SetPolygonSheetModal
         isOpen={mapModalOpen}
         onClose={() => setMapModalOpen(false)}
         onPolygonChange={(polygon) => setPolygon(polygon)}
       />
-    </>
+    </ScrollWithAvoidKeyboardView>
   );
 };

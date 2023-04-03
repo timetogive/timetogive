@@ -45,6 +45,7 @@ import colors, { defaultColor } from '../styles/colors';
 import { MapListMode, TaskOfferStatus } from '../types';
 import { useFocusEffect } from '@react-navigation/native';
 import { MiniProfile } from '../components/MiniProfile';
+import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
 
 type Props = NativeStackScreenProps<
   RootStackParamList,

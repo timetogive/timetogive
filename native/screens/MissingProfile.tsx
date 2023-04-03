@@ -1,4 +1,5 @@
 import Animated, {
+  FadeOut,
   SlideInRight,
   SlideOutRight,
 } from 'react-native-reanimated';
@@ -20,8 +21,8 @@ const SlideInWrapper = ({ children }: SlideInWrapperProps) => {
       style={{
         flex: 1,
       }}
-      entering={SlideInRight.duration(1000)}
-      exiting={SlideOutRight.duration(1000)}
+      entering={SlideInRight.duration(500)}
+      exiting={FadeOut.duration(500)}
     >
       {children}
     </Animated.View>

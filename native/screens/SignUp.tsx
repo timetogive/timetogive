@@ -6,6 +6,9 @@ import {
   Touchable,
   View,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { Image, Input, Button } from '@rneui/themed';
@@ -26,6 +29,7 @@ import {
 import { faStar } from '@fortawesome/sharp-solid-svg-icons';
 import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
+import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -130,176 +134,179 @@ export const SignUp = ({ navigation }: Props) => {
 
   return (
     <Box style={{ flex: 1 }} bg={defaultColor[900]}>
-      <SafeWrapper>
-        <VStack ph={20} spacing={10}>
-          <Stack
-            style={{
-              height: 200,
-            }}
-          >
-            <Image
-              source={require('../assets/ttg-white.png')}
-              resizeMode="contain"
+      <ScrollWithAvoidKeyboardView>
+        <SafeWrapper>
+          <VStack ph={20} spacing={10}>
+            <Stack
               style={{
-                width: '100%',
-                height: '100%',
+                height: 200,
               }}
-            />
-          </Stack>
-        </VStack>
-
-        {mode === 'form' && (
-          <VStack ph={20} spacing={20} shouldWrapChildren>
-            <VStack spacing={15} shouldWrapChildren>
-              <TextInput
-                placeholder="Email address"
-                onChangeText={(text) => setEmail(text)}
-                placeholderTextColor={colors.whiteAlpha[500]}
+            >
+              <Image
+                source={require('../assets/ttg-white.png')}
+                resizeMode="contain"
                 style={{
-                  padding: 15,
-                  borderRadius: 5,
-                  backgroundColor: colors.whiteAlpha[100],
-                  color: colors.whiteAlpha[900],
-                  fontSize: 16,
+                  width: '100%',
+                  height: '100%',
                 }}
               />
-              <TextInput
-                placeholder="Password"
-                secureTextEntry={true}
-                onChangeText={(text) => setPassword(text)}
-                placeholderTextColor={colors.whiteAlpha[500]}
-                style={{
-                  padding: 15,
-                  borderRadius: 5,
-                  backgroundColor: colors.whiteAlpha[100],
-                  color: colors.whiteAlpha[900],
-                  fontSize: 16,
-                }}
-              />
-            </VStack>
-            <ButtonPrimary
-              disabled={loading}
-              onPress={() => signUpWithEmail()}
-            >
-              Sign up with email
-            </ButtonPrimary>
-
-            <ButtonPrimary
-              disabled={loading}
-              onPress={() => signUpWithGoogle()}
-              leftIcon={
-                <FontAwesomeIcon
-                  icon={faGoogle as any}
-                  color={colors.white}
-                  size={20}
-                />
-              }
-            >
-              Sign up with Google
-            </ButtonPrimary>
-
-            <VStack spacing={5} shouldWrapChildren>
-              <Text size="sm" textAlign="center" color="white">
-                Already have an account?{' '}
-              </Text>
-              <Text
-                decoration="underline"
-                size="sm"
-                textAlign="center"
-                color="white"
-                onPress={() => navigation.navigate('SignIn')}
-              >
-                Sign in here
-              </Text>{' '}
-            </VStack>
-            <VStack spacing={5} shouldWrapChildren>
-              <Text
-                size="xs"
-                textAlign="center"
-                color={colors.whiteAlpha[700]}
-              >
-                By signing up to an account you are agreeing to our
-              </Text>
-              <Text
-                size="xs"
-                textAlign="center"
-                color={colors.whiteAlpha[700]}
-              >
-                <Text
-                  decoration="underline"
-                  size="xs"
-                  onPress={() =>
-                    Linking.openURL(
-                      'https://timetogiveapp.com/terms.html'
-                    )
-                  }
-                >
-                  Terms of Service
-                </Text>{' '}
-                and{' '}
-                <Text
-                  decoration="underline"
-                  size="xs"
-                  onPress={() =>
-                    Linking.openURL(
-                      'https://timetogiveapp.com/privacy.html'
-                    )
-                  }
-                >
-                  Privacy Policy
-                </Text>
-              </Text>
-            </VStack>
+            </Stack>
           </VStack>
-        )}
 
-        {mode === 'verify' && (
-          <VStack ph={20} spacing={20}>
-            <TextInput
-              placeholder="Enter verification code"
-              onChangeText={(text) => setVerificationCode(text)}
-              placeholderTextColor={colors.whiteAlpha[500]}
-              style={{
-                padding: 15,
-                borderRadius: 5,
-                backgroundColor: colors.whiteAlpha[100],
-                color: colors.whiteAlpha[900],
-                fontSize: 16,
-              }}
-            />
-            <ButtonPrimary
-              disabled={loading}
-              onPress={() => confirmCode()}
-            >
-              Submit code
-            </ButtonPrimary>
-            <VStack spacing={5} shouldWrapChildren>
-              <Text size="sm" textAlign="center" color="white">
-                You should have received an email with a verification
-                code. In can take a few seconds for it to arrive.
-              </Text>
-              <Text
-                decoration="underline"
-                size="sm"
-                textAlign="center"
-                color="white"
+          {mode === 'form' && (
+            <VStack ph={20} spacing={20} shouldWrapChildren>
+              <VStack spacing={15} shouldWrapChildren>
+                <TextInput
+                  placeholder="Email address"
+                  onChangeText={(text) => setEmail(text)}
+                  placeholderTextColor={colors.whiteAlpha[500]}
+                  style={{
+                    padding: 15,
+                    borderRadius: 5,
+                    backgroundColor: colors.whiteAlpha[100],
+                    color: colors.whiteAlpha[900],
+                    fontSize: 16,
+                  }}
+                />
+                <TextInput
+                  placeholder="Password"
+                  secureTextEntry={true}
+                  onChangeText={(text) => setPassword(text)}
+                  placeholderTextColor={colors.whiteAlpha[500]}
+                  style={{
+                    padding: 15,
+                    borderRadius: 5,
+                    backgroundColor: colors.whiteAlpha[100],
+                    color: colors.whiteAlpha[900],
+                    fontSize: 16,
+                  }}
+                />
+              </VStack>
+              <ButtonPrimary
+                disabled={loading}
                 onPress={() => signUpWithEmail()}
               >
-                Resend email verification
-              </Text>{' '}
-              <Text
-                decoration="underline"
-                size="sm"
-                textAlign="center"
-                color="white"
-                onPress={() => setMode('form')}
+                Sign up with email
+              </ButtonPrimary>
+
+              <ButtonPrimary
+                disabled={loading}
+                onPress={() => signUpWithGoogle()}
+                leftIcon={
+                  <FontAwesomeIcon
+                    icon={faGoogle as any}
+                    color={colors.white}
+                    size={20}
+                  />
+                }
               >
-                Go back
-              </Text>{' '}
+                Sign up with Google
+              </ButtonPrimary>
+
+              <VStack spacing={5} shouldWrapChildren>
+                <Text size="sm" textAlign="center" color="white">
+                  Already have an account?{' '}
+                </Text>
+                <Text
+                  decoration="underline"
+                  size="sm"
+                  textAlign="center"
+                  color="white"
+                  onPress={() => navigation.navigate('SignIn')}
+                >
+                  Sign in here
+                </Text>{' '}
+              </VStack>
+              <VStack spacing={5} shouldWrapChildren>
+                <Text
+                  size="xs"
+                  textAlign="center"
+                  color={colors.whiteAlpha[700]}
+                >
+                  By signing up to an account you are agreeing to our
+                </Text>
+                <Text
+                  size="xs"
+                  textAlign="center"
+                  color={colors.whiteAlpha[700]}
+                >
+                  <Text
+                    decoration="underline"
+                    size="xs"
+                    onPress={() =>
+                      Linking.openURL(
+                        'https://timetogiveapp.com/terms.html'
+                      )
+                    }
+                  >
+                    Terms of Service
+                  </Text>{' '}
+                  and{' '}
+                  <Text
+                    decoration="underline"
+                    size="xs"
+                    onPress={() =>
+                      Linking.openURL(
+                        'https://timetogiveapp.com/privacy.html'
+                      )
+                    }
+                  >
+                    Privacy Policy
+                  </Text>
+                </Text>
+              </VStack>
             </VStack>
-          </VStack>
-        )}
-      </SafeWrapper>
+          )}
+
+          {mode === 'verify' && (
+            <VStack ph={20} spacing={20} shouldWrapChildren>
+              <TextInput
+                placeholder="Enter verification code"
+                onChangeText={(text) => setVerificationCode(text)}
+                placeholderTextColor={colors.whiteAlpha[500]}
+                style={{
+                  padding: 15,
+                  borderRadius: 5,
+                  backgroundColor: colors.whiteAlpha[100],
+                  color: colors.whiteAlpha[900],
+                  fontSize: 16,
+                }}
+              />
+              <ButtonPrimary
+                disabled={loading}
+                onPress={() => confirmCode()}
+              >
+                Submit code
+              </ButtonPrimary>
+              <VStack spacing={5} shouldWrapChildren>
+                <Text size="sm" textAlign="center" color="white">
+                  You should have received an email with a
+                  verification code. It can take a few seconds for it
+                  to arrive.
+                </Text>
+                <Text
+                  decoration="underline"
+                  size="sm"
+                  textAlign="center"
+                  color="white"
+                  onPress={() => signUpWithEmail()}
+                >
+                  Resend email verification
+                </Text>{' '}
+                <Text
+                  decoration="underline"
+                  size="sm"
+                  textAlign="center"
+                  color="white"
+                  onPress={() => setMode('form')}
+                >
+                  Go back
+                </Text>{' '}
+              </VStack>
+            </VStack>
+          )}
+        </SafeWrapper>
+      </ScrollWithAvoidKeyboardView>
     </Box>
   );
 };
