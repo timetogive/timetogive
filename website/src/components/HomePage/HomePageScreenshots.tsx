@@ -14,18 +14,18 @@ export const HomePageScreenshots = () => {
       <VStack alignItems="center">
         <HStack spacing={5} overflowX="auto" py={10}>
           <Image
-            alt="iPhone Screenshot"
-            src="/iphone-screenshot.png"
+            alt="iPhone Screenshot of Map"
+            src="/iphone-screen-map.png"
             maxH="60vh"
           />
           <Image
-            alt="iPhone Screenshot"
-            src="/iphone-screenshot.png"
+            alt="iPhone Screenshot of Task"
+            src="/iphone-screen-task.png"
             maxH="60vh"
           />
           <Image
-            alt="iPhone Screenshot"
-            src="/iphone-screenshot.png"
+            alt="iPhone Screenshot of Chat"
+            src="/iphone-screen-chat.png"
             maxH="60vh"
           />
         </HStack>

@@ -33,6 +33,7 @@ export const TaskInformation = ({
   timing,
   duration,
   onPress,
+  onPressProfile,
 }: TaskCardProps) => {
   return (
     <VStack spacing={20}>
@@ -75,6 +76,7 @@ export const TaskInformation = ({
           <MiniProfile
             avatarUrl={taskUserAvatarUrl}
             fullName={taskUserFullName}
+            onPressProfile={onPressProfile}
           />
         )}
         <Chip textSize="xxs">{duration}</Chip>

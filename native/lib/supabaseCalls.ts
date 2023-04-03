@@ -15,6 +15,16 @@ export const getTaskSupabaseCall = (
   return query;
 };
 
+export const getFullProfileSupabaseCall = (userId: string) => {
+  const query = supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  return query;
+};
+
 export const getNotificationsSupabaseCall = () => {
   const query = supabase
     .from('notifications')

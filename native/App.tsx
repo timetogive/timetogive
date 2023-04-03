@@ -22,6 +22,7 @@ import { SignedOut } from './components/SignedOut';
 import { SignIn } from './screens/SignIn';
 import { SignUp } from './screens/SignUp';
 import { Main } from './screens/Main';
+import { Profile } from './screens/Profile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashPreLoadProvider from './providers/splashPreLoad';
 import { ProfileIsComplete } from './components/ProfileIsComplete';
@@ -46,6 +47,7 @@ export type RootStackParamList = {
   CreateTask: { reason: TaskReason };
   TaskConversation: { taskId: string; userId: string };
   Task: { taskId: string };
+  Profile: { userId: string };
 };
 
 const NavStack = createNativeStackNavigator<RootStackParamList>();
@@ -69,6 +71,7 @@ const linkingOpts: LinkingOptions<RootStackParamList> = {
       CreateTask: 'createtask',
       TaskConversation: 'taskconversation',
       Task: 'task',
+      Profile: 'profile',
     },
   },
 };
@@ -146,6 +149,14 @@ export default function App() {
                                     }}
                                     component={TaskConversation}
                                   />
+                                  <NavStack.Screen
+                                    name="Profile"
+                                    options={{
+                                      title: 'Profile',
+                                      headerShown: false,
+                                    }}
+                                    component={Profile}
+                                  />
                                 </NavStack.Navigator>
                                 <SideMenuDrawer />
                               </ProfileIsComplete>
@@ -169,14 +180,14 @@ export default function App() {
                     <SignedOut>
                       <NavStack.Navigator>
                         <NavStack.Screen
-                          name="SignIn"
-                          options={{ headerShown: false }}
-                          component={SignIn}
-                        />
-                        <NavStack.Screen
                           name="SignUp"
                           options={{ headerShown: false }}
                           component={SignUp}
+                        />
+                        <NavStack.Screen
+                          name="SignIn"
+                          options={{ headerShown: false }}
+                          component={SignIn}
                         />
                       </NavStack.Navigator>
                     </SignedOut>

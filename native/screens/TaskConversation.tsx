@@ -286,6 +286,11 @@ export const TaskConversation = ({ route, navigation }: Props) => {
           <MiniProfile
             avatarUrl={user.avatar_url}
             fullName={user.full_name}
+            onPressProfile={() => {
+              navigation.navigate('Profile', {
+                userId: user.id,
+              });
+            }}
           />
         )}
       </BackBar>
