@@ -35,6 +35,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import { MapWithSingleTask } from '../components/MapWithSingleTask';
 import { faChevronRight } from '@fortawesome/pro-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+} from '../components/Buttons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Task'>;
 
@@ -438,25 +442,23 @@ export const Task = ({ route, navigation }: Props) => {
             right={insets.right}
             ph={15}
             spacing={10}
+            shouldWrapChildren
           >
-            <Button
+            <ButtonPrimary
               onPress={() =>
                 navigation.navigate('TaskConversation', {
                   taskId,
                   userId: task.user_id,
                 })
               }
+              shadow
             >
               Message {task.user_full_name}
-            </Button>
+            </ButtonPrimary>
             {canVolunteer && (
-              <Button
-                color={colors.gray[500]}
-                onPress={() => volunteerForTask()}
-                loading={volunteerCallBusy}
-              >
+              <ButtonSecondary onPress={() => volunteerForTask()}>
                 Volunteer for task
-              </Button>
+              </ButtonSecondary>
             )}
           </VStack>
         )}

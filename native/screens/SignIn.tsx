@@ -18,7 +18,7 @@ import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { ButtonPrimary } from '../components/ButtonPrimary';
+import { ButtonPrimary } from '../components/Buttons';
 import colors, { defaultColor } from '../styles/colors';
 import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
 

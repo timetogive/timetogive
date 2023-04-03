@@ -17,7 +17,7 @@ import { RootStackParamList } from '../App';
 import { VStack, Stack, Box } from 'react-native-flex-layout';
 import { nanoid } from 'nanoid/non-secure';
 import { Text } from '../components/Text';
-import { ButtonPrimary } from '../components/ButtonPrimary';
+import { ButtonPrimary } from '../components/Buttons';
 import colors, { defaultColor } from '../styles/colors';
 import * as Linking from 'expo-linking';
 import { Link } from '@react-navigation/native';
