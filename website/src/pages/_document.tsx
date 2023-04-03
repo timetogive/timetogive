@@ -4,7 +4,10 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link rel="icon" href="/favicon.svg" />
+        <meta
+          name="description"
+          content="TimeToGive is an app that connects people, with even the smallest amount of free time, to small volunteering tasks that make a big difference in their local community"
+        />
       </Head>
       <body>
         <Main />

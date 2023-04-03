@@ -21,14 +21,9 @@ export default function Home() {
       <Head>
         <title>TimeToGive</title>
         <meta
-          name="description"
-          content="TimeToGive is an app that connects people, with even the smallest amount of free time, to small volunteering tasks that make a big difference in their local community"
-        />
-        <meta
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box bg="gray.800" position="relative">
         <header>

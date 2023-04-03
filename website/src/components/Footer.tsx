@@ -21,12 +21,12 @@ export const Footer = () => {
           <Text color="white"></Text>
         </VStack>
         <VStack align="end">
-          <Link href="/terms.html" target="_blank">
+          <Link href="/terms" target="_blank">
             <Text color="white" decoration="underline">
               Terms &amp; Conditions
             </Text>
           </Link>
-          <Link href="/privacy.html" target="_blank">
+          <Link href="/privacy" target="_blank">
             <Text color="white" decoration="underline">
               Privacy Policy
             </Text>
