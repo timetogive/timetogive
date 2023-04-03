@@ -1,4 +1,6 @@
+import { ContentWrapper } from '@/components';
 import { terms } from '@/lib/terms';
+import { Box } from '@chakra-ui/react';
 import Head from 'next/head';
 
 // All pretty horrible but the the very basic privacy policy for TTG
@@ -14,7 +16,11 @@ const Terms = () => {
           content="width=device-width, initial-scale=1"
         />
       </Head>
-      <div dangerouslySetInnerHTML={{ __html: terms }} />
+      <ContentWrapper>
+        <Box p={10}>
+          <div dangerouslySetInnerHTML={{ __html: terms }} />
+        </Box>
+      </ContentWrapper>
     </>
   );
 };
