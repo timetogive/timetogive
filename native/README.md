@@ -75,5 +75,36 @@ Convenience command for uploading all env variables as secrets into EAS build se
 
 # Submitting to Apple App Store
 
+First create the build. You can do this locally using
+
+`./build-prod.sh`
+
+Or build on the EAS servers
+
+`eas build --profile prod --platform ios`
+
+(For real releases it's best really to run it on the EAS build servers for consistency)
+
+To submit the prod build...
+
+`eas submit -p ios`
+
+This will prompt you to choose which ios build to use (you can pick from local files or previous successful EAS cloud builds). 
+
+As part of this you will need to provide connection credentials to Apple App Store Connect
+
+You can provide an app specific password or ASC API key. We're gonna use a key.
+
+You can follow the steps here - https://developer.apple.com/documentation/appstoreconnectapi/creating_api_keys_for_app_store_connect_api. 
+
+Note - For the initial build I did I let the CLI generate it but then subseqently added my own and added this to the eas.json submit config
+
+You can then track the submission into app store connect in the Expo dashboard.
+
+The submission essentially takes it as far as getting it into Test Flight. 
+
+You must then use the App Store Connect dashboard and UI to get it through the process.
+
+
 
 
