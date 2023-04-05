@@ -21,7 +21,7 @@
         "APP_ENV": "dev"
       }
     },
-    "dev": {
+    "dev-internal": {
       "channel": "dev",
       "distribution": "internal",
       "ios": {
@@ -31,14 +31,34 @@
         "APP_ENV": "dev"
       }
     },
+    "prod-internal": {
+      "channel": "prod",
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_ENV": "prod"
+      }
+    },
     "prod": {
       "channel": "prod",
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_ENV": "prod"
       }
     }
   },
   "submit": {
-    "production": {}
+    "prod": {
+      "ios" : {
+        "ascAppId" : "6447304280",
+        "ascApiKeyPath": "./AuthKey_U96ZWMH6WH.p8",
+        "ascApiKeyIssuerId": "053815f2-776e-4136-bc2c-1c7fdcd9bcb1",
+        "ascApiKeyId": "U96ZWMH6WH"
+      }
+    }
   }
 }

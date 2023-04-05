@@ -30,13 +30,6 @@ export type SignInScreenProps = NativeStackScreenProps<
   'SignIn'
 >;
 
-// This builds the URL for the signin page based on the
-// expo URL scheme specified in the config. Ensures it works
-// in local dev and in production.
-const redirectUrl = makeRedirectUri({
-  path: 'signin',
-});
-
 export const SignIn = ({ navigation }: SignInScreenProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
