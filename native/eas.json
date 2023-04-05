@@ -21,7 +21,7 @@
         "APP_ENV": "dev"
       }
     },
-    "dev": {
+    "dev-internal": {
       "channel": "dev",
       "distribution": "internal",
       "ios": {
@@ -31,14 +31,27 @@
         "APP_ENV": "dev"
       }
     },
+    "prod-internal": {
+      "channel": "prod",
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_ENV": "prod"
+      }
+    },
     "prod": {
       "channel": "prod",
       "ios": {
         "resourceClass": "m-medium"
+      },
+      "env": {
+        "APP_ENV": "prod"
       }
     }
   },
   "submit": {
-    "production": {}
+    "prod": {}
   }
 }
