@@ -1,3 +1,7 @@
+\echo '---------------------------'
+\echo 'Drop types'
+\echo '---------------------------'
+
 drop type if exists public.feed_item_type;
 drop type if exists public.notifications_item_type;
 drop type if exists public.reviewee;

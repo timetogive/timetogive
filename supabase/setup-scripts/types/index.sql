@@ -1,28 +1,6 @@
-create type public.task_full_info as (
-   id uuid,
-   user_id uuid,
-   status task_status,
-   reason task_reason,
-   will_pledge boolean,
-   pledge text,
-   title text,
-   description text,
-   effort_days integer,
-   effort_hours integer,
-   effort_minutes integer,
-   effort_normalised_minutes integer,
-   effort_people int ,
-   timing text,
-   remote boolean ,
-   longitude double precision,
-   latitude double precision,
-   created_datetime TIMESTAMP,
-   distance double precision,
-   user_full_name text,
-   user_avatar_url text,
-   user_description text
-);
-
+\echo '---------------------------'
+\echo 'Create types'
+\echo '---------------------------'
 
 create type public.notifications_item_type AS ENUM (
     'Task',
@@ -61,7 +39,29 @@ create type public.task_reason AS ENUM (
    'Return For Pledge' -- it's a job that might normally be paid for but will be paid for via a pledge
 );
 
-
-
+create type public.task_full_info as (
+   id uuid,
+   user_id uuid,
+   status task_status,
+   reason task_reason,
+   will_pledge boolean,
+   pledge text,
+   title text,
+   description text,
+   effort_days integer,
+   effort_hours integer,
+   effort_minutes integer,
+   effort_normalised_minutes integer,
+   effort_people int ,
+   timing text,
+   remote boolean ,
+   longitude double precision,
+   latitude double precision,
+   created_datetime TIMESTAMP,
+   distance double precision,
+   user_full_name text,
+   user_avatar_url text,
+   user_description text
+);
 
 
