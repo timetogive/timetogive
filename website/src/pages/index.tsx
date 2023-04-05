@@ -24,6 +24,14 @@ export default function Home() {
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
+        <meta property="og:title" content="TimeToGive App" />
+        <meta property="og:type" content="website" />
+        <meta
+          name="og:description"
+          content="TimeToGive is a micro-volunteering app that connects people, with even the smallest amount of free time, to small tasks that make a big difference in their local community"
+        />
+        <meta property="og:image" content="/ttg-icon-button.png" />
+        <meta property="og:url" content="https://timetogiveapp.com" />
       </Head>
       <Box bg="gray.800" position="relative">
         <header>
