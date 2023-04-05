@@ -87,6 +87,7 @@ export const Text = ({
         ...(decoration ? { textDecorationLine: decoration } : {}),
       }}
       onPress={onPress}
+      allowFontScaling={false}
     >
       {children}
     </ReactNativeText>
