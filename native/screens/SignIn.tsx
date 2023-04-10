@@ -111,20 +111,6 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
 
             <ButtonSecondary
               disabled={loading}
-              onPress={() => signInWithGoogle()}
-              leftIcon={
-                <FontAwesomeIcon
-                  icon={faGoogle as any}
-                  color={colors.white}
-                  size={20}
-                />
-              }
-            >
-              Sign in with Google
-            </ButtonSecondary>
-
-            <ButtonSecondary
-              disabled={loading}
               onPress={() => signInWithApple()}
               leftIcon={
                 <FontAwesomeIcon
@@ -135,6 +121,20 @@ export const SignIn = ({ navigation }: SignInScreenProps) => {
               }
             >
               Sign in with Apple
+            </ButtonSecondary>
+
+            <ButtonSecondary
+              disabled={loading}
+              onPress={() => signInWithGoogle()}
+              leftIcon={
+                <FontAwesomeIcon
+                  icon={faGoogle as any}
+                  color={colors.white}
+                  size={20}
+                />
+              }
+            >
+              Sign in with Google
             </ButtonSecondary>
 
             <VStack spacing={5} shouldWrapChildren>

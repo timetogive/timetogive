@@ -168,20 +168,6 @@ export const SignUp = ({ navigation }: Props) => {
 
               <ButtonSecondary
                 disabled={loading}
-                onPress={() => signInWithGoogle()}
-                leftIcon={
-                  <FontAwesomeIcon
-                    icon={faGoogle as any}
-                    color={colors.white}
-                    size={20}
-                  />
-                }
-              >
-                Sign up with Google
-              </ButtonSecondary>
-
-              <ButtonSecondary
-                disabled={loading}
                 onPress={() => signInWithApple()}
                 leftIcon={
                   <FontAwesomeIcon
@@ -192,6 +178,20 @@ export const SignUp = ({ navigation }: Props) => {
                 }
               >
                 Sign in with Apple
+              </ButtonSecondary>
+
+              <ButtonSecondary
+                disabled={loading}
+                onPress={() => signInWithGoogle()}
+                leftIcon={
+                  <FontAwesomeIcon
+                    icon={faGoogle as any}
+                    color={colors.white}
+                    size={20}
+                  />
+                }
+              >
+                Sign up with Google
               </ButtonSecondary>
 
               <VStack spacing={5} shouldWrapChildren>
