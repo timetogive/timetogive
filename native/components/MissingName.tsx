@@ -9,6 +9,7 @@ import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary } from './Buttons';
 
 export const MissingName = () => {
   const insets = useSafeAreaInsets();
@@ -75,13 +76,12 @@ export const MissingName = () => {
               who you are.
             </Text>
           </Box>
-          <Button
+          <ButtonPrimary
             onPress={() => clickSaveAndContinue()}
-            color={defaultColor[500]}
             loading={saving}
           >
             Save and continue
-          </Button>
+          </ButtonPrimary>
         </VStack>
       </Box>
     </ScrollWithAvoidKeyboardView>

@@ -20,6 +20,7 @@ import {
 import { useNotifications } from '../providers/notifications';
 import { NotificationsItem } from '../types';
 import { MainTabParamList } from './Main';
+import { SafeWrapper } from '../components/SafeWrapper';
 
 type Props = CompositeScreenProps<
   BottomTabScreenProps<MainTabParamList, 'Notifications'>,
@@ -76,21 +77,24 @@ export const Notifications = ({ route, navigation }: Props) => {
     notif.reset();
   }, []);
 
-  if (!notificationsItems) {
-    return <></>;
-  }
-
   return (
-    <>
-      <VStack shouldWrapChildren spacing={5} radius={20} pt={100}>
-        {notificationsItems.map((item) => (
-          <NotificationCard
-            key={item.id}
-            notificationsItemType={item.type}
-            onPress={() => navigateToNotificationsItem(item)}
-          />
-        ))}
+    <SafeWrapper>
+      <VStack shouldWrapChildren spacing={5} radius={20} ph={10}>
+        {!notificationsItems ||
+          (notificationsItems.length === 0 && (
+            <Text size="lg" weight="semi-bold">
+              No notifications
+            </Text>
+          ))}
+        {notificationsItems &&
+          notificationsItems.map((item) => (
+            <NotificationCard
+              key={item.id}
+              notificationsItemType={item.type}
+              onPress={() => navigateToNotificationsItem(item)}
+            />
+          ))}
       </VStack>
-    </>
+    </SafeWrapper>
   );
 };

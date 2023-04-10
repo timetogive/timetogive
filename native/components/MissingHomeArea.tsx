@@ -10,6 +10,7 @@ import { SetPolygonSheetModal } from './SetPolygon';
 import { Text } from './Text';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary } from './Buttons';
 
 export const MissingHomeArea = () => {
   const insets = useSafeAreaInsets();
@@ -40,9 +41,9 @@ export const MissingHomeArea = () => {
           <Text size="xl" weight="bold">
             Set your home area
           </Text>
-          <Button onPress={() => setMapModalOpen(true)}>
+          <ButtonPrimary onPress={() => setMapModalOpen(true)}>
             Start now
-          </Button>
+          </ButtonPrimary>
           <Text size="xs" color={defaultColor[400]}>
             TimeToGive is all about helping each other in your local
             community. The home area determines the default area you

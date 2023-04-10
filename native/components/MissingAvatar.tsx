@@ -41,6 +41,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { decode } from 'base64-arraybuffer';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary, ButtonSecondary } from './Buttons';
 
 interface MenuBottomSheetModalProps {
   isOpen: boolean;
@@ -371,23 +372,28 @@ export const MissingAvatar = () => {
             )}
           </Stack>
           <HStack spacing={10} center shouldWrapChildren>
-            <Button
+            <ButtonPrimary
               onPress={() => regenerateAvatarUrl()}
-              color={colors.gray[500]}
+              leftIcon={
+                <FontAwesomeIcon
+                  icon={faArrowsRotate}
+                  color={colors.white}
+                />
+              }
             >
-              Regenerate{' '}
-              <FontAwesomeIcon
-                icon={faArrowsRotate}
-                color={colors.white}
-              />
-            </Button>
-            <Button
+              Regenerate
+            </ButtonPrimary>
+            <ButtonSecondary
               onPress={() => clickOwnPic()}
-              color={colors.gray[500]}
+              leftIcon={
+                <FontAwesomeIcon
+                  icon={faCamera}
+                  color={colors.white}
+                />
+              }
             >
-              Use my own{' '}
-              <FontAwesomeIcon icon={faCamera} color={colors.white} />
-            </Button>
+              Use my own
+            </ButtonSecondary>
           </HStack>
 
           <Box>
@@ -397,13 +403,12 @@ export const MissingAvatar = () => {
               uploading a photo.
             </Text>
           </Box>
-          <Button
+          <ButtonPrimary
             onPress={() => clickSaveAndContinue()}
-            color={defaultColor[500]}
             loading={saving}
           >
             Save and continue
-          </Button>
+          </ButtonPrimary>
         </VStack>
         <MenuBottomSheetModal
           isOpen={dialogVisible}

@@ -15,6 +15,7 @@ import Animated, {
   SlideOutRight,
 } from 'react-native-reanimated';
 import { usePush } from '../providers/push';
+import { ButtonPrimary } from './Buttons';
 
 export const SideMenuDrawer = () => {
   const push = usePush();
@@ -48,7 +49,9 @@ export const SideMenuDrawer = () => {
           <SafeWrapper>
             <Box style={{ flex: 1 }} position="relative">
               <VStack style={{ flex: 1 }} center>
-                <Button title="Sign Out" onPress={() => signOut()} />
+                <ButtonPrimary onPress={() => signOut()}>
+                  Sign out
+                </ButtonPrimary>
               </VStack>
               <Box position="absolute" top={0} right={20}>
                 <TouchableOpacity onPress={() => setOpen(false)}>

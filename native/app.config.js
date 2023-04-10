@@ -95,6 +95,7 @@ module.exports = {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      buildNumber: '2',
       bundleIdentifier: 'com.timetogiveapp.timetogive',
       supportsTablet: true,
       icon: './assets/icon-ios.png',

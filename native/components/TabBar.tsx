@@ -37,9 +37,6 @@ export const TabBar = ({
 
   const { count } = useNotifications();
 
-  console.log('notifications count');
-  console.log(count);
-
   const [createModalOpen, setCreateModalOpen] = React.useState(false);
 
   // Clicking on tabs
@@ -98,14 +95,6 @@ export const TabBar = ({
             focussedIconDefinition={faMagnifyingGlass}
             title="Find Tasks"
             focused={routes[index].name === 'Tasks'}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => onNavPress('Dashboard')}>
-          <TabWithIcon
-            iconDefinition={faHeartCircleCheck}
-            focussedIconDefinition={faHeartCircleCheckSolid}
-            title="Dashboard"
-            focused={routes[index].name === 'Dashboard'}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onCreatePress()}>
