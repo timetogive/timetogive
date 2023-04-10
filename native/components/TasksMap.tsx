@@ -69,7 +69,7 @@ export const MapMarker = ({
   return (
     <PointAnnotation
       coordinate={[task.longitude, task.latitude]}
-      style={{ zIndex: 100 }}
+      style={{ zIndex: 1 }}
       onSelected={onSelected}
     >
       <TaskPin reason={task.reason} />

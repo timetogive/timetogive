@@ -122,7 +122,15 @@ module.exports = {
       [
         'expo-image-picker',
         {
-          photosPermission: 'Allow TimeToGive to access your photos',
+          photosPermission:
+            'Allow $(PRODUCT_NAME) to access your photos in order to set your profile picture.',
+        },
+      ],
+      [
+        'expo-location',
+        {
+          locationAlwaysAndWhenInUsePermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
         },
       ],
     ],

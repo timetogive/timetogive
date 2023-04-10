@@ -414,6 +414,7 @@ export const Task = ({ route, navigation }: Props) => {
             right={insets.right}
             ph={15}
             spacing={10}
+            shouldWrapChildren
           >
             <ButtonPrimary
               onPress={() => {
@@ -449,7 +450,6 @@ export const Task = ({ route, navigation }: Props) => {
                   userId: task.user_id,
                 })
               }
-              shadow
             >
               Message {task.user_full_name}
             </ButtonPrimary>

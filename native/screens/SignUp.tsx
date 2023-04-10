@@ -26,6 +26,7 @@ import * as Linking from 'expo-linking';
 import { Link } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import {
+  faApple,
   faGoogle,
   faGoogleDrive,
 } from '@fortawesome/free-brands-svg-icons';
@@ -33,6 +34,7 @@ import { faStar } from '@fortawesome/sharp-solid-svg-icons';
 import { makeRedirectUri, startAsync } from 'expo-auth-session';
 import { supabaseUrl } from '../lib/consts';
 import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
+import { signInWithGoogle, signInWithApple } from '../lib/auth';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SignUp'>;
 
@@ -84,34 +86,6 @@ export const SignUp = ({ navigation }: Props) => {
     }
     setLoading(false);
     setMode('verify');
-  };
-
-  const signUpWithGoogle = async () => {
-    // This builds the URL for the signin page based on the
-    // expo URL scheme specified in the config. Ensures it works
-    // in local dev and in production.
-    const redirectUrl = makeRedirectUri({
-      path: 'signin',
-    });
-
-    // authUrl: https://{YOUR_PROJECT_REFERENCE_ID}.supabase.co
-    // returnURL: the redirectUrl you created above.
-    const authResponse = await startAsync({
-      authUrl: `${supabaseUrl}/auth/v1/authorize?provider=google&redirect_to=${redirectUrl}`,
-      returnUrl: redirectUrl,
-      projectNameForProxy: '@hoochani/timetogive',
-    });
-
-    // If the user successfully signs in
-    // we will have access to an accessToken and an refreshToken
-    // and then we'll use setSession (https://supabase.com/docs/reference/javascript/auth-setsession)
-    // to create a Supabase-session using these token
-    if (authResponse.type === 'success') {
-      supabase.auth.setSession({
-        access_token: authResponse.params.access_token,
-        refresh_token: authResponse.params.refresh_token,
-      });
-    }
   };
 
   const confirmCode = async () => {
@@ -194,7 +168,7 @@ export const SignUp = ({ navigation }: Props) => {
 
               <ButtonSecondary
                 disabled={loading}
-                onPress={() => signUpWithGoogle()}
+                onPress={() => signInWithGoogle()}
                 leftIcon={
                   <FontAwesomeIcon
                     icon={faGoogle as any}
@@ -204,6 +178,20 @@ export const SignUp = ({ navigation }: Props) => {
                 }
               >
                 Sign up with Google
+              </ButtonSecondary>
+
+              <ButtonSecondary
+                disabled={loading}
+                onPress={() => signInWithApple()}
+                leftIcon={
+                  <FontAwesomeIcon
+                    icon={faApple as any}
+                    color={colors.white}
+                    size={25}
+                  />
+                }
+              >
+                Sign in with Apple
               </ButtonSecondary>
 
               <VStack spacing={5} shouldWrapChildren>

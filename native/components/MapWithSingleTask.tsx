@@ -59,7 +59,7 @@ export const MapWithSingleTask = ({
         {/* Just a single pin */}
         <PointAnnotation
           coordinate={point.coordinates}
-          style={{ zIndex: 100 }}
+          style={{ zIndex: 1 }}
         >
           <TaskPin reason={reason} />
         </PointAnnotation>

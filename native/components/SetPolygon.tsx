@@ -188,7 +188,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
         {firstPoint && (
           <PointAnnotation
             coordinate={firstPoint.coordinates}
-            style={{ zIndex: 100 }}
+            style={{ zIndex: 1 }}
             onSelected={() => onClickFirstPoint()}
           >
             <Box

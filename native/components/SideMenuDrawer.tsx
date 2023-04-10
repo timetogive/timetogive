@@ -15,11 +15,17 @@ import Animated, {
   SlideOutRight,
 } from 'react-native-reanimated';
 import { usePush } from '../providers/push';
-import { ButtonPrimary } from './Buttons';
+import { ButtonPrimary, ButtonSecondary } from './Buttons';
+import { IconButtonWithShadow } from './IconButtonWithShadow';
+import { ConfirmationModal } from './ConfirmationModal';
+import { useState } from 'react';
 
 export const SideMenuDrawer = () => {
   const push = usePush();
   const { open, setOpen } = useSideMenu();
+
+  const [deletionConfirmationOpen, setDeletionConfirmationOpen] =
+    useState<boolean>(false);
 
   const signOut = async () => {
     setOpen(false);
@@ -41,42 +47,54 @@ export const SideMenuDrawer = () => {
             left: 0,
             right: 0,
             backgroundColor: 'white',
-            zIndex: 100,
+            zIndex: 1,
           }}
           entering={SlideInRight}
           exiting={SlideOutRight}
         >
           <SafeWrapper>
             <Box style={{ flex: 1 }} position="relative">
-              <VStack style={{ flex: 1 }} center>
-                <ButtonPrimary onPress={() => signOut()}>
+              <VStack
+                style={{ flex: 1 }}
+                ph={20}
+                justify="end"
+                spacing={10}
+                shouldWrapChildren
+              >
+                <ButtonSecondary
+                  onPress={() => {
+                    console.log('Clicked on delete account');
+                    setOpen(false);
+                    setDeletionConfirmationOpen(true);
+                  }}
+                  fullWidth
+                >
+                  Delete my account
+                </ButtonSecondary>
+                <ButtonPrimary onPress={() => signOut()} fullWidth>
                   Sign out
                 </ButtonPrimary>
               </VStack>
               <Box position="absolute" top={0} right={20}>
-                <TouchableOpacity onPress={() => setOpen(false)}>
-                  <Stack
-                    style={{ backgroundColor: colors.white }}
-                    center
-                    radius={100}
-                    h={40}
-                    w={40}
-                    p={5}
-                  >
-                    <VStack center>
-                      <FontAwesomeIcon
-                        icon={faClose}
-                        size={25}
-                        color={defaultColor[500]}
-                      />
-                    </VStack>
-                  </Stack>
-                </TouchableOpacity>
+                <IconButtonWithShadow onPress={() => setOpen(false)}>
+                  <FontAwesomeIcon
+                    icon={faClose}
+                    size={25}
+                    color={defaultColor[500]}
+                  />
+                </IconButtonWithShadow>
               </Box>
             </Box>
           </SafeWrapper>
         </Animated.View>
       )}
+      <ConfirmationModal
+        title="Delete account"
+        isOpen={deletionConfirmationOpen}
+        onClose={() => setDeletionConfirmationOpen(false)}
+        onConfirm={() => console.log('Account deleted')}
+        onCancel={() => setDeletionConfirmationOpen(false)}
+      />
     </>
   );
 };
