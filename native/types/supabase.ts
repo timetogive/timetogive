@@ -368,6 +368,10 @@ export interface Database {
         }
         Returns: string
       }
+      delete_account: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_task: {
         Args: {
           p_id: string

@@ -131,6 +131,10 @@ module.exports = {
         {
           locationAlwaysAndWhenInUsePermission:
             'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
+          locationAlwaysPermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
+          locationWhenInUsePermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
         },
       ],
     ],

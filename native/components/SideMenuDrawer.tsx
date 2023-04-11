@@ -35,6 +35,13 @@ export const SideMenuDrawer = () => {
     await supabase.auth.signOut();
   };
 
+  const deleteAccount = async () => {
+    await push.clearPushToken();
+    const { data, error } = await supabase.rpc('delete_account');
+    console.log('Delete account', data, error);
+    await signOut();
+  };
+
   return (
     <>
       {open && (
@@ -92,7 +99,7 @@ export const SideMenuDrawer = () => {
         title="Delete account"
         isOpen={deletionConfirmationOpen}
         onClose={() => setDeletionConfirmationOpen(false)}
-        onConfirm={() => console.log('Account deleted')}
+        onConfirm={() => deleteAccount()}
         onCancel={() => setDeletionConfirmationOpen(false)}
       />
     </>

@@ -177,7 +177,7 @@ export const SignUp = ({ navigation }: Props) => {
                   />
                 }
               >
-                Sign in with Apple
+                Sign up with Apple
               </ButtonSecondary>
 
               <ButtonSecondary
@@ -226,7 +226,7 @@ export const SignUp = ({ navigation }: Props) => {
                     size="xs"
                     onPress={() =>
                       Linking.openURL(
-                        'https://timetogiveapp.com/terms.html'
+                        'https://timetogiveapp.com/terms'
                       )
                     }
                   >
@@ -238,7 +238,7 @@ export const SignUp = ({ navigation }: Props) => {
                     size="xs"
                     onPress={() =>
                       Linking.openURL(
-                        'https://timetogiveapp.com/privacy.html'
+                        'https://timetogiveapp.com/privacy'
                       )
                     }
                   >
