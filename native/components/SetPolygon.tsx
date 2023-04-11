@@ -42,6 +42,7 @@ import Mapbox, { Camera, PointAnnotation } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
 import { Position } from 'geojson';
 import { lineString } from '@turf/helpers';
+import { ButtonPrimary } from './Buttons';
 
 Mapbox.setAccessToken(mapBoxApiKey);
 
@@ -187,7 +188,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
         {firstPoint && (
           <PointAnnotation
             coordinate={firstPoint.coordinates}
-            style={{ zIndex: 100 }}
+            style={{ zIndex: 1 }}
             onSelected={() => onClickFirstPoint()}
           >
             <Box
@@ -331,9 +332,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
           </HStack>
         )}
         {polygon && (
-          <Button
-            color={defaultColor[500]}
-            style={{ width: '100%' }}
+          <ButtonPrimary
             onPress={() =>
               onPolygonChange && onPolygonChange(polygon)
             }
@@ -341,7 +340,7 @@ export const SetPolygon = ({ onPolygonChange }: Props) => {
             <Text color={colors.white} size="xs">
               Set this as my home area
             </Text>
-          </Button>
+          </ButtonPrimary>
         )}
       </VStack>
     </Box>

@@ -48,7 +48,7 @@ const CreateButton = ({
         >
           <TtgIcon reason={action as TaskReason} />
         </Stack>
-        <VStack shouldWrapChildren spacing={5}>
+        <VStack shouldWrapChildren spacing={5} style={{ flex: 1 }}>
           <Text size="sm">{title}</Text>
           <Text size="xxs" color={colors.gray[400]}>
             {description}

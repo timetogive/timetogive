@@ -5,10 +5,15 @@ import {
   BottomSheetModalProvider,
 } from '@gorhom/bottom-sheet';
 import { Picker } from '@react-native-picker/picker';
-import { Button } from '@rneui/themed';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { HStack, VStack, Box } from 'react-native-flex-layout';
 import { Text, translateFontSize } from './Text';
+import { ButtonPrimary } from './Buttons';
 
 const pickerFontSize = translateFontSize('sm');
 
@@ -149,7 +154,9 @@ export const DaysHoursMinutesSheetModal = ({
             onHoursChange={onHoursChange}
             onMinutesChange={onMinutesChange}
           />
-          <Button onPress={() => hideModal()}>Close</Button>
+          <ButtonPrimary onPress={() => hideModal()}>
+            Close
+          </ButtonPrimary>
         </VStack>
       </BottomSheetModal>
     </BottomSheetModalProvider>

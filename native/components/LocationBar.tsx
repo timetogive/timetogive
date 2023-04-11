@@ -86,7 +86,7 @@ export const LocationBar = ({ mode, onChangeMode }: Props) => {
         top={mode === MapListMode.Map ? 0 : undefined}
         left={mode === MapListMode.Map ? 0 : undefined}
         right={mode === MapListMode.Map ? 0 : undefined}
-        zIndex={mode === MapListMode.Map ? 100 : undefined}
+        zIndex={mode === MapListMode.Map ? 1 : undefined}
       >
         <HStack justify="between" items="center">
           <HStack

@@ -414,24 +414,23 @@ export const Task = ({ route, navigation }: Props) => {
             right={insets.right}
             ph={15}
             spacing={10}
+            shouldWrapChildren
           >
-            {}
-            <Button
+            <ButtonPrimary
               onPress={() => {
                 actionTask('Completed');
               }}
             >
               Mark task completed
-            </Button>
-            <Button
-              color={colors.red[500]}
+            </ButtonPrimary>
+            <ButtonSecondary
               onPress={() => {
                 actionTask('Closed');
               }}
               loading={volunteerCallBusy}
             >
               Close this task
-            </Button>
+            </ButtonSecondary>
           </VStack>
         )}
         {!isMyTask && (
@@ -451,7 +450,6 @@ export const Task = ({ route, navigation }: Props) => {
                   userId: task.user_id,
                 })
               }
-              shadow
             >
               Message {task.user_full_name}
             </ButtonPrimary>

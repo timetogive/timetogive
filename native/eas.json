@@ -14,6 +14,17 @@
         "APP_ENV": "dev"
       }
     },
+    "dev-client-simulator-prod": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "resourceClass": "m-medium",
+        "simulator": true
+      },
+      "env": {
+        "APP_ENV": "prod"
+      }
+    },
     "dev-client-device": {
       "developmentClient": true,
       "distribution": "internal",

@@ -9,6 +9,7 @@ import { useSession } from '../providers/session';
 import colors, { defaultColor } from '../styles/colors';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary } from './Buttons';
 
 export const MissingName = () => {
   const insets = useSafeAreaInsets();
@@ -44,29 +45,29 @@ export const MissingName = () => {
   return (
     <ScrollWithAvoidKeyboardView>
       <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
-        <VStack items="center" spacing={20} ph={20}>
-          <Box>
-            <Text size="xl" weight="bold">
-              Provide your full name
-            </Text>
-          </Box>
-          <Box w="100%">
-            <Input
-              value={name}
-              onChangeText={setName}
-              placeholder="e.g. Christine Doe"
-              inputStyle={{
-                fontSize: translateFontSize('sm'),
-                lineHeight: 25,
-                paddingBottom: 10,
-              }}
-              containerStyle={{
-                paddingHorizontal: 0,
-              }}
-              errorStyle={{ margin: 0, padding: 0 }}
-            />
-          </Box>
-          <Box>
+        <VStack spacing={10}>
+          <VStack items="center" spacing={20} ph={20}>
+            <Box>
+              <Text size="xl" weight="bold">
+                Provide your full name
+              </Text>
+            </Box>
+            <Box w="100%">
+              <Input
+                value={name}
+                onChangeText={setName}
+                placeholder="e.g. Christine Doe"
+                inputStyle={{
+                  fontSize: translateFontSize('sm'),
+                  lineHeight: 25,
+                  paddingBottom: 10,
+                }}
+                containerStyle={{
+                  paddingHorizontal: 0,
+                }}
+                errorStyle={{ margin: 0, padding: 0 }}
+              />
+            </Box>
             <Text size="xs" color={defaultColor[400]}>
               TimeToGive is a volunteering platform for carrying out
               small meaningful tasks in your local community. We take
@@ -74,14 +75,16 @@ export const MissingName = () => {
               in your profile so other members of the community know
               who you are.
             </Text>
-          </Box>
-          <Button
-            onPress={() => clickSaveAndContinue()}
-            color={defaultColor[500]}
-            loading={saving}
-          >
-            Save and continue
-          </Button>
+          </VStack>
+          <VStack style={{ flex: 1 }} spacing={20} ph={20}>
+            <ButtonPrimary
+              onPress={() => clickSaveAndContinue()}
+              loading={saving}
+              fullWidth
+            >
+              Save and continue
+            </ButtonPrimary>
+          </VStack>
         </VStack>
       </Box>
     </ScrollWithAvoidKeyboardView>

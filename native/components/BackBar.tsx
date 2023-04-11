@@ -12,6 +12,7 @@ import { RootStackParamList } from '../App';
 import { SafeWrapper } from '../components/SafeWrapper';
 import { Text } from '../components/Text';
 import colors, { defaultColor } from '../styles/colors';
+import { IconButtonWithShadow } from './IconButtonWithShadow';
 
 interface Props {
   children?: React.ReactNode;
@@ -38,36 +39,18 @@ export const BackBar = ({ onBackPress, children }: Props) => {
         top={0}
         left={0}
         right={0}
-        zIndex={2}
+        zIndex={1}
       >
         <HStack spacing={10} items="center">
-          <TouchableOpacity
+          <IconButtonWithShadow
             onPress={() => onBackPress && onBackPress()}
           >
-            <Stack
-              style={{
-                backgroundColor: colors.white,
-                shadowColor: colors.gray[600],
-                shadowOffset: { width: -4, height: 6 },
-                shadowOpacity: 0.7,
-                shadowRadius: 20,
-                elevation: 2,
-              }}
-              center
-              radius={100}
-              h={40}
-              w={40}
-              p={5}
-            >
-              <VStack center>
-                <FontAwesomeIcon
-                  icon={faChevronLeft}
-                  color={colors.gray[800]}
-                  size={25}
-                />
-              </VStack>
-            </Stack>
-          </TouchableOpacity>
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              color={colors.gray[800]}
+              size={25}
+            />
+          </IconButtonWithShadow>
         </HStack>
         {children}
       </HStack>

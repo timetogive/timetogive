@@ -17,6 +17,7 @@
 \ir mark_notification_delivered.sql
 \ir action_task.sql
 \ir account_check.sql
+\ir delete_account.sql
 
 -- This tells postgrest to reload the schema
 NOTIFY pgrst, 'reload schema';

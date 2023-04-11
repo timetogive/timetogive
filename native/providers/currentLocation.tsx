@@ -75,7 +75,6 @@ export const CurrentLocationProvider = ({
       setCanAccessOnDevice(canAccess);
       setRequestedAccess(true);
       if (!canAccess) {
-        console.log('current location initialise permission denied');
         Alert.alert(
           'Permission Denied',
           'Your device would not allow your current location to be used. Go to app settings and allow location to be used',

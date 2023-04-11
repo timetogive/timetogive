@@ -41,6 +41,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { decode } from 'base64-arraybuffer';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary, ButtonSecondary } from './Buttons';
 
 interface MenuBottomSheetModalProps {
   isOpen: boolean;
@@ -346,64 +347,80 @@ export const MissingAvatar = () => {
   return (
     <ScrollWithAvoidKeyboardView>
       <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
-        <VStack items="center" spacing={20} ph={20}>
-          <Box>
+        <VStack spacing={20}>
+          <VStack
+            items="center"
+            spacing={10}
+            ph={20}
+            style={{ flex: 1 }}
+            shouldWrapChildren
+          >
             <Text size="xl" weight="bold">
               Set a profile picture
             </Text>
-          </Box>
-          <Stack
-            center
-            h={140}
-            w={140}
-            bg={colors.white}
-            radius={70}
-            overflow="hidden"
-          >
-            {imageUri && (
-              <Image
-                source={{ uri: imageUri }}
-                style={{ width: 200, height: 200 }}
-              />
-            )}
-            {avatarUrl && (
-              <SvgUri width="100%" height="100%" uri={avatarUrl} />
-            )}
-          </Stack>
-          <HStack spacing={10} center shouldWrapChildren>
-            <Button
-              onPress={() => regenerateAvatarUrl()}
-              color={colors.gray[500]}
-            >
-              Regenerate{' '}
-              <FontAwesomeIcon
-                icon={faArrowsRotate}
-                color={colors.white}
-              />
-            </Button>
-            <Button
-              onPress={() => clickOwnPic()}
-              color={colors.gray[500]}
-            >
-              Use my own{' '}
-              <FontAwesomeIcon icon={faCamera} color={colors.white} />
-            </Button>
-          </HStack>
-
-          <Box>
             <Text size="xs" color={defaultColor[400]}>
               A profile picture helps other users recognise you on the
               platform. For the best trust factor, we recommend
               uploading a photo.
             </Text>
-          </Box>
-          <Button
-            onPress={() => clickSaveAndContinue()}
-            color={defaultColor[500]}
-            loading={saving}
+            <Stack
+              center
+              h={140}
+              w={140}
+              bg={colors.white}
+              radius={70}
+              overflow="hidden"
+            >
+              {imageUri && (
+                <Image
+                  source={{ uri: imageUri }}
+                  style={{ width: 200, height: 200 }}
+                />
+              )}
+              {avatarUrl && (
+                <SvgUri width="100%" height="100%" uri={avatarUrl} />
+              )}
+            </Stack>
+          </VStack>
+          <VStack
+            spacing={10}
+            ph={20}
+            style={{ flex: 1 }}
+            shouldWrapChildren
           >
-            Save and continue
-          </Button>
+            <ButtonSecondary
+              onPress={() => regenerateAvatarUrl()}
+              leftIcon={
+                <FontAwesomeIcon
+                  icon={faArrowsRotate}
+                  color={colors.white}
+                />
+              }
+              fullWidth
+            >
+              Regenerate
+            </ButtonSecondary>
+            <ButtonSecondary
+              onPress={() => clickOwnPic()}
+              leftIcon={
+                <FontAwesomeIcon
+                  icon={faCamera}
+                  color={colors.white}
+                />
+              }
+              fullWidth
+            >
+              Use my own
+            </ButtonSecondary>
+
+            <ButtonPrimary
+              onPress={() => clickSaveAndContinue()}
+              loading={saving}
+              fullWidth
+            >
+              Save and continue
+            </ButtonPrimary>
+          </VStack>
         </VStack>
         <MenuBottomSheetModal
           isOpen={dialogVisible}

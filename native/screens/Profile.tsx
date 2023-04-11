@@ -123,6 +123,7 @@ export const Profile = ({ route, navigation }: Props) => {
               pt={25}
               ph={25}
               pb={60}
+              style={{ flex: 1 }}
             >
               <VStack spacing={10} shouldWrapChildren>
                 <Text color="white" size="xl" weight="medium">
@@ -130,26 +131,6 @@ export const Profile = ({ route, navigation }: Props) => {
                 </Text>
                 <Text color="white" size="sm">
                   {fullProfile.description}
-                </Text>
-              </VStack>
-            </VStack>
-            <VStack
-              mt={-60}
-              radius={20}
-              bg={defaultColor[600]}
-              pt={25}
-              ph={25}
-              pb={60}
-              style={{ flex: 1 }}
-            >
-              <VStack spacing={10} shouldWrapChildren>
-                <Text color="white" size="xl" weight="medium">
-                  Stats & Reviews
-                </Text>
-                <Text color="white" size="sm">
-                  Once the platform starts gaining traction, we'll be
-                  adding in lister stats, volunteer stats, and
-                  reviews. We're releasing quickly.
                 </Text>
               </VStack>
             </VStack>

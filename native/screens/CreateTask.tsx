@@ -31,6 +31,7 @@ import {
 } from '../components/BackBar';
 import { Point } from 'geojson';
 import { ScrollWithAvoidKeyboardView } from '../components/ScrollWithAvoidKeyboardView';
+import { ButtonPrimary } from '../components/Buttons';
 
 const integerText = (value: number, word: string) => {
   const text = `${value} ${pluralize(word, value)}`;
@@ -327,9 +328,12 @@ export const CreateTask = ({ route, navigation }: Props) => {
             </VStack>
 
             {/* Submit */}
-            <Button onPress={() => clickSubmit()} loading={saving}>
-              Submit
-            </Button>
+            <ButtonPrimary
+              onPress={() => clickSubmit()}
+              loading={saving}
+            >
+              Create task
+            </ButtonPrimary>
           </VStack>
         </Box>
       </ScrollWithAvoidKeyboardView>

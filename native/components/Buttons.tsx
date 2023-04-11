@@ -11,7 +11,7 @@ interface Props {
   children?: React.ReactNode | string;
   leftIcon?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
-  shadow?: boolean;
+  fullWidth?: boolean;
 }
 
 interface BaseProps extends Props {
@@ -52,21 +52,13 @@ const ButtonBase = ({
   leftIcon,
   size,
   type,
-  shadow,
+  fullWidth,
 }: BaseProps) => {
   const backgroundColor =
     type === 'primary' ? defaultColor[400] : colors.gray[400];
   const paddingSize = padding(size || 'md');
   const fontSizeSize = fontSize(size || 'md');
-  const shadowStyle = shadow
-    ? {
-        shadowColor: colors.gray[800],
-        shadowOffset: { width: -4, height: 6 },
-        shadowOpacity: 0.7,
-        shadowRadius: 20,
-        elevation: 2,
-      }
-    : {};
+  const width = fullWidth ? '100%' : 'auto';
 
   return (
     <Button
@@ -76,6 +68,7 @@ const ButtonBase = ({
         padding: paddingSize,
         backgroundColor,
         borderRadius: 5,
+        width,
       }}
       titleStyle={{ fontSize: fontSizeSize }}
     >
