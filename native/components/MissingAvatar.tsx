@@ -197,11 +197,16 @@ export const MissingAvatar = () => {
 
     if (status !== 'granted') {
       Alert.alert(
-        'Permission Denied',
-        'Your device would not allow access to your camera. Go to app settings and allow camera to be used',
+        'Unable to access your camera',
+        'Your device would not allow access to your camera. To allow this, you will need to visit the app settings.',
         [
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-          { text: 'Settings', onPress: () => Linking.openSettings() },
+          {
+            text: 'Dismiss',
+          },
+          {
+            text: 'Go to settings',
+            onPress: () => Linking.openSettings(),
+          },
         ]
       );
       return;
