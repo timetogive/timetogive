@@ -95,7 +95,7 @@ module.exports = {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
-      buildNumber: '4',
+      buildNumber: '5',
       bundleIdentifier: 'com.timetogiveapp.timetogive',
       supportsTablet: true,
       icon: './assets/icon-ios.png',
@@ -124,6 +124,8 @@ module.exports = {
         {
           photosPermission:
             'Allow $(PRODUCT_NAME) to access your photos in order to set your profile picture.',
+          cameraPermission:
+            'Allow $(PRODUCT_NAME) to access your camera in order to set your profile picture.',
         },
       ],
       [
