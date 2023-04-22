@@ -32,6 +32,13 @@
         "APP_ENV": "dev"
       }
     },
+    "dev-client-device-prod": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "prod"
+      }
+    },
     "dev-internal": {
       "channel": "dev",
       "distribution": "internal",

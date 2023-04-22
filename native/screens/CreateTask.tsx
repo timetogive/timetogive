@@ -328,10 +328,7 @@ export const CreateTask = ({ route, navigation }: Props) => {
             </VStack>
 
             {/* Submit */}
-            <ButtonPrimary
-              onPress={() => clickSubmit()}
-              loading={saving}
-            >
+            <ButtonPrimary onPress={() => clickSubmit()}>
               Create task
             </ButtonPrimary>
           </VStack>
