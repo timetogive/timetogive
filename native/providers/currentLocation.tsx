@@ -68,23 +68,21 @@ export const CurrentLocationProvider = ({
 
   const initialise = async () => {
     if (!requestedAccess) {
-      console.log('current location initialise requesting access');
       const { status } =
         await Location.requestForegroundPermissionsAsync();
       const canAccess = status === 'granted';
       setCanAccessOnDevice(canAccess);
       setRequestedAccess(true);
       if (!canAccess) {
-        console.log('current location initialise permission denied');
         Alert.alert(
-          'Permission Denied',
-          'Your device would not allow your current location to be used. Go to app settings and allow location to be used',
+          'Unable to access your location',
+          'Your device would not allow access to your location. To allow this, you will need to visit the app settings.',
           [
             {
-              text: 'OK',
+              text: 'Dismiss',
             },
             {
-              text: 'Settings',
+              text: 'Go to settings',
               onPress: () => Linking.openSettings(),
             },
           ]

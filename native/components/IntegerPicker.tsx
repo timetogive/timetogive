@@ -10,6 +10,7 @@ import pluralize from 'pluralize';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { HStack, VStack, Box } from 'react-native-flex-layout';
 import { Text, translateFontSize } from './Text';
+import { ButtonPrimary } from './Buttons';
 
 const pickerFontSize = translateFontSize('sm');
 
@@ -118,7 +119,9 @@ export const IntegerPickerSheetModal = ({
             min={min}
             max={max}
           />
-          <Button onPress={() => hideModal()}>Close</Button>
+          <ButtonPrimary onPress={() => hideModal()}>
+            Close
+          </ButtonPrimary>
         </VStack>
       </BottomSheetModal>
     </BottomSheetModalProvider>

@@ -95,6 +95,7 @@ module.exports = {
     },
     assetBundlePatterns: ['**/*'],
     ios: {
+      buildNumber: '5',
       bundleIdentifier: 'com.timetogiveapp.timetogive',
       supportsTablet: true,
       icon: './assets/icon-ios.png',
@@ -121,7 +122,21 @@ module.exports = {
       [
         'expo-image-picker',
         {
-          photosPermission: 'Allow TimeToGive to access your photos',
+          photosPermission:
+            'Allow $(PRODUCT_NAME) to access your photos in order to set your profile picture.',
+          cameraPermission:
+            'Allow $(PRODUCT_NAME) to access your camera in order to set your profile picture.',
+        },
+      ],
+      [
+        'expo-location',
+        {
+          locationAlwaysAndWhenInUsePermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
+          locationAlwaysPermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
+          locationWhenInUsePermission:
+            'Allow $(PRODUCT_NAME) to use your location in order to find tasks near you.',
         },
       ],
     ],

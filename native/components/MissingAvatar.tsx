@@ -15,7 +15,7 @@ import { Button, Input } from '@rneui/themed';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faArrowsRotate } from '@fortawesome/pro-light-svg-icons/faArrowsRotate';
 import { faImage, faCamera } from '@fortawesome/pro-light-svg-icons';
-import { Image, TouchableOpacity } from 'react-native';
+import { Image, StatusBar, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import Modal from 'react-native-modal';
 import { StandardModal } from '../components/StandardModal';
@@ -41,6 +41,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { decode } from 'base64-arraybuffer';
 import { ScrollWithAvoidKeyboardView } from './ScrollWithAvoidKeyboardView';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ButtonPrimary, ButtonSecondary } from './Buttons';
 
 interface MenuBottomSheetModalProps {
   isOpen: boolean;
@@ -196,11 +197,16 @@ export const MissingAvatar = () => {
 
     if (status !== 'granted') {
       Alert.alert(
-        'Permission Denied',
-        'Your device would not allow access to your camera. Go to app settings and allow camera to be used',
+        'Unable to access your camera',
+        'Your device would not allow access to your camera. To allow this, you will need to visit the app settings.',
         [
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
-          { text: 'Settings', onPress: () => Linking.openSettings() },
+          {
+            text: 'Dismiss',
+          },
+          {
+            text: 'Go to settings',
+            onPress: () => Linking.openSettings(),
+          },
         ]
       );
       return;
@@ -236,48 +242,9 @@ export const MissingAvatar = () => {
     }
   };
 
-  const proceedWithAvatar = async () => {
-    if (!avatarUrl) {
-      Alert.alert('No image selected');
-      return;
-    }
-    setSaving(true);
-    // Bit inefficient, but we need to download the avatar
-    const { data } = await axios.get(avatarUrl);
-
-    const filePath = `${nanoid()}.svg`;
-
-    // Use supabase storage to upload the avatar
-    let { error } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, data, { contentType: 'image/svg+xml' });
-
-    if (error) {
-      Alert.alert('Error uploading avatar');
-      throw error;
-    }
-
-    // Now update the user's profile with the new avatar URL
-    const fullAvatarUrl = `${supabaseUrl}/storage/v1/object/public/avatars/${filePath}`;
-
-    const { error: updateError } = await supabase
-      .from('profiles')
-      .update({ avatar_url: fullAvatarUrl })
-      .eq('id', session.user?.id);
-
-    if (updateError) {
-      Alert.alert('Error setting the avatar URL');
-      throw error;
-    }
-
-    // Refetch the user session
-    session.refetch();
-    setSaving(false);
-  };
-
-  const proceedWithFile = async () => {
+  const clickSaveAndContinue = async () => {
     if (!imageUri) {
-      Alert.alert('No image selected');
+      Alert.alert('Please set a photo.');
       return;
     }
     setSaving(true);
@@ -334,91 +301,102 @@ export const MissingAvatar = () => {
     setSaving(false);
   };
 
-  const clickSaveAndContinue = async () => {
-    // Todo implement resizing of the image
-    if (imageUri) {
-      proceedWithFile();
-    } else if (avatarUrl) {
-      proceedWithAvatar();
-    }
-  };
-
   return (
-    <ScrollWithAvoidKeyboardView>
-      <Box style={{ flex: 1 }} bg={colors.white} pt={insets.top + 60}>
-        <VStack items="center" spacing={20} ph={20}>
-          <Box>
-            <Text size="xl" weight="bold">
-              Set a profile picture
-            </Text>
-          </Box>
-          <Stack
-            center
-            h={140}
-            w={140}
-            bg={colors.white}
-            radius={70}
-            overflow="hidden"
-          >
-            {imageUri && (
-              <Image
-                source={{ uri: imageUri }}
-                style={{ width: 200, height: 200 }}
-              />
-            )}
-            {avatarUrl && (
-              <SvgUri width="100%" height="100%" uri={avatarUrl} />
-            )}
-          </Stack>
-          <HStack spacing={10} center shouldWrapChildren>
-            <Button
-              onPress={() => regenerateAvatarUrl()}
-              color={colors.gray[500]}
+    <>
+      <StatusBar animated={true} barStyle={'dark-content'} />
+      <ScrollWithAvoidKeyboardView>
+        <Box
+          style={{ flex: 1 }}
+          bg={colors.white}
+          pt={insets.top + 60}
+        >
+          <VStack spacing={20}>
+            <VStack
+              items="center"
+              spacing={10}
+              ph={20}
+              style={{ flex: 1 }}
+              shouldWrapChildren
             >
-              Regenerate{' '}
-              <FontAwesomeIcon
-                icon={faArrowsRotate}
-                color={colors.white}
-              />
-            </Button>
-            <Button
-              onPress={() => clickOwnPic()}
-              color={colors.gray[500]}
+              <Text size="xl" weight="bold">
+                Set a profile picture
+              </Text>
+              <Text size="xs" color={defaultColor[400]}>
+                A profile picture helps other users recognise you on
+                the platform. For the best trust factor, we recommend
+                using a real photo of yourself.
+              </Text>
+              <Stack
+                center
+                h={140}
+                w={140}
+                bg={colors.gray[100]}
+                radius={70}
+                overflow="hidden"
+              >
+                {imageUri ? (
+                  <Image
+                    source={{ uri: imageUri }}
+                    style={{ width: 200, height: 200 }}
+                  />
+                ) : (
+                  <TouchableOpacity onPress={() => clickOwnPic()}>
+                    <VStack items="center">
+                      <FontAwesomeIcon
+                        icon={faCamera}
+                        color={colors.gray[600]}
+                        size={40}
+                      />
+                      <Text size="xxs" color={colors.gray[600]}>
+                        Set Photo
+                      </Text>
+                    </VStack>
+                  </TouchableOpacity>
+                )}
+              </Stack>
+            </VStack>
+            <VStack
+              spacing={10}
+              ph={20}
+              style={{ flex: 1 }}
+              shouldWrapChildren
             >
-              Use my own{' '}
-              <FontAwesomeIcon icon={faCamera} color={colors.white} />
-            </Button>
-          </HStack>
+              <ButtonSecondary
+                onPress={() => clickOwnPic()}
+                leftIcon={
+                  <FontAwesomeIcon
+                    icon={faCamera}
+                    color={colors.white}
+                  />
+                }
+                fullWidth
+              >
+                Take photo or upload
+              </ButtonSecondary>
 
-          <Box>
-            <Text size="xs" color={defaultColor[400]}>
-              A profile picture helps other users recognise you on the
-              platform. For the best trust factor, we recommend
-              uploading a photo.
-            </Text>
-          </Box>
-          <Button
-            onPress={() => clickSaveAndContinue()}
-            color={defaultColor[500]}
-            loading={saving}
-          >
-            Save and continue
-          </Button>
-        </VStack>
-        <MenuBottomSheetModal
-          isOpen={dialogVisible}
-          onClose={() => setDialogVisible(false)}
-          onMenuItemPress={(item) => {
-            console.log('item', item);
-            if (item === 'camera') {
-              clickCamera();
-            } else if (item === 'photos') {
-              clickFile();
-            }
-            setDialogVisible(false);
-          }}
-        />
-      </Box>
-    </ScrollWithAvoidKeyboardView>
+              <ButtonPrimary
+                onPress={() => clickSaveAndContinue()}
+                fullWidth
+              >
+                Save and continue
+              </ButtonPrimary>
+            </VStack>
+          </VStack>
+          <MenuBottomSheetModal
+            isOpen={dialogVisible}
+            onClose={() => setDialogVisible(false)}
+            onMenuItemPress={(item) => {
+              console.log('item', item);
+              if (item === 'camera') {
+                clickCamera();
+              } else if (item === 'photos') {
+                clickFile();
+              }
+              setDialogVisible(false);
+            }}
+          />
+        </Box>
+      </ScrollWithAvoidKeyboardView>
+    </>
   );
 };

@@ -37,6 +37,7 @@ import Mapbox, { Camera, PointAnnotation } from '@rnmapbox/maps';
 import { mapBoxApiKey } from '../lib/consts';
 import { Position } from 'geojson';
 import { lineString } from '@turf/helpers';
+import { ButtonPrimary } from './Buttons';
 
 interface Props {
   reason?: TaskReason;
@@ -127,15 +128,9 @@ export const SetPoint = ({ reason, point, onPointChange }: Props) => {
         bottom={insets.bottom + 20}
         mh={20}
       >
-        <Button
-          color={defaultColor[500]}
-          style={{ width: '100%' }}
-          onPress={() => confirmPinLocation()}
-        >
-          <Text color={colors.white} size="xs">
-            Pin location looks good
-          </Text>
-        </Button>
+        <ButtonPrimary onPress={() => confirmPinLocation()}>
+          Pin location looks good
+        </ButtonPrimary>
       </Stack>
     </Box>
   );

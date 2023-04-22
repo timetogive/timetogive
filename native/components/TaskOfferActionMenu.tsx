@@ -19,6 +19,7 @@ import {
   faComment,
 } from '@fortawesome/pro-regular-svg-icons';
 import { TaskOfferStatus, TaskStatus } from '../types';
+import { ButtonPrimary, ButtonSecondary } from './Buttons';
 
 interface TaskOfferActionMenuProps {
   fullName: string;
@@ -38,45 +39,31 @@ export const TaskOfferActionMenu = ({
   return (
     <VStack spacing={10} shouldWrapChildren>
       {offerStatus === 'Pending' && (
-        <Button onPress={() => onAccept && onAccept()} size="md">
-          <HStack items="center" spacing={10} shouldWrapChildren>
-            <Text size="xs" color={colors.white}>
-              Accept offer
-            </Text>
-            <FontAwesomeIcon
-              icon={faCircleCheck}
-              color={colors.white}
-              size={17}
-            />
-          </HStack>
-        </Button>
+        <ButtonPrimary
+          onPress={() => onAccept && onAccept()}
+          leftIcon={
+            <FontAwesomeIcon icon={faCircleCheck} size={17} />
+          }
+        >
+          Accept offer
+        </ButtonPrimary>
       )}
       {offerStatus === 'Pending' && (
-        <Button onPress={() => onDecline && onDecline()} size="md">
-          <HStack items="center" spacing={10} shouldWrapChildren>
-            <Text size="xs" color={colors.white}>
-              Decline offer
-            </Text>
-            <FontAwesomeIcon
-              icon={faCircleXmark}
-              color={colors.white}
-              size={17}
-            />
-          </HStack>
-        </Button>
+        <ButtonSecondary
+          onPress={() => onDecline && onDecline()}
+          leftIcon={
+            <FontAwesomeIcon icon={faCircleXmark} size={17} />
+          }
+        >
+          Decline offer
+        </ButtonSecondary>
       )}
-      <Button onPress={() => onMessage && onMessage()} size="md">
-        <HStack items="center" spacing={10} shouldWrapChildren>
-          <Text size="xs" color={colors.white}>
-            Message {fullName}
-          </Text>
-          <FontAwesomeIcon
-            icon={faComment}
-            color={colors.white}
-            size={17}
-          />
-        </HStack>
-      </Button>
+      <ButtonSecondary
+        onPress={() => onMessage && onMessage()}
+        leftIcon={<FontAwesomeIcon icon={faComment} size={17} />}
+      >
+        Message {fullName}
+      </ButtonSecondary>
     </VStack>
   );
 };
