@@ -3,7 +3,7 @@
 This is a simple Node JS script written in TypeScript.
 
 - runs in a loop
-- pauses for 15 mins
+- pauses for 30 mins
 - looks for notifications that need sending
 
 In order to run continuously, we boot an Express JS server (so you can manually verify via a web page that is running) - and then the script loops in the background.
@@ -42,7 +42,11 @@ For historic reference, in order to make it work in the CI, we can do the same, 
 - aws configure set aws_access_key_id $EB_DEPLOY_AWS_ACCESS_KEY_ID
 - aws configure set aws_secret_access_key $EB_DEPLOY_AWS_SECRET_ACCESS_KEY
 - aws configure set region eu-west-2
-- eb init push-sender --platform node.js --region eu-west-2
+- eb init ttg-push-sender-dev --platform node.js --region eu-west-2
+
+or 
+
+- eb init ttg-push-sender-prod --platform node.js --region eu-west-2
 
 Then I created a new application called expire-stripe-checkouts-dev in the web console (using a single instance node.js setup)
 
