@@ -51,7 +51,7 @@ begin
     into   l_task_owner_id
     ,      l_task_title
     from   public.tasks
-    where  id = p_task_id;
+    where  id = task_id;
 
     
     -- Get the auth user information
@@ -60,7 +60,7 @@ begin
     into   l_auth_user_full_name
     ,      l_auth_user_avatar_url
     from   public.profiles
-    where  id = l_user_id;
+    where  id = from_user_id;
 
     -- Get the task user information
     select full_name
@@ -72,16 +72,28 @@ begin
 
     -- Build the jsonb payload
     l_jsonb := json_build_object(
-        'taskId', p_task_id,
+        'taskId', task_id,
         'taskTitle', l_task_title,
         'taskOwnerId', l_task_owner_id,
         'taskOwnerFullName', l_task_owner_full_name,
-        'taskOwnerAvatarUrl', l_task_owner_avatar_url
+        'taskOwnerAvatarUrl', l_task_owner_avatar_url,
         'taskMessageId', return_id,
         'taskMessageText', message_text,
         'taskMessageFromUserId', from_user_id,
         'taskMessageFromUserFullName', l_auth_user_full_name,
         'taskMessageFromUserAvatarUrl', l_auth_user_avatar_url
+    );
+
+    insert into public.notifications(
+        user_id,
+        you_actioned,
+        type,
+        payload
+    ) values (
+        to_user_id,
+        false,
+        l_notifications_type,
+        l_jsonb
     );
 
 
