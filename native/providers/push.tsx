@@ -136,7 +136,6 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
 
   useEffect(() => {
     const a = async () => {
-      console.log('AAAAAAAAAA');
       await initialise();
       notificationListener.current =
         Notifications.addNotificationReceivedListener(
@@ -148,7 +147,10 @@ export const PushProvider = ({ children }: Props): JSX.Element => {
       responseListener.current =
         Notifications.addNotificationResponseReceivedListener(
           (response) => {
-            console.log('Response received', response);
+            console.log(
+              'Response received e.g. user has tapped on push notification',
+              response
+            );
           }
         );
     };

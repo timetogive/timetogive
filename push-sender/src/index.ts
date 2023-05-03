@@ -7,7 +7,7 @@ import { Expo, ExpoPushMessage } from 'expo-server-sdk';
 
 dotenv.config({ path: path.resolve('.env') });
 
-const PAUSE = 1 * 60 * 1000; // 1 minute
+const PAUSE = 30 * 60 * 1000; // 30 minutes
 
 let iter = 0;
 
@@ -163,6 +163,17 @@ const doWork = async () => {
   for (const chunk of chunks) {
     const blah = await expo.sendPushNotificationsAsync(chunk);
     console.log(blah);
+  }
+
+  console.log(
+    'Now marking notifications as delivered - this is obviously naive'
+  );
+
+  // Not ideal, but it's a start, we just mark them all as delivered
+  for (const notification of notificationsWithPushTokens) {
+    await supabase.rpc('mark_notification_delivered', {
+      p_notification_id: notification.id,
+    });
   }
 };
 
