@@ -39,7 +39,7 @@ export const Navbar = () => {
           <Image
             alt="Time to Give Logo"
             src="/ttg-white.svg"
-            width={40}
+            width={60}
           />
           <HStack spacing="4">
             <ButtonGroup
@@ -52,7 +52,7 @@ export const Navbar = () => {
                 target="_blank"
               >
                 <IconButton
-                  icon={<FiGithub fontSize="1.25rem" />}
+                  icon={<FiGithub fontSize="2rem" />}
                   aria-label="Search"
                 />
               </Link>
