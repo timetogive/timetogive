@@ -10,6 +10,7 @@ import {
   VStack,
   Image,
 } from '@chakra-ui/react';
+import Link from 'next/link';
 import { HiChevronRight } from 'react-icons/hi';
 
 export const HomePageHero = () => {
@@ -36,7 +37,7 @@ export const HomePageHero = () => {
             smallest amount of free time, to small volunteering tasks
             that make a big difference in their local community
           </Text>
-          <VStack spacing={0}>
+          <VStack spacing={10}>
             <Text
               fontSize={{ md: 'xl' }}
               mt="4"
@@ -46,6 +47,17 @@ export const HomePageHero = () => {
               It&apos;s free to use, entirely open source, and is
               itself run by volunteers.
             </Text>
+            <Link
+              href="https://apps.apple.com/gb/app/timetogive/id6447304280"
+              target="_blank"
+            >
+              <Image
+                alt="Apple App Store Download"
+                src="/download-on-app-store.svg"
+                w={44}
+                alignSelf="center"
+              />
+            </Link>
           </VStack>
         </VStack>
       </VStack>

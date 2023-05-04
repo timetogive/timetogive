@@ -8,6 +8,11 @@ export default function Document() {
           name="description"
           content="TimeToGive is a micro-volunteering app that connects people, with even the smallest amount of free time, to small tasks that make a big difference in their local community"
         />
+        <link
+          rel="icon"
+          type="image/svg+xml"
+          href="/ttg-favicon.svg"
+        />
       </Head>
       <body>
         <Main />
